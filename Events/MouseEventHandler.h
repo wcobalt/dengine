@@ -1,4 +1,6 @@
 #include "EventHandler.h"
+#include "MouseEventParameters.h"
+
 //
 // Created by wcobalt on 15.09.18.
 //
