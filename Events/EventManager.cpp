@@ -7,12 +7,12 @@
 
 #include "EventManager.h"
 
-EventHandler EventManager::getFirstEventHandler(unsigned int eventType) {
+EventHandler* EventManager::getFirstEventHandler(unsigned int eventType) {
     return eventsHandlers.find(eventType)->second;
 }
 
-std::vector<EventHandler> EventManager::getEventHandlers(unsigned int eventType) {
-    std::vector<EventHandler> handlers;
+std::vector<EventHandler*> EventManager::getEventHandlers(unsigned int eventType) {
+    std::vector<EventHandler*> handlers;
 
     auto pairOfIterators = eventsHandlers.equal_range(eventType);
 
@@ -23,6 +23,6 @@ std::vector<EventHandler> EventManager::getEventHandlers(unsigned int eventType)
     return handlers;
 }
 
-void EventManager::setEventHandler(unsigned int eventType, EventHandler eventHandler) {
-    eventsHandlers.insert(std::pair<unsigned int, EventHandler>(eventType, eventHandler));
+void EventManager::setEventHandler(unsigned int eventType, EventHandler* eventHandler) {
+    eventsHandlers.insert(std::pair<unsigned int, EventHandler*>(eventType, eventHandler));
 }

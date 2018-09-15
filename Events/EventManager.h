@@ -12,7 +12,7 @@
 
 class EventManager {
 private:
-    std::multimap<unsigned int, EventHandler> eventsHandlers;
+    std::multimap<unsigned int, EventHandler*> eventsHandlers;
 public:
     const unsigned int EVENT_CLICK = 0;
     const unsigned int EVENT_LEFT_BUTTON_CLICK = 1;
@@ -30,9 +30,9 @@ public:
     const unsigned int EVENT_KEY_RELEASE = 13;
     //@TODO king of consts needs more consts!!!
 
-    void setEventHandler(unsigned int, EventHandler);
-    EventHandler getFirstEventHandler(unsigned int);
-    std::vector<EventHandler> getEventHandlers(unsigned int);
+    void setEventHandler(unsigned int, EventHandler*);
+    EventHandler* getFirstEventHandler(unsigned int);
+    std::vector<EventHandler*> getEventHandlers(unsigned int);
 };
 
 
