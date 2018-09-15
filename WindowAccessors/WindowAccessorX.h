@@ -1,6 +1,7 @@
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 #include "../WindowAccessor.h"
+#include <string>
 
 //
 // Created by wcobalt on 15.09.18.
@@ -23,7 +24,7 @@ private:
 
 public:
     WindowAccessorX();
-    int initialize(int, int, int, int, GLint[]);
+    int initialize(int, int, unsigned int, unsigned int, GLint[], long, std::string);
 };
 
 #endif //DENGINE_WINDOWACCESSORX_H
