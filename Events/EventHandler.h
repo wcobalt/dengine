@@ -1,3 +1,4 @@
+#include "EventParameters.h"
 //
 // Created by wcobalt on 15.09.18.
 //
@@ -8,7 +9,7 @@
 
 class EventHandler {
 public:
-    virtual void handle() = 0;
+    virtual void handle(EventParameters) = 0;
 };
 
 

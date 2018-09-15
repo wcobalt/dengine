@@ -3,7 +3,7 @@ project(Dengine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Dengine main.cpp WindowAccessors/WindowAccessorX.cpp WindowAccessors/WindowAccessorX.h WindowAccessor.cpp WindowAccessor.h Events/EventManager.cpp Events/EventManager.h Events/EventHandler.cpp Events/EventHandler.h)
+add_executable(Dengine main.cpp WindowAccessors/WindowAccessorX.cpp WindowAccessors/WindowAccessorX.h WindowAccessor.cpp WindowAccessor.h Events/EventManager.cpp Events/EventManager.h Events/EventHandler.cpp Events/EventHandler.h Events/MouseEventHandler.cpp Events/MouseEventHandler.h Events/EventParameters.cpp Events/EventParameters.h Events/MouseEventParameters.cpp Events/MouseEventParameters.h)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
