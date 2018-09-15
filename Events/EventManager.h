@@ -1,4 +1,6 @@
 #include "EventHandler.h"
+#include <map>
+
 //
 // Created by wcobalt on 15.09.18.
 //
@@ -8,6 +10,8 @@
 
 
 class EventManager {
+private:
+    std::map<unsigned int, EventHandler> eventsHandlers;
 public:
     const unsigned int EVENT_CLICK = 0;
     const unsigned int EVENT_LEFT_BUTTON_CLICK = 1;
@@ -23,9 +27,10 @@ public:
     const unsigned int EVENT_WINDOW_WINDOWED = 11;
     const unsigned int EVENT_KEY_PRESS = 12;
     const unsigned int EVENT_KEY_RELEASE = 13;
+    //@TODO king of consts needs more consts!!!
 
     void setEventHandler(unsigned int event, EventHandler eventHandler);
-    EventHandler getEventManager(unsigned int event);
+    EventHandler getEventHandler(unsigned int event);
 };
 
 
