@@ -9,7 +9,7 @@
 
 class MouseEventHandler : public EventHandler {
 public:
-    void handle()
+    virtual void handle(MouseEventParameters) = 0;
 };
 
 
