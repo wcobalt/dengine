@@ -14,6 +14,10 @@ void Dengine::setFPS(int fps) {
     this->fps = fps;
 }
 
+void Dengine::setWindowManager(WindowManager* windowManager) {
+    this->windowManager = windowManager;
+}
+
 void Dengine::setWindowPosition(int x, int y) {
 
 }

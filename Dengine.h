@@ -1,4 +1,5 @@
 #include <string>
+#include "WindowAccessors/WindowManager.h"
 //
 // Created by wcobalt on 16.09.18.
 //
@@ -10,6 +11,7 @@
 class Dengine {
 private:
     int fps;
+    WindowManager* windowManager;
 public:
     Dengine();
     //@todo to Window class
@@ -19,6 +21,7 @@ public:
     void setWindowSize(unsigned int, unsigned int);
     void setFPS(int);
     int getFPS();
+    void setWindowManager(WindowManager*);
     void start();
 };
 
