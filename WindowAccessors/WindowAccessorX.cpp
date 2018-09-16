@@ -34,3 +34,43 @@ int WindowAccessorX::initialize(int x, int y, unsigned int width, unsigned int h
 
     return 0;
 }
+
+void setX(int x) {
+
+}
+
+void setY(int y) {
+
+}
+
+int getX() {
+
+}
+
+int getY() {
+
+}
+
+void setWidth(unsigned int width) {
+
+}
+
+void setHeight(unsigned int height) {
+
+}
+
+unsigned int getWidth() {
+
+}
+
+unsigned int getHeight() {
+
+}
+
+void setWindowTitle(std::string title) {
+
+}
+
+void getWindowTitle() {
+
+}
