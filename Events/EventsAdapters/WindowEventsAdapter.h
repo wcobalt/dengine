@@ -1,4 +1,4 @@
-#include "WindowEventsHandler.h"
+#include "../EventsHandlers/WindowEventsHandler.h"
 //
 // Created by wcobalt on 16.09.18.
 //

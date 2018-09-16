@@ -1,5 +1,5 @@
 #include "EventsHandler.h"
-#include "KeyEventInfo.h"
+#include "../EventsInfo/KeyEventInfo.h"
 
 //
 // Created by wcobalt on 16.09.18.

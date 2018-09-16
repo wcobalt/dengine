@@ -1,5 +1,5 @@
 #include "WindowEventsAdapter.h"
-#include "WindowEventInfo.h"
+#include "../EventsInfo/WindowEventInfo.h"
 
 //
 // Created by wcobalt on 16.09.18.

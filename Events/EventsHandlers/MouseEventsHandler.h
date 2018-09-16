@@ -1,7 +1,7 @@
 #include "EventsHandler.h"
-#include "MouseEventInfo.h"
-#include "MouseButtonEventInfo.h"
-#include "MouseScrollEventInfo.h"
+#include "../EventsInfo/MouseEventInfo.h"
+#include "../EventsInfo/MouseButtonEventInfo.h"
+#include "../EventsInfo/MouseScrollEventInfo.h"
 
 //
 // Created by wcobalt on 16.09.18.
