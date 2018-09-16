@@ -10,6 +10,6 @@ int main() {
     GLint att[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
 
     accessorX->initialize(0, 0, 600, 400, att, ExposureMask | KeyPressMask, "A title");
-
+    while(true);
     return 0;
 }
