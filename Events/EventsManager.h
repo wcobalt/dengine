@@ -1,4 +1,4 @@
-#include "EventHandler.h"
+#include "EventsHandlers/EventsHandler.h"
 #include <map>
 #include <vector>
 
@@ -6,14 +6,15 @@
 // Created by wcobalt on 15.09.18.
 //
 
-#ifndef DENGINE_EVENTMANAGER_H
-#define DENGINE_EVENTMANAGER_H
+#ifndef DENGINE_EVENTSMANAGER_H
+#define DENGINE_EVENTSMANAGER_H
 
 
-class EventManager {
+class EventsManager {
 private:
-    std::multimap<unsigned int, EventHandler*> eventsHandlers;
+    std::multimap<unsigned int, EventsHandler*> eventsHandlers;
 public:
+    //deprecated
     const unsigned int EVENT_CLICK = 0;
     const unsigned int EVENT_LEFT_BUTTON_CLICK = 1;
     const unsigned int EVENT_RIGHT_BUTTON_CLICK = 2;
@@ -30,10 +31,14 @@ public:
     const unsigned int EVENT_KEY_RELEASE = 13;
     //@TODO king of consts needs more consts!!!
 
-    void setEventHandler(unsigned int, EventHandler*);
-    EventHandler* getFirstEventHandler(unsigned int);
-    std::vector<EventHandler*> getEventHandlers(unsigned int);
+    const unsigned int MOUSE_EVENTS = 0;
+    const unsigned int WINDOW_EVENTS = 1;
+    const unsigned int KEY_EVENTS = 2;
+
+    void setEventHandler(unsigned int, EventsHandler*);
+    EventsHandler* getFirstEventHandler(unsigned int);
+    std::vector<EventsHandler*> getEventHandlers(unsigned int);
 };
 
 
-#endif //DENGINE_EVENTMANAGER_H
+#endif //DENGINE_EVENTSMANAGER_H
