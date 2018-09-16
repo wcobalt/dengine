@@ -1,6 +1,6 @@
 #include <GL/glx.h>
 #include <X11/Xlib.h>
-#include "../WindowAccessor.h"
+#include "WindowAccessor.h"
 #include <string>
 
 //
