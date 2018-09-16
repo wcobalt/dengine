@@ -2,14 +2,13 @@
 // Created by wcobalt on 15.09.18.
 //
 
-#ifndef DENGINE_EVENTHANDLER_H
-#define DENGINE_EVENTHANDLER_H
+#ifndef DENGINE_EVENTSHANDLER_H
+#define DENGINE_EVENTSHANDLER_H
 
 
-class EventHandler {
-public:
-    virtual void handle(EventParameters) = 0;
+class EventsHandler {
+
 };
 
 
-#endif //DENGINE_EVENTHANDLER_H
+#endif //DENGINE_EVENTSHANDLER_H
