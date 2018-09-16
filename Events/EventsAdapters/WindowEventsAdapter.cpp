@@ -9,7 +9,7 @@ void windowOpened(WindowEventInfo info) {
     
 }
 
-void windowClosed(WindowEventIndo info) {
+void windowClosed(WindowEventInfo info) {
     
 }
 
