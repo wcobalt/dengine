@@ -7,42 +7,42 @@
 
 #include "MouseEventsAdapter.h"
 
-void mouseOver(MouseEventInfo info) {
+void MouseEventsAdapter::mouseOver(MouseEventInfo info) {
 
 }
 
-void mouseOut(MouseEventInfo info) {
+void MouseEventsAdapter::mouseOut(MouseEventInfo info) {
 
 }
 
-void mouseMove(MouseEventInfo info) {
+void MouseEventsAdapter::mouseMove(MouseEventInfo info) {
 
 }
 
-void mouseButtonPressed(MouseButtonEventInfo info) {
+void MouseEventsAdapter::mouseButtonPressed(MouseButtonEventInfo info) {
 
 }
 
-void mouseButtonReleased(MouseButtonEventInfo info) {
+void MouseEventsAdapter::mouseButtonReleased(MouseButtonEventInfo info) {
 
 }
 
-void mouseButtonClicked(MouseButtonEventInfo info) {
+void MouseEventsAdapter::mouseButtonClicked(MouseButtonEventInfo info) {
 
 }
 
-void mouseDrag(MouseEventInfo info) {
+void MouseEventsAdapter::mouseDrag(MouseEventInfo info) {
 
 }
 
-void mouseDraggingStart(MouseEventInfo info) {
+void MouseEventsAdapter::mouseDraggingStart(MouseEventInfo info) {
 
 }
 
-void mouseDraggingEnd(MouseEventInfo info) {
+void MouseEventsAdapter::mouseDraggingEnd(MouseEventInfo info) {
 
 }
 
-void mouseScroll(MouseScrollEventInfo info) {
+void MouseEventsAdapter::mouseScroll(MouseScrollEventInfo info) {
 
 }
