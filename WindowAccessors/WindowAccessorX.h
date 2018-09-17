@@ -25,6 +25,16 @@ private:
 public:
     WindowAccessorX();
     int initialize(int, int, unsigned int, unsigned int, GLint[], long, std::string);
+    virtual void setX(int x);
+    virtual void setY(int y);
+    virtual int getX();
+    virtual int getY();
+    virtual void setWidth(unsigned int width);
+    virtual void setHeight(unsigned int height);
+    virtual unsigned int getWidth();
+    virtual unsigned int getHeight();
+    virtual void setWindowTitle(std::string title);
+    virtual void getWindowTitle();
 };
 
 #endif //DENGINE_WINDOWACCESSORX_H

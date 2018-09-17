@@ -8,7 +8,10 @@
 
 
 class KeyEventsAdapter : public KeyEventsHandler {
-
+public:
+    virtual void keyPressed(KeyEventInfo info);
+    virtual void keyReleased(KeyEventInfo info);
+    virtual void keyChecked(KeyEventInfo info);
 };
 
 

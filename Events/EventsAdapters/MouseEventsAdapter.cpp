@@ -39,10 +39,10 @@ void MouseEventsAdapter::mouseDraggingStart(MouseEventInfo info) {
 
 }
 
-void mouseDraggingEnd(MouseEventInfo info) {
+void MouseEventsAdapter::mouseDraggingEnd(MouseEventInfo info) {
 
 }
 
-void mouseScroll(MouseScrollEventInfo info) {
+void MouseEventsAdapter::mouseScroll(MouseScrollEventInfo info) {
 
 }

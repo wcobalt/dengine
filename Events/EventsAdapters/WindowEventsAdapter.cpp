@@ -5,38 +5,38 @@
 // Created by wcobalt on 16.09.18.
 //
 
-void windowOpened(WindowEventInfo info) {
+void WindowEventsAdapter::windowOpened(WindowEventInfo info) {
     
 }
 
-void windowClosed(WindowEventInfo info) {
+void WindowEventsAdapter::windowClosed(WindowEventInfo info) {
     
 }
 
-void windowMaximized(WindowEventInfo info) {
+void WindowEventsAdapter::windowMaximized(WindowEventInfo info) {
     
 }
 
-void windowMinimized(WindowEventInfo info) {
+void WindowEventsAdapter::windowMinimized(WindowEventInfo info) {
     
 }
 
-void windowWindowed(WindowEventInfo info) {
+void WindowEventsAdapter::windowWindowed(WindowEventInfo info) {
     
 }
 
-void windowMove(WindowEventInfo info) {
+void WindowEventsAdapter::windowMove(WindowEventInfo info) {
     
 }
 
-void windowGotFocus(WindowEventInfo info) {
+void WindowEventsAdapter::windowGotFocus(WindowEventInfo info) {
     
 }
 
-void windowLostFocus(WindowEventInfo info) {
+void WindowEventsAdapter::windowLostFocus(WindowEventInfo info) {
     
 }
 
-void windowResized(WindowEventInfo info) {
+void WindowEventsAdapter::windowResized(WindowEventInfo info) {
 
 }
