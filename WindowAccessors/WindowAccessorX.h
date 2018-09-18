@@ -24,7 +24,7 @@ private:
 
 public:
     WindowAccessorX();
-    int initialize(int, int, unsigned int, unsigned int, GLint[], long, std::string);
+    virtual int initialize(int, int, unsigned int, unsigned int, GLint[], long, std::string);
     virtual void setX(int x);
     virtual void setY(int y);
     virtual int getX();
