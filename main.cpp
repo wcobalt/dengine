@@ -8,7 +8,11 @@
 int main() {
     Dengine engine;
 
-    engine.setWindowManager();
+    WindowAccessor* accessor = new WindowAccessorX();
+
+    engine.setWindowManager(new WindowManager(accessor));
+
+    engine.start();
 
     return 0;
 }
