@@ -16,12 +16,10 @@ public:
     Dengine();
     //@todo to Window class
     //@todo getXXX() add
-    void setWindowTitle(std::string);
-    void setWindowPosition(int, int);
-    void setWindowSize(unsigned int, unsigned int);
     void setFPS(int);
     int getFPS();
     void setWindowManager(WindowManager*);
+    WindowManager* getWindowManager();
     void start();
 };
 
