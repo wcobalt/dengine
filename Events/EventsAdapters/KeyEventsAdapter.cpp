@@ -4,14 +4,14 @@
 // Created by wcobalt on 16.09.18.
 //
 
-void keyPressed(KeyEventInfo info) {
+void KeyEventsAdapter::keyPressed(KeyEventInfo info) {
 
 }
 
-void keyReleased(KeyEventInfo info) {
+void KeyEventsAdapter::keyReleased(KeyEventInfo info) {
 
 }
 
-void keyChecked(KeyEventInfo info) {
+void KeyEventsAdapter::keyChecked(KeyEventInfo info) {
 
 }
