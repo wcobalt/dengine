@@ -11,7 +11,8 @@ class WindowManager {
 private:
     WindowAccessor* windowAccessor;
 public:
-    virtual WindowAccessor* getWindowAccessor() = 0;
+    WindowManager(WindowAccessor*);
+    WindowAccessor* getWindowAccessor();
 };
 
 

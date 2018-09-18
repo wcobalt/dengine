@@ -3,3 +3,11 @@
 //
 
 #include "WindowManager.h"
+
+WindowManager::WindowManager(WindowAccessor * windowAccessor) {
+    this->windowAccessor = windowAccessor;
+}
+
+WindowAccessor* WindowManager::getWindowAccessor() {
+    return windowAccessor;
+}
