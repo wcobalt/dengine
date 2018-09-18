@@ -1,15 +1,14 @@
 #include <iostream>
 #include "WindowAccessors/WindowAccessorX.h"
 #include <string>
+#include "Dengine.h"
 
 //@TODO x11*, windows(later), and macos(later) support
 
 int main() {
-    WindowAccessorX* accessorX = new WindowAccessorX();
+    Dengine engine;
 
-    GLint att[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
+    engine.setWindowManager();
 
-    accessorX->initialize(0, 0, 600, 400, att, ExposureMask | KeyPressMask, "A title");
-    while(true);
     return 0;
 }
