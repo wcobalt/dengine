@@ -1,6 +1,7 @@
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 #include <string>
+#include "../Events/EventsManager.h"
 
 //
 // Created by wcobalt on 15.09.18.
@@ -11,6 +12,8 @@
 
 
 class WindowAccessor {
+private:
+    EventsManager* eventsManager;
 public:
     //@todo borders
     virtual int initialize(int, int, unsigned int, unsigned int, GLint[], long, std::string) = 0;
@@ -24,6 +27,9 @@ public:
     virtual unsigned int getHeight() = 0;
     virtual void setWindowTitle(std::string title) = 0;
     virtual void getWindowTitle() = 0;
+    void setEventsManager(EventsManager* eventsManager);
+    EventsManager* getEventsManager();
+    virtual void checkEvents() = 0;
 };
 
 

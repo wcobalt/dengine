@@ -20,11 +20,10 @@ private:
     Window window;
     GLXContext glXContext;
     XWindowAttributes xWindowAttributes;
-    XEvent xEvent;
-
 public:
     WindowAccessorX();
-    virtual int initialize(int, int, unsigned int, unsigned int, GLint[], long, std::string);
+    virtual int initialize(int x, int y, unsigned int width, unsigned int height,
+                           GLint attributes[], long eventMask, std::string title);
     virtual void setX(int x);
     virtual void setY(int y);
     virtual int getX();
@@ -35,6 +34,7 @@ public:
     virtual unsigned int getHeight();
     virtual void setWindowTitle(std::string title);
     virtual void getWindowTitle();
+    virtual void checkEvents();
 };
 
 #endif //DENGINE_WINDOWACCESSORX_H

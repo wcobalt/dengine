@@ -5,12 +5,17 @@
 #include "WindowAccessorX.h"
 #include <iostream>
 #include <string>
+#include "../Events/EventsHandlers/EventsHandler.h"
+#include "../Events/EventsHandlers/KeyEventsHandler.h"
+#include "../Events/EventsHandlers/MouseEventsHandler.h"
+#include "../Events/EventsHandlers/EventsHandler.h"
 
 //X11 windowAccessor
 
 WindowAccessorX::WindowAccessorX() = default;
 
-int WindowAccessorX::initialize(int x, int y, unsigned int width, unsigned int height, GLint attributes[], long eventMask, std::string title) {
+int WindowAccessorX::initialize(int x, int y, unsigned int width, unsigned int height,
+                                GLint attributes[], long eventMask, std::string title) {
     display = XOpenDisplay(NULL);
 
     rootWindow = DefaultRootWindow(display);
@@ -73,4 +78,25 @@ void WindowAccessorX::setWindowTitle(std::string title) {
 
 void WindowAccessorX::getWindowTitle() {
 
+}
+
+void WindowAccessorX::checkEvents() {
+    while(XEventsQueued(display, QueuedAlready)) {
+        XEvent xEvent;
+
+        XNextEvent(display, &xEvent);
+
+        switch(xEvent.type) {
+            case KeyPress:
+                break;
+            case KeyRelease:
+                break;
+            case ButtonPress:
+                break;
+            case ButtonRelease:
+                break;
+            case MotionNotify:
+                break;
+        }
+    }
 }
