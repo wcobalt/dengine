@@ -80,7 +80,9 @@ void WindowAccessorX::getWindowTitle() {
 
 }
 
-void WindowAccessorX::checkEvents() {
+EventsData* WindowAccessorX::checkEvents() {
+    EventsData* eventsData = new EventsData();
+
     while(XEventsQueued(display, QueuedAlready)) {
         XEvent xEvent;
 
@@ -88,15 +90,37 @@ void WindowAccessorX::checkEvents() {
 
         switch(xEvent.type) {
             case KeyPress:
+                eventsData->addPressedKey(xEvent.xkey.keycode);
                 break;
             case KeyRelease:
+                eventsData->addReleasedKey(xEvent.xkey.keycode);
                 break;
             case ButtonPress:
+                switch(xEvent.xbutton.button) {
+                    case Button4:
+                        eventsData->setMouseWheelDirection(1);
+                        break;
+                    case Button5:
+                        eventsData->setMouseWheelDirection(-1);
+                        break;
+                    default:
+                        eventsData->addPressedButton(xEvent.xbutton.button);
+                }
                 break;
             case ButtonRelease:
+                eventsData->addReleasedButton(xEvent.xbutton.button);
                 break;
             case MotionNotify:
+                eventsData->setMouseCoordinates(xEvent.xmotion.x, xEvent.xmotion.y);
                 break;
+                //@todo destroy window and create events
+
+
         }
+        //@todo window state
+        //@todo window focus on/off
+        //@todo windowResizing by lastWidth and newWidth
     }
+
+    return eventsData;
 }

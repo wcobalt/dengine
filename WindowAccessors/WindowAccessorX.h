@@ -2,7 +2,7 @@
 #include <X11/Xlib.h>
 #include "WindowAccessor.h"
 #include <string>
-
+#include "../Events/EventsData.h"
 //
 // Created by wcobalt on 15.09.18.
 //
@@ -34,7 +34,8 @@ public:
     virtual unsigned int getHeight();
     virtual void setWindowTitle(std::string title);
     virtual void getWindowTitle();
-    virtual void checkEvents();
+    //@todo replace pointers to "clever" pointers
+    virtual EventsData* checkEvents();
 };
 
 #endif //DENGINE_WINDOWACCESSORX_H

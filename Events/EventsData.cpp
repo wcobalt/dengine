@@ -98,7 +98,7 @@ void EventsData::setMouseWheelDirection(int mouseWheelDirection) {
     this->mouseWheelDirection = mouseWheelDirection;
 }
 
-void EventsData::setMouseCoords(int mouseX, int mouseY) {
+void EventsData::setMouseCoordinates(int mouseX, int mouseY) {
     this->mouseX = mouseX;
     this->mouseY = mouseY;
 }

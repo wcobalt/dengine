@@ -51,7 +51,7 @@ public:
     void setWindowGotFocus(bool isWindowGotFocus);
     void setWindowLostFocus(bool isWindowLostFocus);
     void setMouseWheelDirection(int mouseWheelDirection);
-    void setMouseCoords(int mouseX, int mouseY);
+    void setMouseCoordinates(int mouseX, int mouseY);
 };
 
 
