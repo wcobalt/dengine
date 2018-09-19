@@ -11,4 +11,6 @@ include_directories(${OPENGL_INCLUDE_DIR})
 find_package(X11 REQUIRED)
 include_directories(${X11_INCLUDE_DIR})
 
-target_link_libraries(Dengine ${X11_LIBRARIES} ${OPENGL_LIBRARIES})
+find_package (Threads)
+
+target_link_libraries(Dengine ${X11_LIBRARIES} ${OPENGL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})

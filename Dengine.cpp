@@ -3,15 +3,21 @@
 //
 
 #include "Dengine.h"
-#include "Steam.h"
 #include <X11/Xlib.h>
 #include <GL/glx.h>
 #include <GL/gl.h>
+#include <future>
+#include <thread>
+#include <chrono>
+#include <iostream>
 
 Dengine::Dengine() = default;
 
 Dengine::Dengine(int windowX, int windowY, unsigned int windowWidth,
-                 unsigned int windowHeight, std::string windowTitle) {
+                 unsigned int windowHeight, std::string windowTitle,
+                 WindowManager* windowManager) {
+
+    this->windowManager = windowManager;
     //@todo add parameters' names in header-files
     GLint attributes[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 24, None};
 
@@ -23,11 +29,13 @@ Dengine::Dengine(int windowX, int windowY, unsigned int windowWidth,
     windowManager->getWindowAccessor()->initialize(windowX, windowY, windowWidth, windowHeight,
                                                    attributes, eventsMask, windowTitle);
 
-    steam = new Steam(this);
+    isPaused = false;
+}
 
-    while(!isPaused) {
-        std::async(steam->update);
-    }
+void Dengine::update() {
+    static int i;
+
+    std::cout << ++i << "Duration\n";
 }
 
 int Dengine::getFPS() {
@@ -36,10 +44,6 @@ int Dengine::getFPS() {
 
 void Dengine::setFPS(int fps) {
     this->fps = fps;
-}
-
-void Dengine::setWindowManager(WindowManager* windowManager) {
-    this->windowManager = windowManager;
 }
 
 WindowManager* Dengine::getWindowManager() {
@@ -56,6 +60,10 @@ bool Dengine::isAllPaused() {
 }
 
 void Dengine::start() {
+    while(!isPaused) {
+        std::async(&Dengine::update, this);
 
-
+        //@todo async may take some time real_fps != fps
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000 / fps));
+    }
 }
