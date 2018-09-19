@@ -6,7 +6,7 @@
 //@TODO x11*, windows(later), and macos(later) support
 
 int main() {
-    Dengine engine;
+    Dengine* engine = new Dengine(0, 0, 800, 600, "Test window");
 
     WindowAccessor* accessor = new WindowAccessorX();
 
