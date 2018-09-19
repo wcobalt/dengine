@@ -3,3 +3,11 @@
 //
 //@todo dynamic WindowAccessor linking
 #include "WindowAccessor.h"
+
+void WindowAccessor::setEventsManager(EventsManager *eventsManager) {
+    this->eventsManager = eventsManager;
+}
+
+EventsManager* WindowAccessor::getEventsManager() {
+    return eventsManager;
+}
