@@ -4,19 +4,19 @@
 
 #include "EventsData.h"
 
-std::vector<int> EventsData::getPressedKeys() {
+std::set<int> EventsData::getPressedKeys() {
     return pressedKeys;
 }
 
-std::vector<int> EventsData::getReleasedKeys() {
+std::set<int> EventsData::getReleasedKeys() {
     return releasedKeys;
 }
 
-std::vector<int> EventsData::getPressedButtons() {
+std::set<int> EventsData::getPressedButtons() {
     return pressedButtons;
 }
 
-std::vector<int> EventsData::getReleasedButtons() {
+std::set<int> EventsData::getReleasedButtons() {
     return releasedButtons;
 }
 
@@ -48,26 +48,25 @@ int EventsData::getMouseWheelDirection() {
     return mouseWheelDirection;
 }
 
-std::vector<int> EventsData::getMouseCoordinates() {
+MousePosition EventsData::getMousePosition() {
     //@todo check is it right
-    return std::vector<int>{mouseX, mouseY};
+    return mousePosition;
 }
 
-
 void EventsData::addPressedKey(int keyCode) {
-    pressedKeys.push_back(keyCode);
+    pressedKeys.insert(keyCode);
 }
 
 void EventsData::addReleasedKey(int keyCode) {
-    releasedKeys.push_back(keyCode);
+    releasedKeys.insert(keyCode);
 }
 
 void EventsData::addPressedButton(int buttonNumber) {
-    pressedButtons.push_back(buttonNumber);
+    pressedButtons.insert(buttonNumber);
 }
 
 void EventsData::addReleasedButton(int buttonNumber) {
-    releasedButtons.push_back(buttonNumber);
+    releasedButtons.insert(buttonNumber);
 }
 
 void EventsData::setWindowMaximized(bool isWindowMaximized) {
@@ -98,7 +97,6 @@ void EventsData::setMouseWheelDirection(int mouseWheelDirection) {
     this->mouseWheelDirection = mouseWheelDirection;
 }
 
-void EventsData::setMouseCoordinates(int mouseX, int mouseY) {
-    this->mouseX = mouseX;
-    this->mouseY = mouseY;
+void EventsData::setMousePosition(MousePosition mousePosition) {
+    this->mousePosition = mousePosition;
 }

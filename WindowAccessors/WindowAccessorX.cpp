@@ -5,10 +5,7 @@
 #include "WindowAccessorX.h"
 #include <iostream>
 #include <string>
-#include "../Events/EventsHandlers/EventsHandler.h"
-#include "../Events/EventsHandlers/KeyEventsHandler.h"
-#include "../Events/EventsHandlers/MouseEventsHandler.h"
-#include "../Events/EventsHandlers/EventsHandler.h"
+#include <climits>
 
 //X11 windowAccessor
 
@@ -36,6 +33,12 @@ int WindowAccessorX::initialize(int x, int y, unsigned int width, unsigned int h
     glXContext = glXCreateContext(display, xVisualInfo, NULL, GL_TRUE);
 
     glXMakeCurrent(display, window, glXContext);
+
+    GetPropertyData focusState = getProperty("_NET_ACTIVE_WINDOW", 0, LONG_MAX, rootWindow);
+
+    long activeWindowID = ((long*)(focusState.data))[0];
+
+    lastFocusState = (activeWindowID == window);
 
     return 0;
 }
@@ -80,7 +83,24 @@ void WindowAccessorX::getWindowTitle() {
 
 }
 
+std::vector<int> WindowAccessorX::getMinimumSizes() {
+
+}
+
+std::vector<int> WindowAccessorX::getMaximumSizes() {
+
+}
+
+void WindowAccessorX::setMinimumSizes(int minimumWidth, int minimumHeight) {
+
+}
+
+void WindowAccessorX::setMaximumSizes(int maximumWidth, int maximumHeight) {
+
+}
+
 EventsData* WindowAccessorX::checkEvents() {
+    //@todo do events' masks is configured out of engine
     EventsData* eventsData = new EventsData();
 
     while(XEventsQueued(display, QueuedAlready)) {
@@ -96,7 +116,7 @@ EventsData* WindowAccessorX::checkEvents() {
                 eventsData->addReleasedKey(xEvent.xkey.keycode);
                 break;
             case ButtonPress:
-                switch(xEvent.xbutton.button) {
+                switch (xEvent.xbutton.button) {
                     case Button4:
                         eventsData->setMouseWheelDirection(1);
                         break;
@@ -110,17 +130,88 @@ EventsData* WindowAccessorX::checkEvents() {
             case ButtonRelease:
                 eventsData->addReleasedButton(xEvent.xbutton.button);
                 break;
-            case MotionNotify:
-                eventsData->setMouseCoordinates(xEvent.xmotion.x, xEvent.xmotion.y);
-                break;
                 //@todo destroy window and create events
-
+            case FocusIn:
+                eventsData->setWindowGotFocus(true);
+                break;
+            case FocusOut:
+                eventsData->setWindowLostFocus(true);
+                break;
+            case ResizeRequest:
+                eventsData->setWindowResized(true);
+                break;
 
         }
-        //@todo window state
-        //@todo window focus on/off
-        //@todo windowResizing by lastWidth and newWidth
     }
 
+    GetPropertyData focusState = getProperty("_NET_ACTIVE_WINDOW", 0, LONG_MAX, rootWindow);
+
+    long activeWindowID = ((long*)(focusState.data))[0];
+
+    bool currentFocusState = (activeWindowID == window);
+
+    if (lastFocusState != currentFocusState) {
+        if(lastFocusState) eventsData->setWindowLostFocus(true);
+        else eventsData->setWindowGotFocus(true);
+    }
+
+    lastFocusState = currentFocusState;
+
+    GetPropertyData windowState;
+
+    windowState = getProperty("_NET_WM_STATE", 0, LONG_MAX, window);
+
+    bool maximizedVert, maximizedHorz;
+
+    maximizedVert = maximizedHorz = false;
+
+    for(int i = 0; i < windowState.numberOfItems; i++) {
+        long atom = ((long*)(windowState.data))[i];
+
+        if (atom == XInternAtom(display, "_NET_WM_STATE_HIDDEN", false)) {
+            eventsData->setWindowMinimized(true);
+        } else if (atom == XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", false)) {
+            maximizedHorz = true;
+        } else if (atom == XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", false)) {
+            maximizedVert = true;
+        }
+    }
+
+    if (maximizedHorz && maximizedVert) eventsData->setWindowMaximized(true);
+    else if (!maximizedHorz && !maximizedVert &&
+             !eventsData->isWindowMinimized()) eventsData->setWindowWindowed(true);
+
+    Window childWindow, rootWindow;
+
+    unsigned int mask;
+
+    int rootMouseX, rootMouseY, windowMouseX, windowMouseY;
+
+    XQueryPointer(display, window, &rootWindow, &childWindow, &rootMouseX,
+                  &rootMouseY, &windowMouseX, &windowMouseY, &mask);
+
+    MousePosition mousePosition(rootMouseX, rootMouseY, windowMouseX, windowMouseY);
+
+    eventsData->setMousePosition(mousePosition);
+
     return eventsData;
+}
+
+GetPropertyData WindowAccessorX::getProperty(char* propertyName, long offset,
+                                             long size, Window window) {
+    Atom property, returnedProperty;
+
+    int returnedActualFormat;
+
+    unsigned long returnedNumberOfItems;
+    unsigned long returnedBytesToRead;
+    unsigned char* returnedData = {};
+
+    property = XInternAtom(display, propertyName, false);
+
+    XGetWindowProperty(display, window, property, offset, size, false,
+                       AnyPropertyType, &returnedProperty, &returnedActualFormat,
+                       &returnedNumberOfItems, &returnedBytesToRead, &returnedData);
+
+    return {returnedData, returnedNumberOfItems};
 }

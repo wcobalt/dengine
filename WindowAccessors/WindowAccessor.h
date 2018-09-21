@@ -33,8 +33,6 @@ public:
     virtual std::vector<int> getMaximumSizes() = 0;
     virtual void setMinimumSizes(int minimumWidth, int minimumHeight) = 0;
     virtual std::vector<int> getMinimumSizes() = 0;
-    void setEventsManager(EventsManager* eventsManager);
-    EventsManager* getEventsManager();
     virtual EventsData* checkEvents() = 0;
 };
 

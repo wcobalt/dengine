@@ -1,8 +1,9 @@
 //
 // Created by wcobalt on 19.09.18.
 //
-#include <vector>
+#include <set>
 #include <map>
+#include "MousePosition.h"
 
 #ifndef DENGINE_EVENTSDATA_H
 #define DENGINE_EVENTSDATA_H
@@ -10,11 +11,11 @@
 
 class EventsData {
 private:
-    std::vector<int> pressedKeys;
-    std::vector<int> releasedKeys;
+    std::set<int> pressedKeys;
+    std::set<int> releasedKeys;
 
-    std::vector<int> pressedButtons;
-    std::vector<int> releasedButtons;
+    std::set<int> pressedButtons;
+    std::set<int> releasedButtons;
 
     bool windowMaximized, windowMinimized,
          windowWindowed;
@@ -25,12 +26,15 @@ private:
     bool isWindowLostFocus;
 
     int mouseWheelDirection;
-    int mouseX, mouseY;
+
+    MousePosition mousePosition;
 public:
-    std::vector<int> getPressedKeys();
-    std::vector<int> getReleasedKeys();
-    std::vector<int> getPressedButtons();
-    std::vector<int> getReleasedButtons();
+    EventsData() = default;
+
+    std::set<int> getPressedKeys();
+    std::set<int> getReleasedKeys();
+    std::set<int> getPressedButtons();
+    std::set<int> getReleasedButtons();
     bool isWindowMaximized();
     bool isWindowMinimized();
     bool isWindowWindowed();
@@ -38,7 +42,7 @@ public:
     bool windowGotFocus();
     bool windowLostFocus();
     int getMouseWheelDirection();
-    std::vector<int> getMouseCoordinates();
+    MousePosition getMousePosition();
 
     void addPressedKey(int keyCode);
     void addReleasedKey(int keyCode);
@@ -51,7 +55,7 @@ public:
     void setWindowGotFocus(bool isWindowGotFocus);
     void setWindowLostFocus(bool isWindowLostFocus);
     void setMouseWheelDirection(int mouseWheelDirection);
-    void setMouseCoordinates(int mouseX, int mouseY);
+    void setMousePosition(MousePosition mousePosition);
 };
 
 
