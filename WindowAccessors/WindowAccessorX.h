@@ -31,8 +31,8 @@ private:
     GetPropertyData getProperty(char* propertyName, long offset, long size, Window window);
 public:
     WindowAccessorX();
-    virtual int initialize(int x, int y, unsigned int width, unsigned int height,
-                           GLint attributes[], long eventMask, std::string title);
+    virtual int initialize(int x, int y, unsigned int width,
+                           unsigned int height, std::string title);
     virtual void setX(int x);
     virtual void setY(int y);
     virtual int getX();

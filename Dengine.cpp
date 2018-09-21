@@ -21,15 +21,10 @@ Dengine::Dengine(int windowX, int windowY, unsigned int windowWidth,
 
     this->windowManager = windowManager;
     //@todo add parameters' names in header-files
-    GLint attributes[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 24, None};
-
-    long eventsMask = KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask |
-                      Button1MotionMask | Button2MotionMask | Button3MotionMask | PropertyChangeMask|
-                      Button4MotionMask | Button5MotionMask | ButtonMotionMask | ResizeRedirectMask;
 
     //@todo windowTitle copies creating!!!
-    windowManager->getWindowAccessor()->initialize(windowX, windowY, windowWidth, windowHeight,
-                                                   attributes, eventsMask, windowTitle);
+    windowManager->getWindowAccessor()->initialize(windowX, windowY, windowWidth,
+                                                   windowHeight, windowTitle);
 
     isPaused = false;
 }

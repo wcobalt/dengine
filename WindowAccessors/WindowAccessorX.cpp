@@ -11,8 +11,15 @@
 
 WindowAccessorX::WindowAccessorX() = default;
 
-int WindowAccessorX::initialize(int x, int y, unsigned int width, unsigned int height,
-                                GLint attributes[], long eventMask, std::string title) {
+int WindowAccessorX::initialize(int x, int y, unsigned int width,
+                                unsigned int height, std::string title) {
+    //@todo to settings of WindowAccessor
+    GLint attributes[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 24, None};
+
+    long eventsMask = KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask |
+                      Button1MotionMask | Button2MotionMask | Button3MotionMask |
+                      Button4MotionMask | Button5MotionMask | ButtonMotionMask | ResizeRedirectMask;
+
     display = XOpenDisplay(NULL);
 
     rootWindow = DefaultRootWindow(display);
@@ -22,7 +29,7 @@ int WindowAccessorX::initialize(int x, int y, unsigned int width, unsigned int h
     colorMap = XCreateColormap(display, rootWindow, xVisualInfo->visual, AllocNone);
 
     xSetWindowAttributes.colormap = colorMap;
-    xSetWindowAttributes.event_mask = eventMask;
+    xSetWindowAttributes.event_mask = eventsMask;
 
     window = XCreateWindow(display, rootWindow, x, y, width, height, 0, xVisualInfo->depth,
                 InputOutput, xVisualInfo->visual, CWColormap | CWEventMask, &xSetWindowAttributes);
