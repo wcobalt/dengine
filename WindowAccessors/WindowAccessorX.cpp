@@ -17,7 +17,7 @@ int WindowAccessorX::initialize(int x, int y, unsigned int width,
     GLint attributes[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 24, None};
 
     long eventsMask = KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask |
-                      Button1MotionMask | Button2MotionMask | Button3MotionMask |
+                      Button1MotionMask | Button2MotionMask | Button3MotionMask | StructureNotifyMask |
                       Button4MotionMask | Button5MotionMask | ButtonMotionMask | ResizeRedirectMask;
 
     display = XOpenDisplay(NULL);
@@ -137,7 +137,6 @@ EventsData* WindowAccessorX::checkEvents() {
             case ButtonRelease:
                 eventsData->addReleasedButton(xEvent.xbutton.button);
                 break;
-                //@todo destroy window and create events
             case FocusIn:
                 eventsData->setWindowGotFocus(true);
                 break;
@@ -147,7 +146,9 @@ EventsData* WindowAccessorX::checkEvents() {
             case ResizeRequest:
                 eventsData->setWindowResized(true);
                 break;
-
+            case DestroyNotify:
+                eventsData->setWindowClosing(true);
+                break;
         }
     }
 
