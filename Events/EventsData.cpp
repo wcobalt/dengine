@@ -4,6 +4,18 @@
 
 #include "EventsData.h"
 
+EventsData::EventsData() {
+    windowMaximized = windowMinimized = windowWindowed = false;
+
+    windowResized = false;
+
+    isWindowGotFocus = isWindowLostFocus = false;
+
+    mouseWheelDirection = 0;
+
+    windowClosing = false;
+}
+
 std::set<int> EventsData::getPressedKeys() {
     return pressedKeys;
 }
@@ -53,6 +65,10 @@ MousePosition EventsData::getMousePosition() {
     return mousePosition;
 }
 
+bool EventsData::isWindowClosing() {
+    return windowClosing;
+}
+
 void EventsData::addPressedKey(int keyCode) {
     pressedKeys.insert(keyCode);
 }
@@ -69,20 +85,20 @@ void EventsData::addReleasedButton(int buttonNumber) {
     releasedButtons.insert(buttonNumber);
 }
 
-void EventsData::setWindowMaximized(bool isWindowMaximized) {
-    windowMaximized = isWindowMaximized;
+void EventsData::setWindowMaximized(bool windowMaximized) {
+    windowMaximized = windowMaximized;
 }
 
-void EventsData::setWindowMinimized(bool isWindowMinimized) {
-    windowMinimized = isWindowMinimized;
+void EventsData::setWindowMinimized(bool windowMinimized) {
+    windowMinimized = windowMinimized;
 }
 
-void EventsData::setWindowWindowed(bool isWindowWindowed) {
-    windowWindowed = isWindowWindowed;
+void EventsData::setWindowWindowed(bool windowWindowed) {
+    windowWindowed = windowWindowed;
 }
 
-void EventsData::setWindowResized(bool isWindowResized) {
-    windowResized = isWindowResized;
+void EventsData::setWindowResized(bool windowResized) {
+    windowResized = windowResized;
 }
 
 void EventsData::setWindowGotFocus(bool isWindowGotFocus) {
@@ -99,4 +115,8 @@ void EventsData::setMouseWheelDirection(int mouseWheelDirection) {
 
 void EventsData::setMousePosition(MousePosition mousePosition) {
     this->mousePosition = mousePosition;
+}
+
+void EventsData::setWindowClosing(bool windowClosing) {
+    this->windowClosing = windowClosing;
 }
