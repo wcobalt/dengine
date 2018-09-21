@@ -1,7 +1,7 @@
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 #include <string>
-#include "../Events/EventsManager.h"
+#include <vector>
 
 //
 // Created by wcobalt on 15.09.18.
@@ -13,8 +13,6 @@
 #define DENGINE_WINDOWACCESSOR_H
 
 class WindowAccessor {
-private:
-    EventsManager* eventsManager;
 public:
     const int NOT_FIXED_SIZE = -1;
     //@todo borders
