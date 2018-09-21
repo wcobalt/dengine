@@ -16,7 +16,8 @@ class WindowAccessor {
 public:
     const int NOT_FIXED_SIZE = -1;
     //@todo borders
-    virtual int initialize(int, int, unsigned int, unsigned int, GLint[], long, std::string) = 0;
+    virtual int initialize(int x, int y, unsigned int width,
+                           unsigned int height, std::string) = 0;
     virtual void setX(int x) = 0;
     virtual void setY(int y) = 0;
     virtual int getX() = 0;
