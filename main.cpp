@@ -11,7 +11,7 @@ int main() {
     Dengine* engine = new Dengine(0, 0, 800, 600, "Test window",
                                   new WindowManager(accessor));
 
-    engine->setFPS(60);
+    engine->setFPS(2);
     engine->start();
 
     return 0;

@@ -32,6 +32,7 @@ public:
     void setAllPaused(bool isPaused);
     bool isAllPaused();
     void update();
+    void p(const char* str);
 };
 
 

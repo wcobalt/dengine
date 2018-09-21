@@ -10,6 +10,8 @@
 #include <thread>
 #include <chrono>
 #include <iostream>
+#include "Events/EventsData.h"
+#include "Events/MousePosition.h"
 
 Dengine::Dengine() = default;
 
@@ -21,9 +23,9 @@ Dengine::Dengine(int windowX, int windowY, unsigned int windowWidth,
     //@todo add parameters' names in header-files
     GLint attributes[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 24, None};
 
-    long eventsMask = KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask |
-                      Button1MotionMask | Button2MotionMask | Button3MotionMask |
-                      Button4MotionMask | Button5MotionMask | ButtonMotionMask;
+    long eventsMask = KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask |
+                      Button1MotionMask | Button2MotionMask | Button3MotionMask | PropertyChangeMask|
+                      Button4MotionMask | Button5MotionMask | ButtonMotionMask | ResizeRedirectMask;
 
     //@todo windowTitle copies creating!!!
     windowManager->getWindowAccessor()->initialize(windowX, windowY, windowWidth, windowHeight,
@@ -33,10 +35,57 @@ Dengine::Dengine(int windowX, int windowY, unsigned int windowWidth,
 }
 
 void Dengine::update() {
-    static int i;
+    EventsData* data = windowManager->getWindowAccessor()->checkEvents();
 
-    std::cout << ++i << "Duration\n";
+    MousePosition mousePosition = data->getMousePosition();
+
+    p("Is windowed: ");p(data->isWindowWindowed()?"true":"false");p("\n");//
+    p("Is maximized: ");p(data->isWindowMaximized()?"true":"false");p("\n");//
+    p("Is minimzed: ");p(data->isWindowMinimized()?"true":"false");p("\n");//
+    p("Is resized: ");p(data->isWindowResized()?"true":"false");p("\n");//
+    p("Got focus: ");p(data->windowGotFocus()?"true":"false");p("\n");
+    p("Lost focus: ");p(data->windowLostFocus()?"true":"false");p("\n");
+    p("Scroll direction: ");std::printf("%d", data->getMouseWheelDirection());p("\n");//
+    p("Mouse Position: ");std::printf("%d", mousePosition.getRootMouseX());p(" ");//
+    std::printf("%d", mousePosition.getRootMouseY());p(" ");//
+    std::printf("%d", mousePosition.getWindowMouseX());p(" ");//
+    std::printf("%d", mousePosition.getWindowMouseY());p("\n");//
+
+    std::set<int> pk, rk, pb, rb;
+
+    pk = data->getPressedKeys(); rk = data->getReleasedKeys();
+    pb = data->getPressedButtons(); rb = data->getReleasedButtons();
+    //focus
+    p("Pressed keys: ");
+    for (int key : pk) {
+        printf("%d", key);p(" ");//
+    }
+    p("\n");
+
+    p("Released keys: ");
+    for (int key : rk) {
+        printf("%d", key);p(" ");//
+    }
+    p("\n");
+
+    p("Pressed buttons: ");
+    for (int key : pb) {
+        printf("%d", key);p(" ");//
+    }
+    p("\n");
+
+    p("Released buttons: ");//
+    for (int key : rb) {
+        printf("%d", key);p(" ");
+    }
+    p("\n");
+
+    p("--------------------------------------------");
 }
+
+void Dengine::p(const char* str) {
+    std::cout << str;
+};
 
 int Dengine::getFPS() {
     return fps;
