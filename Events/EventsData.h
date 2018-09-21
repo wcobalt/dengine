@@ -28,8 +28,10 @@ private:
     int mouseWheelDirection;
 
     MousePosition mousePosition;
+
+    bool windowClosing;
 public:
-    EventsData() = default;
+    EventsData();
 
     std::set<int> getPressedKeys();
     std::set<int> getReleasedKeys();
@@ -43,19 +45,21 @@ public:
     bool windowLostFocus();
     int getMouseWheelDirection();
     MousePosition getMousePosition();
+    bool isWindowClosing();
 
     void addPressedKey(int keyCode);
     void addReleasedKey(int keyCode);
     void addPressedButton(int buttonNumber);
     void addReleasedButton(int buttonNumber);
-    void setWindowMaximized(bool isWindowMaximized);
-    void setWindowMinimized(bool isWindowMinimized);
-    void setWindowWindowed(bool isWindowWindowed);
-    void setWindowResized(bool isWindowResized);
+    void setWindowMaximized(bool windowMaximized);
+    void setWindowMinimized(bool windowMinimized);
+    void setWindowWindowed(bool windowWindowed);
+    void setWindowResized(bool windowResized);
     void setWindowGotFocus(bool isWindowGotFocus);
     void setWindowLostFocus(bool isWindowLostFocus);
     void setMouseWheelDirection(int mouseWheelDirection);
     void setMousePosition(MousePosition mousePosition);
+    void setWindowClosing(bool windowClosing);
 };
 
 

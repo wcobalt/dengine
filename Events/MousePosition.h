@@ -11,7 +11,7 @@ private:
     int rootMouseX, rootMouseY;
     int windowMouseX, windowMouseY;
 public:
-    MousePosition() = default;
+    MousePosition();
     MousePosition(int rootMouseX, int rootMouseY, int windowMouseX, int windowMouseY);
 
     int getRootMouseX();
