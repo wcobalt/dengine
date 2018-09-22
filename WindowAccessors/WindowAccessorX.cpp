@@ -17,7 +17,7 @@ int WindowAccessorX::initialize(int x, int y, unsigned int width,
     GLint attributes[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 24, None};
 
     long eventsMask = KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask |
-                      Button1MotionMask | Button2MotionMask | Button3MotionMask | StructureNotifyMask |
+                      Button1MotionMask | Button2MotionMask | Button3MotionMask |
                       Button4MotionMask | Button5MotionMask | ButtonMotionMask | ResizeRedirectMask;
 
     display = XOpenDisplay(NULL);
@@ -46,6 +46,10 @@ int WindowAccessorX::initialize(int x, int y, unsigned int width,
     long activeWindowID = ((long*)(focusState.data))[0];
 
     lastFocusState = (activeWindowID == window);
+
+    wmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
+
+    XSetWMProtocols(display, window, &wmDeleteWindow, 1);
 
     return 0;
 }
@@ -146,61 +150,68 @@ EventsData* WindowAccessorX::checkEvents() {
             case ResizeRequest:
                 eventsData->setWindowResized(true);
                 break;
-            case DestroyNotify:
-                eventsData->setWindowClosing(true);
+            case ClientMessage:
+                if(xEvent.xclient.message_type == XInternAtom(display, "WM_PROTOCOLS", false) &&
+                   xEvent.xclient.data.l[0] == wmDeleteWindow) {
+                    eventsData->setWindowClosing(true);
+                }
+
                 break;
         }
     }
 
-    GetPropertyData focusState = getProperty("_NET_ACTIVE_WINDOW", 0, LONG_MAX, rootWindow);
+    if (!eventsData->isWindowClosing()) {
+        GetPropertyData focusState = getProperty("_NET_ACTIVE_WINDOW", 0, LONG_MAX, rootWindow);
 
-    long activeWindowID = ((long*)(focusState.data))[0];
+        long activeWindowID = ((long *)(focusState.data))[0];
 
-    bool currentFocusState = (activeWindowID == window);
+        bool currentFocusState = (activeWindowID == window);
 
-    if (lastFocusState != currentFocusState) {
-        if(lastFocusState) eventsData->setWindowLostFocus(true);
-        else eventsData->setWindowGotFocus(true);
-    }
-
-    lastFocusState = currentFocusState;
-
-    GetPropertyData windowState;
-
-    windowState = getProperty("_NET_WM_STATE", 0, LONG_MAX, window);
-
-    bool maximizedVert, maximizedHorz;
-
-    maximizedVert = maximizedHorz = false;
-
-    for(int i = 0; i < windowState.numberOfItems; i++) {
-        long atom = ((long*)(windowState.data))[i];
-
-        if (atom == XInternAtom(display, "_NET_WM_STATE_HIDDEN", false)) {
-            eventsData->setWindowMinimized(true);
-        } else if (atom == XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", false)) {
-            maximizedHorz = true;
-        } else if (atom == XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", false)) {
-            maximizedVert = true;
+        if (lastFocusState != currentFocusState) {
+            if (lastFocusState) eventsData->setWindowLostFocus(true);
+            else eventsData->setWindowGotFocus(true);
         }
-    }
 
-    if (maximizedHorz && maximizedVert) eventsData->setWindowMaximized(true);
-    else if (!maximizedHorz && !maximizedVert &&
-             !eventsData->isWindowMinimized()) eventsData->setWindowWindowed(true);
+        lastFocusState = currentFocusState;
 
-    Window childWindow, rootWindow;
+        GetPropertyData windowState;
 
-    unsigned int mask;
+        windowState = getProperty("_NET_WM_STATE", 0, LONG_MAX, window);
 
-    int rootMouseX, rootMouseY, windowMouseX, windowMouseY;
+        bool maximizedVert, maximizedHorz;
 
-    XQueryPointer(display, window, &rootWindow, &childWindow, &rootMouseX,
-                  &rootMouseY, &windowMouseX, &windowMouseY, &mask);
+        maximizedVert = maximizedHorz = false;
 
-    MousePosition mousePosition(rootMouseX, rootMouseY, windowMouseX, windowMouseY);
+        for (int i = 0; i < windowState.numberOfItems; i++) {
+            long atom = ((long *) (windowState.data))[i];
 
-    eventsData->setMousePosition(mousePosition);
+            if (atom == XInternAtom(display, "_NET_WM_STATE_HIDDEN", false)) {
+                eventsData->setWindowMinimized(true);
+            } else if (atom == XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", false)) {
+                maximizedHorz = true;
+            } else if (atom == XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", false)) {
+                maximizedVert = true;
+            }
+        }
+
+        if (maximizedHorz && maximizedVert) eventsData->setWindowMaximized(true);
+        else if (!maximizedHorz && !maximizedVert &&
+                 !eventsData->isWindowMinimized())
+            eventsData->setWindowWindowed(true);
+
+        Window childWindow, rootWindow;
+
+        unsigned int mask;
+
+        int rootMouseX, rootMouseY, windowMouseX, windowMouseY;
+
+        XQueryPointer(display, window, &rootWindow, &childWindow, &rootMouseX,
+                      &rootMouseY, &windowMouseX, &windowMouseY, &mask);
+
+        MousePosition mousePosition(rootMouseX, rootMouseY, windowMouseX, windowMouseY);
+
+        eventsData->setMousePosition(mousePosition);
+    } else std::cout << "Window is closing";
 
     return eventsData;
 }

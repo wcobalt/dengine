@@ -26,6 +26,8 @@ private:
     GLXContext glXContext;
     XWindowAttributes xWindowAttributes;
 
+    Atom wmDeleteWindow;
+
     bool lastFocusState;
 
     GetPropertyData getProperty(char* propertyName, long offset, long size, Window window);
