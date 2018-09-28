@@ -8,10 +8,10 @@
 int main() {
     WindowAccessor* accessor = new WindowAccessorX();
 
-    Dengine* engine = new Dengine(0, 0, 800, 600, "Test window",
+    Dengine* engine = new Dengine(0, 0, 400, 200, "Test window",
                                   new WindowManager(accessor));
 
-    engine->setFPS(2);
+    engine->setFPS(30);
     engine->start();
 
     return 0;

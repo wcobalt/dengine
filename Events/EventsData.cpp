@@ -9,7 +9,7 @@ EventsData::EventsData() {
 
     windowResized = false;
 
-    isWindowGotFocus = isWindowLostFocus = false;
+    windowFocused = false;
 
     mouseWheelDirection = 0;
 
@@ -48,12 +48,8 @@ bool EventsData::isWindowResized() {
     return windowResized;
 }
 
-bool EventsData::windowGotFocus() {
-    return isWindowGotFocus;
-}
-
-bool EventsData::windowLostFocus() {
-    return isWindowLostFocus;
+bool EventsData::isWindowFocused() {
+    return windowFocused;
 }
 
 int EventsData::getMouseWheelDirection() {
@@ -86,27 +82,23 @@ void EventsData::addReleasedButton(int buttonNumber) {
 }
 
 void EventsData::setWindowMaximized(bool windowMaximized) {
-    windowMaximized = windowMaximized;
+    this->windowMaximized = windowMaximized;
 }
 
 void EventsData::setWindowMinimized(bool windowMinimized) {
-    windowMinimized = windowMinimized;
+    this->windowMinimized = windowMinimized;
 }
 
 void EventsData::setWindowWindowed(bool windowWindowed) {
-    windowWindowed = windowWindowed;
+    this->windowWindowed = windowWindowed;
 }
 
 void EventsData::setWindowResized(bool windowResized) {
-    windowResized = windowResized;
+    this->windowResized = windowResized;
 }
 
-void EventsData::setWindowGotFocus(bool isWindowGotFocus) {
-    this->isWindowGotFocus = isWindowGotFocus;
-}
-
-void EventsData::setWindowLostFocus(bool isWindowLostFocus) {
-    this->isWindowLostFocus = isWindowLostFocus;
+void EventsData::setWindowFocused(bool isWindowFocused) {
+    this->windowFocused = isWindowFocused;
 }
 
 void EventsData::setMouseWheelDirection(int mouseWheelDirection) {

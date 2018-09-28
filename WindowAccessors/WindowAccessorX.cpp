@@ -2,10 +2,13 @@
 #include <X11/Xlib.h>
 #include <GL/glx.h>
 #include <GL/gl.h>
+#include <X11/Xatom.h>
 #include "WindowAccessorX.h"
 #include <iostream>
 #include <string>
 #include <climits>
+#include <thread>
+#include <cstring>
 
 //X11 windowAccessor
 
@@ -18,7 +21,7 @@ int WindowAccessorX::initialize(int x, int y, unsigned int width,
 
     long eventsMask = KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask |
                       Button1MotionMask | Button2MotionMask | Button3MotionMask |
-                      Button4MotionMask | Button5MotionMask | ButtonMotionMask | ResizeRedirectMask;
+                      Button4MotionMask | Button5MotionMask | ButtonMotionMask;
 
     display = XOpenDisplay(NULL);
 
@@ -35,79 +38,140 @@ int WindowAccessorX::initialize(int x, int y, unsigned int width,
                 InputOutput, xVisualInfo->visual, CWColormap | CWEventMask, &xSetWindowAttributes);
 
     XMapWindow(display, window);
-    XStoreName(display, window, title.data());
+
+    setPosition(x, y);
+
+    setWindowTitle(title);
 
     glXContext = glXCreateContext(display, xVisualInfo, NULL, GL_TRUE);
 
     glXMakeCurrent(display, window, glXContext);
 
-    GetPropertyData focusState = getProperty("_NET_ACTIVE_WINDOW", 0, LONG_MAX, rootWindow);
-
-    long activeWindowID = ((long*)(focusState.data))[0];
-
-    lastFocusState = (activeWindowID == window);
-
     wmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
 
     XSetWMProtocols(display, window, &wmDeleteWindow, 1);
 
+    lastWidth = width;
+    lastHeight = height;
+
     return 0;
 }
 
-void WindowAccessorX::setX(int x) {
-
+void WindowAccessorX::setPosition(int x, int y) {//ok
+    XMoveWindow(display, window, x, y);
+    XFlush(display);
 }
 
-void WindowAccessorX::setY(int y) {
+std::vector<int> WindowAccessorX::getPosition() {//ok, but it's position of inner corner isn't of outer one.
+    std::vector<int> result = {0, 0};
 
+    XTranslateCoordinates(display, window, rootWindow, 0, 0, &(result[0]), &(result[1]), &window);
+
+    return result;
 }
 
-int WindowAccessorX::getX() {
-
+void WindowAccessorX::setSize(unsigned int width, unsigned int height) {//ok
+    XResizeWindow(display, window, width, height);
+    XFlush(display);
 }
 
-int WindowAccessorX::getY() {
+std::vector<unsigned int> WindowAccessorX::getSize() {//ok
+    XGetWindowAttributes(display, window, &xWindowAttributes);
 
+    return std::vector<unsigned int>{(unsigned int)xWindowAttributes.width,
+                                     (unsigned int)xWindowAttributes.height};
 }
 
-void WindowAccessorX::setWidth(unsigned int width) {
-
+void WindowAccessorX::setWindowTitle(std::string title) {//ok
+    //@todo all char* to const char*
+    XStoreName(display, window, title.c_str());
+    XFlush(display);
 }
 
-void WindowAccessorX::setHeight(unsigned int height) {
+std::string WindowAccessorX::getWindowTitle() {//ok
+    char* title;
 
+    XFetchName(display, window, &title);
+
+    std::string result = std::string(title);
+
+    delete title;
+
+    return result;
 }
 
-unsigned int WindowAccessorX::getWidth() {
+std::vector<int> WindowAccessorX::getMinimumSize() {
+    XSizeHints xSizeHints = {};
 
+    XGetNormalHints(display, window, &xSizeHints);
+
+    return {xSizeHints.min_width, xSizeHints.min_height};
 }
 
-unsigned int WindowAccessorX::getHeight() {
+std::vector<int> WindowAccessorX::getMaximumSize() {
+    XSizeHints xSizeHints = {};
 
+    XGetNormalHints(display, window, &xSizeHints);
+
+    return {xSizeHints.max_width, xSizeHints.max_height};
 }
 
-void WindowAccessorX::setWindowTitle(std::string title) {
+void WindowAccessorX::setMinimumSize(int minimumWidth, int minimumHeight) {//ok
+    std::vector<int> maximumSize = getMaximumSize();
 
+    setMinimumAndMaximumSize(maximumSize[0], maximumSize[1], minimumWidth, minimumHeight);
 }
 
-void WindowAccessorX::getWindowTitle() {
+void WindowAccessorX::setMaximumSize(int maximumWidth, int maximumHeight) {//ok
+    std::vector<int> minimumSize = getMinimumSize();
 
+    setMinimumAndMaximumSize(maximumWidth, maximumHeight, minimumSize[0], minimumSize[1]);
 }
 
-std::vector<int> WindowAccessorX::getMinimumSizes() {
+void WindowAccessorX::setMinimumAndMaximumSize(int maximumWidth, int maximumHeight,
+                                               int minimumWidth, int minimumHeight) {
+        XSizeHints xSizeHints = {};
 
+        xSizeHints.flags = PMaxSize | PMinSize;
+
+        xSizeHints.max_width = maximumWidth;
+        xSizeHints.max_height = maximumHeight;
+
+        xSizeHints.min_width = minimumWidth;
+        xSizeHints.min_height = minimumHeight;
+
+        XSetWMNormalHints(display, window, &xSizeHints);
 }
 
-std::vector<int> WindowAccessorX::getMaximumSizes() {
+bool WindowAccessorX::isFullscreenEnabled() {
+    GetPropertyData data = getProperty("_NET_WM_STATE", 0, LONG_MAX, window);
 
+    for(int i = 0; i < data.numberOfItems; i++) {
+        if(((long*)(data.data))[i] == XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", false)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
-void WindowAccessorX::setMinimumSizes(int minimumWidth, int minimumHeight) {
+void WindowAccessorX::setFullscreenEnabled(bool isEnabled) {
+    XEvent event;
+    std::memset(&event, 0, sizeof(event));
+    event.type = ClientMessage;
+    event.xclient.window = window;
+    event.xclient.message_type = XInternAtom(display, "_NET_WM_STATE", False);
+    event.xclient.format = 32;
+    event.xclient.data.l[0] = isEnabled?1:0;
+    event.xclient.data.l[1] = XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", False);
+    event.xclient.data.l[2] = 0;
 
+    XSendEvent(display, rootWindow, False,
+                SubstructureRedirectMask | SubstructureNotifyMask, &event);
 }
 
-void WindowAccessorX::setMaximumSizes(int maximumWidth, int maximumHeight) {
-
+void WindowAccessorX::destroy() {
+    XDestroyWindow(display, window);
 }
 
 EventsData* WindowAccessorX::checkEvents() {
@@ -141,38 +205,31 @@ EventsData* WindowAccessorX::checkEvents() {
             case ButtonRelease:
                 eventsData->addReleasedButton(xEvent.xbutton.button);
                 break;
-            case FocusIn:
-                eventsData->setWindowGotFocus(true);
-                break;
-            case FocusOut:
-                eventsData->setWindowLostFocus(true);
-                break;
-            case ResizeRequest:
-                eventsData->setWindowResized(true);
-                break;
             case ClientMessage:
                 if(xEvent.xclient.message_type == XInternAtom(display, "WM_PROTOCOLS", false) &&
                    xEvent.xclient.data.l[0] == wmDeleteWindow) {
                     eventsData->setWindowClosing(true);
                 }
-
-                break;
         }
     }
 
-    if (!eventsData->isWindowClosing()) {
+    if(!eventsData->isWindowClosing()) {
+        std::vector<unsigned int> currentSize = getSize();
+
+        if(currentSize[0] != lastWidth || currentSize[1] != lastHeight) {
+            eventsData->setWindowResized(true);
+
+            lastWidth = currentSize[0];
+            lastHeight = currentSize[1];
+        }
+
         GetPropertyData focusState = getProperty("_NET_ACTIVE_WINDOW", 0, LONG_MAX, rootWindow);
 
         long activeWindowID = ((long *)(focusState.data))[0];
 
         bool currentFocusState = (activeWindowID == window);
 
-        if (lastFocusState != currentFocusState) {
-            if (lastFocusState) eventsData->setWindowLostFocus(true);
-            else eventsData->setWindowGotFocus(true);
-        }
-
-        lastFocusState = currentFocusState;
+        eventsData->setWindowFocused(currentFocusState);
 
         GetPropertyData windowState;
 
@@ -182,22 +239,22 @@ EventsData* WindowAccessorX::checkEvents() {
 
         maximizedVert = maximizedHorz = false;
 
-        for (int i = 0; i < windowState.numberOfItems; i++) {
+        for(int i = 0; i < windowState.numberOfItems; i++) {
             long atom = ((long *) (windowState.data))[i];
 
-            if (atom == XInternAtom(display, "_NET_WM_STATE_HIDDEN", false)) {
+            if(atom == XInternAtom(display, "_NET_WM_STATE_HIDDEN", false)) {
                 eventsData->setWindowMinimized(true);
-            } else if (atom == XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", false)) {
+            } else if(atom == XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", false)) {
                 maximizedHorz = true;
-            } else if (atom == XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", false)) {
+            } else if(atom == XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", false)) {
                 maximizedVert = true;
             }
         }
 
-        if (maximizedHorz && maximizedVert) eventsData->setWindowMaximized(true);
-        else if (!maximizedHorz && !maximizedVert &&
+        if(maximizedHorz && maximizedVert) eventsData->setWindowMaximized(true);
+        else if(!maximizedHorz && !maximizedVert &&
                  !eventsData->isWindowMinimized())
-            eventsData->setWindowWindowed(true);
+            eventsData->setWindowWindowed(true);//!
 
         Window childWindow, rootWindow;
 
@@ -211,7 +268,7 @@ EventsData* WindowAccessorX::checkEvents() {
         MousePosition mousePosition(rootMouseX, rootMouseY, windowMouseX, windowMouseY);
 
         eventsData->setMousePosition(mousePosition);
-    } else std::cout << "Window is closing";
+    }
 
     return eventsData;
 }
@@ -229,8 +286,8 @@ GetPropertyData WindowAccessorX::getProperty(char* propertyName, long offset,
     property = XInternAtom(display, propertyName, false);
 
     XGetWindowProperty(display, window, property, offset, size, false,
-                       AnyPropertyType, &returnedProperty, &returnedActualFormat,
-                       &returnedNumberOfItems, &returnedBytesToRead, &returnedData);
+                         AnyPropertyType, &returnedProperty, &returnedActualFormat,
+                         &returnedNumberOfItems, &returnedBytesToRead, &returnedData);
 
     return {returnedData, returnedNumberOfItems};
 }
