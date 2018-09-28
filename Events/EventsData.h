@@ -22,8 +22,7 @@ private:
 
     bool windowResized;
 
-    bool isWindowGotFocus;
-    bool isWindowLostFocus;
+    bool windowFocused;
 
     int mouseWheelDirection;
 
@@ -41,8 +40,7 @@ public:
     bool isWindowMinimized();
     bool isWindowWindowed();
     bool isWindowResized();
-    bool windowGotFocus();
-    bool windowLostFocus();
+    bool isWindowFocused();
     int getMouseWheelDirection();
     MousePosition getMousePosition();
     bool isWindowClosing();
@@ -55,8 +53,7 @@ public:
     void setWindowMinimized(bool windowMinimized);
     void setWindowWindowed(bool windowWindowed);
     void setWindowResized(bool windowResized);
-    void setWindowGotFocus(bool isWindowGotFocus);
-    void setWindowLostFocus(bool isWindowLostFocus);
+    void setWindowFocused(bool isWindowFocused);
     void setMouseWheelDirection(int mouseWheelDirection);
     void setMousePosition(MousePosition mousePosition);
     void setWindowClosing(bool windowClosing);

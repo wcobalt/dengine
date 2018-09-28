@@ -28,30 +28,30 @@ private:
 
     Atom wmDeleteWindow;
 
-    bool lastFocusState;
+    unsigned int lastWidth, lastHeight;
 
     GetPropertyData getProperty(char* propertyName, long offset, long size, Window window);
+    void setMinimumAndMaximumSize(int maximumWidth, int maximumHeight, int minimumWidth, int minimumHeight);
 public:
     WindowAccessorX();
     virtual int initialize(int x, int y, unsigned int width,
                            unsigned int height, std::string title);
-    virtual void setX(int x);
-    virtual void setY(int y);
-    virtual int getX();
-    virtual int getY();
-    virtual void setWidth(unsigned int width);
-    virtual void setHeight(unsigned int height);
-    virtual unsigned int getWidth();
-    virtual unsigned int getHeight();
+    virtual void setPosition(int x, int y);
+    virtual std::vector<int> getPosition();
+    virtual void setSize(unsigned int width, unsigned int height);
+    virtual std::vector<unsigned int> getSize();
     virtual void setWindowTitle(std::string title);
-    virtual void getWindowTitle();
+    virtual std::string getWindowTitle();
+    virtual void setMaximumSize(int maximumWidth, int maximumHeight);
+    virtual std::vector<int> getMaximumSize();
+    virtual void setMinimumSize(int minimumWidth, int minimumHeight);
+    virtual std::vector<int> getMinimumSize();
+    virtual void setFullscreenEnabled(bool isEnabled);
+    virtual bool isFullscreenEnabled();
     //@todo vector2i vector2f 3f 3i as structs add
-    virtual void setMaximumSizes(int maximumWidth, int maximumHeight);
-    virtual std::vector<int> getMaximumSizes();
-    virtual void setMinimumSizes(int minimumWidth, int minimumHeight);
-    virtual std::vector<int> getMinimumSizes();
-    //@todo replace pointers to "clever" pointers
+    //@todo replace pointers to "smart" pointers
     virtual EventsData* checkEvents();
+    virtual void destroy();
 };
 
 #endif //DENGINE_WINDOWACCESSORX_H

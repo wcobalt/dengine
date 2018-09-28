@@ -16,23 +16,23 @@ class WindowAccessor {
 public:
     const int NOT_FIXED_SIZE = -1;
     //@todo borders
+    //@todo add defualt constructors
     virtual int initialize(int x, int y, unsigned int width,
                            unsigned int height, std::string) = 0;
-    virtual void setX(int x) = 0;
-    virtual void setY(int y) = 0;
-    virtual int getX() = 0;
-    virtual int getY() = 0;
-    virtual void setWidth(unsigned int width) = 0;
-    virtual void setHeight(unsigned int height) = 0;
-    virtual unsigned int getWidth() = 0;
-    virtual unsigned int getHeight() = 0;
+    virtual void setPosition(int x, int y) = 0;
+    virtual std::vector<int> getPosition() = 0;
+    virtual void setSize(unsigned int width, unsigned int height) = 0;
+    virtual std::vector<unsigned int> getSize() = 0;
     virtual void setWindowTitle(std::string title) = 0;
-    virtual void getWindowTitle() = 0;
-    virtual void setMaximumSizes(int maximumWidth, int maximumHeight) = 0;
-    virtual std::vector<int> getMaximumSizes() = 0;
-    virtual void setMinimumSizes(int minimumWidth, int minimumHeight) = 0;
-    virtual std::vector<int> getMinimumSizes() = 0;
+    virtual std::string getWindowTitle() = 0;
+    virtual void setMaximumSize(int maximumWidth, int maximumHeight) = 0;
+    virtual std::vector<int> getMaximumSize() = 0;
+    virtual void setMinimumSize(int minimumWidth, int minimumHeight) = 0;
+    virtual std::vector<int> getMinimumSize() = 0;
+    virtual void setFullscreenEnabled(bool isEnabled) = 0;
+    virtual bool isFullscreenEnabled() = 0;
     virtual EventsData* checkEvents() = 0;
+    virtual void destroy() = 0;
 };
 
 
