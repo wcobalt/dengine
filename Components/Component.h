@@ -7,7 +7,12 @@
 
 
 class Component {
-
+public:
+    virtual void gameStart() = 0;
+    virtual void update() = 0;
+    virtual void gameEnd() = 0;
+    virtual void create() = 0;
+    virtual void destroy() = 0;
 };
 
 
