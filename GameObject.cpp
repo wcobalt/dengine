@@ -8,7 +8,11 @@ std::vector<Component> GameObject::getAllComponents() {
 
 }
 
-std::vector<Component> GameObject::getComponentsByID(ID id) {
+std::vector<Component> GameObject::getComponentsByName(std::string name) {
+
+}
+
+std::vector<Component> GameObject::getComponentsByGroup(std::string group) {
 
 }
 
