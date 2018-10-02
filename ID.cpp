@@ -8,14 +8,14 @@ ID::ID(std::string name) {
     this->name = name;
 }
 
-ID::ID(std::string name, std::string category):ID(name) {
-    this->category = category;
+ID::ID(std::string name, std::string group):ID(name) {
+    this->group = group;
 };
 
 std::string ID::getName() {
     return name;
 }
 
-std::string ID::getCategory() {
-    return category;
+std::string ID::getGroup() {
+    return group;
 }

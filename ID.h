@@ -11,12 +11,12 @@
 class ID {
 private:
     std::string name;
-    std::string category;
+    std::string group;
 public:
     ID(std::string name);
-    ID(std::string name, std::string category);
+    ID(std::string name, std::string group);
     std::string getName();
-    std::string getCategory();
+    std::string getGroup();
 };
 
 
