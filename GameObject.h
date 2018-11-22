@@ -13,20 +13,21 @@
 
 class GameObject {
 private:
-    ID id;
-    std::vector<Component*> components;
-    GameObject* parent;
-    std::vector<GameObject*> children;
+    ID* id;
+    const std::vector<const Component *const> components;
+    GameObject *parent;
+    std::vector<const GameObject*> children;
 public:
-    std::vector<Component*>* getAllComponents();
-    std::vector<Component*>* getComponentsByName(std::string name);
-    std::vector<Component*>* getComponentsByGroup(std::string group);
-    void addComponent(Component component);
-    void setParent(GameObject* parent);
+    //constructors
+    const std::vector<const Component *const> *const getAllComponents();
+    const std::vector<const Component *const> *const getComponentsByName(std::string name);
+    const std::vector<const Component *const> *const getComponentsByGroup(std::string group);
+    void addComponent(Component *component);
+    void setParent(GameObject *parent);
     void addChild(std::vector<GameObject*> children);
-    GameObject* getParent();
-    std::vector<GameObject*>* getChildren();
-    ID* getID();
+    GameObject *getParent();
+    const std::vector<GameObject*> getChildren();
+    ID *getID();
 };
 
 
