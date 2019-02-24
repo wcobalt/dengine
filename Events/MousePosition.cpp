@@ -4,10 +4,6 @@
 
 #include "MousePosition.h"
 
-MousePosition::MousePosition() {
-    rootMouseX = rootMouseY = windowMouseX = windowMouseY = 0;
-}
-
 MousePosition::MousePosition(int rootMouseX, int rootMouseY, int windowMouseX, int windowMouseY) {
     this->rootMouseX = rootMouseX;
     this->rootMouseY = rootMouseY;
@@ -15,28 +11,18 @@ MousePosition::MousePosition(int rootMouseX, int rootMouseY, int windowMouseX, i
     this->windowMouseY = windowMouseY;
 }
 
-int MousePosition::getRootMouseX() {
+int MousePosition::getRootMouseX() const {
     return rootMouseX;
 }
 
-int MousePosition::getRootMouseY() {
+int MousePosition::getRootMouseY() const {
     return rootMouseY;
 }
 
-int MousePosition::getWindowMouseX() {
+int MousePosition::getWindowMouseX() const {
     return windowMouseX;
 }
 
-int MousePosition::getWindowMouseY() {
+int MousePosition::getWindowMouseY() const {
     return windowMouseY;
-}
-
-void MousePosition::setRootMousePosition(int rootMouseX, int rootMouseY) {
-    this->rootMouseX = rootMouseX;
-    this->rootMouseY = rootMouseY;
-}
-
-void MousePosition::setWindowMousePosition(int windowMouseX, int windowMouseY) {
-    this->windowMouseX = windowMouseX;
-    this->windowMouseY = windowMouseY;
 }

@@ -4,10 +4,8 @@
 
 #include "WindowManager.h"
 
-WindowManager::WindowManager(WindowAccessor * windowAccessor) {
-    this->windowAccessor = windowAccessor;
-}
+WindowManager::WindowManager(WindowAccessor& windowAccessor):windowAccessor(windowAccessor) {}
 
-WindowAccessor* WindowManager::getWindowAccessor() {
+WindowAccessor& WindowManager::getWindowAccessor() {
     return windowAccessor;
 }

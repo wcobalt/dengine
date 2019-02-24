@@ -4,54 +4,50 @@
 
 #include "GameObject.h"
 
-const std::vector<const Component *const> *const GameObject::getAllComponents() {
-    return &components;
+GameObject::GameObject(unsigned int id):id(id) {
+
 }
 
-const std::vector<const Component *const> *const GameObject::getComponentsByName(std::string name) {
-    const std::vector<const Component *const> *const result = new std::vector<const Component *const>();
+void GameObject::addChild(GameObject &child) {
 
-    unsigned long size = components.size();
-
-    for(unsigned long i = 0; i < size; i++) {
-        if(components[i]->getID()->getName() == name) result.push_back(components[i]);
-    }
-
-    return result;
 }
 
-const std::vector<const Component *const> *const GameObject::getComponentsByGroup(std::string group) {
-    const std::vector<const Component *const> *const result = new std::vector<const Component *const>();
+void GameObject::addComponent(Component &component) {
 
-    unsigned long size = components.size();
-
-    for(unsigned long i = 0; i < size; i++) {
-        if(components[i]->getID()->getGroup() == group) result.push_back(components[i]);
-    }
-
-    return result;
 }
 
-void GameObject::addComponent(Component *component) {
-    components.push_back(component);
+void GameObject::removeComponent(std::string name) {
+
 }
 
-void GameObject::setParent(GameObject *parent) {
-    this->parent = parent;
+void GameObject::removeChild(unsigned int id) {
+
 }
 
-void GameObject::addChild(std::vector<GameObject*> children) {
-    this->children.insert(this->children.end(), children.begin(), children.end());
+void GameObject::setParent(GameObject &parent) {
+
 }
 
-GameObject *GameObject::getParent() {
-    return parent;
+std::vector<Component&>& GameObject::getAllComponents() const {
+    return *(new std::vector<Component&>(components));
 }
 
-const std::vector<GameObject*> GameObject::getChildren() {
-    return children;
+std::vector<Component&> GameObject::getComponentsByID(const std::string& name) const {
+    return components;
 }
 
-ID *GameObject::getID() {
-    return id;
+std::vector<GameObject&> GameObject::getChildren() const {
+
+}
+
+GameObject& GameObject::getParent() const {
+
+}
+
+unsigned int GameObject::getID() const {
+
+}
+
+std::vector<Component&> GameObject::hui() {
+
 }

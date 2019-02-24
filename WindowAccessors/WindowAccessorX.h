@@ -1,14 +1,16 @@
 #include <GL/glx.h>
 #include <X11/Xlib.h>
-#include "WindowAccessor.h"
 #include <string>
-#include "../Events/EventsData.h"
+
 //
 // Created by wcobalt on 15.09.18.
 //
 
 #ifndef DENGINE_WINDOWACCESSORX_H
 #define DENGINE_WINDOWACCESSORX_H
+
+#include "WindowAccessor.h"
+#include "../Events/EventsData.h"
 
 struct GetPropertyData {
     unsigned char* data;
@@ -30,28 +32,28 @@ private:
 
     unsigned int lastWidth, lastHeight;
 
-    GetPropertyData getProperty(char* propertyName, long offset, long size, Window window);
+    GetPropertyData getProperty(char* propertyName, long offset, long size, Window window) const;
     void setMinimumAndMaximumSize(int maximumWidth, int maximumHeight, int minimumWidth, int minimumHeight);
 public:
     WindowAccessorX();
-    virtual int initialize(int x, int y, unsigned int width,
-                           unsigned int height, std::string title);
-    virtual void setPosition(int x, int y);
-    virtual std::vector<int> getPosition();
-    virtual void setSize(unsigned int width, unsigned int height);
-    virtual std::vector<unsigned int> getSize();
-    virtual void setWindowTitle(std::string title);
-    virtual std::string getWindowTitle();
-    virtual void setMaximumSize(int maximumWidth, int maximumHeight);
-    virtual std::vector<int> getMaximumSize();
-    virtual void setMinimumSize(int minimumWidth, int minimumHeight);
-    virtual std::vector<int> getMinimumSize();
-    virtual void setFullscreenEnabled(bool isEnabled);
-    virtual bool isFullscreenEnabled();
+    int initialize(int x, int y, unsigned int width,
+                           unsigned int height, std::string& title);
+    void setPosition(int x, int y);
+    std::vector<int> getPosition();//@todo may be mark as const?
+    void setSize(unsigned int width, unsigned int height);
+    std::vector<unsigned int> getSize();//@todo may be mark as const?
+    void setWindowTitle(std::string title);
+    const std::string& getWindowTitle() const;
+    void setMaximumSize(int maximumWidth, int maximumHeight);
+    std::vector<int> getMaximumSize() const;
+    void setMinimumSize(int minimumWidth, int minimumHeight);
+    std::vector<int> getMinimumSize() const;
+    void setFullscreenEnabled(bool isEnabled);
+    bool isFullscreenEnabled() const;
     //@todo vector2i vector2f 3f 3i as structs add
     //@todo replace pointers to "smart" pointers
-    virtual EventsData* checkEvents();
-    virtual void destroy();
+    const EventsData& checkEvents();
+    void destroy();
 };
 
 #endif //DENGINE_WINDOWACCESSORX_H

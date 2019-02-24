@@ -1,33 +1,40 @@
 //
 // Created by wcobalt on 19.09.18.
 //
-
-#include "Components/Component.h"
 #include <vector>
 #include <string>
-#include "ID.h"
 
 #ifndef DENGINE_GAMEOBJECT_H
 #define DENGINE_GAMEOBJECT_H
 
+#include "Components/Component.h"
+#include "Dengine.h"
 
 class GameObject {
 private:
-    ID* id;
-    const std::vector<const Component *const> components;
-    GameObject *parent;
-    std::vector<const GameObject*> children;
+    const unsigned int id;
+    std::vector<Component&> components;
+    GameObject* parent;
+    std::vector<GameObject&> children;
 public:
-    //constructors
-    const std::vector<const Component *const> *const getAllComponents();
-    const std::vector<const Component *const> *const getComponentsByName(std::string name);
-    const std::vector<const Component *const> *const getComponentsByGroup(std::string group);
-    void addComponent(Component *component);
-    void setParent(GameObject *parent);
-    void addChild(std::vector<GameObject*> children);
-    GameObject *getParent();
-    const std::vector<GameObject*> getChildren();
-    ID *getID();
+    GameObject(unsigned int id);
+
+    std::vector<Component&>& getAllComponents() const;
+    std::vector<Component&> getComponentsByID(const std::string& name) const;
+
+    void addComponent(Component& component);
+    void removeComponent(std::string name);
+
+    void setParent(GameObject& parent);
+
+    void addChild(GameObject& child);
+    void removeChild(unsigned int id);
+
+    std::vector<Component&> hui();
+
+    GameObject& getParent() const;
+    std::vector<GameObject&> getChildren() const;
+    unsigned int getID() const;
 };
 
 

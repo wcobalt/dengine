@@ -4,10 +4,27 @@
 
 #include "Component.h"
 
-Component::Component(ID *id) {
-    this->id = id;
+Component::Component(const std::string& id):id(id) {
+    mIsOnly = true;
+    mIsEnabled = true;
 }
 
-ID *Component::getID() {
+bool Component::isOnly() const {
+    return mIsOnly;
+}
+
+void Component::setOnly(bool isOnly) {
+    Component::mIsOnly = isOnly;
+}
+
+bool Component::isEnabled() const {
+    return mIsEnabled;
+}
+
+void Component::setEnabled(bool isEnabled) {
+    Component::mIsEnabled = isEnabled;
+}
+
+const std::string& Component::getID() const {
     return id;
 }

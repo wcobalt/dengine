@@ -16,52 +16,51 @@ EventsData::EventsData() {
     windowClosing = false;
 }
 
-std::set<int> EventsData::getPressedKeys() {
+std::set<int> EventsData::getPressedKeys() const {
     return pressedKeys;
 }
 
-std::set<int> EventsData::getReleasedKeys() {
+std::set<int> EventsData::getReleasedKeys() const {
     return releasedKeys;
 }
 
-std::set<int> EventsData::getPressedButtons() {
+std::set<int> EventsData::getPressedButtons() const {
     return pressedButtons;
 }
 
-std::set<int> EventsData::getReleasedButtons() {
+std::set<int> EventsData::getReleasedButtons() const {
     return releasedButtons;
 }
 
-bool EventsData::isWindowMaximized() {
+bool EventsData::isWindowMaximized() const {
     return windowMaximized;
 }
 
-bool EventsData::isWindowMinimized() {
+bool EventsData::isWindowMinimized() const {
     return windowMinimized;
 }
 
-bool EventsData::isWindowWindowed() {
+bool EventsData::isWindowWindowed() const {
     return windowWindowed;
 }
 
-bool EventsData::isWindowResized() {
+bool EventsData::isWindowResized() const {
     return windowResized;
 }
 
-bool EventsData::isWindowFocused() {
+bool EventsData::isWindowFocused() const {
     return windowFocused;
 }
 
-int EventsData::getMouseWheelDirection() {
+int EventsData::getMouseWheelDirection() const {
     return mouseWheelDirection;
 }
 
-MousePosition EventsData::getMousePosition() {
-    //@todo check is it right
-    return mousePosition;
+const MousePosition& EventsData::getMousePosition() const {
+    return *mousePosition;
 }
 
-bool EventsData::isWindowClosing() {
+bool EventsData::isWindowClosing() const {
     return windowClosing;
 }
 
@@ -105,8 +104,9 @@ void EventsData::setMouseWheelDirection(int mouseWheelDirection) {
     this->mouseWheelDirection = mouseWheelDirection;
 }
 
-void EventsData::setMousePosition(MousePosition mousePosition) {
-    this->mousePosition = mousePosition;
+void EventsData::setMousePosition(const MousePosition& mousePosition) {
+    this->mousePosition = &mousePosition;
+    //что происходит если this-mnousePosiiotn& не const и мы делаем &(this->mousePosition)=mousePosition
 }
 
 void EventsData::setWindowClosing(bool windowClosing) {

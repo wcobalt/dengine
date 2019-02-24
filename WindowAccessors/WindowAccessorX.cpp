@@ -15,7 +15,7 @@
 WindowAccessorX::WindowAccessorX() = default;
 
 int WindowAccessorX::initialize(int x, int y, unsigned int width,
-                                unsigned int height, std::string title) {
+                                unsigned int height, std::string& title) {
     //@todo to settings of WindowAccessor
     GLint attributes[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 24, None};
 
@@ -62,7 +62,7 @@ void WindowAccessorX::setPosition(int x, int y) {//ok
     XFlush(display);
 }
 
-std::vector<int> WindowAccessorX::getPosition() {//ok, but it's position of inner corner isn't of outer one.
+std::vector<int> WindowAccessorX::getPosition()  {//ok, but it's position of inner corner isn't of outer one.
     std::vector<int> result = {0, 0};
 
     XTranslateCoordinates(display, window, rootWindow, 0, 0, &(result[0]), &(result[1]), &window);
@@ -88,19 +88,19 @@ void WindowAccessorX::setWindowTitle(std::string title) {//ok
     XFlush(display);
 }
 
-std::string WindowAccessorX::getWindowTitle() {//ok
+const std::string& WindowAccessorX::getWindowTitle() const {//ok
     char* title;
 
     XFetchName(display, window, &title);
 
-    std::string result = std::string(title);
+    std::string* result = new std::string(title);
 
     delete title;
 
-    return result;
+    return *result;
 }
 
-std::vector<int> WindowAccessorX::getMinimumSize() {
+std::vector<int> WindowAccessorX::getMinimumSize() const {
     XSizeHints xSizeHints = {};
 
     XGetNormalHints(display, window, &xSizeHints);
@@ -108,7 +108,7 @@ std::vector<int> WindowAccessorX::getMinimumSize() {
     return {xSizeHints.min_width, xSizeHints.min_height};
 }
 
-std::vector<int> WindowAccessorX::getMaximumSize() {
+std::vector<int> WindowAccessorX::getMaximumSize() const {
     XSizeHints xSizeHints = {};
 
     XGetNormalHints(display, window, &xSizeHints);
@@ -143,7 +143,7 @@ void WindowAccessorX::setMinimumAndMaximumSize(int maximumWidth, int maximumHeig
         XSetWMNormalHints(display, window, &xSizeHints);
 }
 
-bool WindowAccessorX::isFullscreenEnabled() {
+bool WindowAccessorX::isFullscreenEnabled() const {
     GetPropertyData data = getProperty("_NET_WM_STATE", 0, LONG_MAX, window);
 
     for(int i = 0; i < data.numberOfItems; i++) {
@@ -174,7 +174,7 @@ void WindowAccessorX::destroy() {
     XDestroyWindow(display, window);
 }
 
-EventsData* WindowAccessorX::checkEvents() {
+const EventsData& WindowAccessorX::checkEvents() {
     //@todo do events' masks is configured out of engine
     EventsData* eventsData = new EventsData();
 
@@ -265,16 +265,16 @@ EventsData* WindowAccessorX::checkEvents() {
         XQueryPointer(display, window, &rootWindow, &childWindow, &rootMouseX,
                       &rootMouseY, &windowMouseX, &windowMouseY, &mask);
 
-        MousePosition mousePosition(rootMouseX, rootMouseY, windowMouseX, windowMouseY);
+        MousePosition* mousePosition = new MousePosition(rootMouseX, rootMouseY, windowMouseX, windowMouseY);
 
-        eventsData->setMousePosition(mousePosition);
+        eventsData->setMousePosition(*mousePosition);
     }
 
-    return eventsData;
+    return *eventsData;
 }
 
 GetPropertyData WindowAccessorX::getProperty(char* propertyName, long offset,
-                                             long size, Window window) {
+                                             long size, Window window) const {
     Atom property, returnedProperty;
 
     int returnedActualFormat;

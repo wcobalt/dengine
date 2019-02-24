@@ -3,11 +3,11 @@
 //
 #include <set>
 #include <map>
-#include "MousePosition.h"
 
 #ifndef DENGINE_EVENTSDATA_H
 #define DENGINE_EVENTSDATA_H
 
+#include "MousePosition.h"
 
 class EventsData {
 private:
@@ -26,24 +26,24 @@ private:
 
     int mouseWheelDirection;
 
-    MousePosition mousePosition;
+    const MousePosition* mousePosition;
 
     bool windowClosing;
 public:
     EventsData();
 
-    std::set<int> getPressedKeys();
-    std::set<int> getReleasedKeys();
-    std::set<int> getPressedButtons();
-    std::set<int> getReleasedButtons();
-    bool isWindowMaximized();
-    bool isWindowMinimized();
-    bool isWindowWindowed();
-    bool isWindowResized();
-    bool isWindowFocused();
-    int getMouseWheelDirection();
-    MousePosition getMousePosition();
-    bool isWindowClosing();
+    std::set<int> getPressedKeys() const;
+    std::set<int> getReleasedKeys() const;
+    std::set<int> getPressedButtons() const;
+    std::set<int> getReleasedButtons() const;
+    bool isWindowMaximized() const;
+    bool isWindowMinimized() const;
+    bool isWindowWindowed() const;
+    bool isWindowResized() const;
+    bool isWindowFocused() const;
+    int getMouseWheelDirection() const;
+    const MousePosition& getMousePosition() const;
+    bool isWindowClosing() const;
 
     void addPressedKey(int keyCode);
     void addReleasedKey(int keyCode);
@@ -55,7 +55,7 @@ public:
     void setWindowResized(bool windowResized);
     void setWindowFocused(bool isWindowFocused);
     void setMouseWheelDirection(int mouseWheelDirection);
-    void setMousePosition(MousePosition mousePosition);
+    void setMousePosition(const MousePosition& mousePosition);
     void setWindowClosing(bool windowClosing);
 };
 
