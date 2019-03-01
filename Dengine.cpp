@@ -15,13 +15,15 @@
 
 Dengine::Dengine(int windowX, int windowY, unsigned windowWidth,
                  unsigned windowHeight, std::string& windowTitle,
-                 std::shared_ptr<WindowManager> windowManager):windowManager(windowManager) {//memory-safe
+                 std::shared_ptr<WindowManager> windowManager) {//memory-safe
+
+    this->windowManager = windowManager;
 
     //this->windowManager = windowManager; (keeping for below comment)
     //@todo add parameters' names in header-files
 
     //@todo windowTitle copies creating!!!
-    windowManager.getWindowAccessor().initialize(windowX, windowY, windowWidth,
+    windowManager.getWindowAccessor()->initialize(windowX, windowY, windowWidth,
                                                    windowHeight, windowTitle);
 
     mIsPaused = false;

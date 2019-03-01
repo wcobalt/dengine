@@ -2,6 +2,8 @@
 // Created by wcobalt on 16.09.18.
 //
 
+#include <memory>
+
 #ifndef DENGINE_WINDOWMANAGER_H
 #define DENGINE_WINDOWMANAGER_H
 
@@ -9,10 +11,10 @@
 
 class WindowManager {
 private:
-    WindowAccessor& windowAccessor;
+    std::shared_ptr<WindowAccessor> windowAccessor;
 public:
-    WindowManager(WindowAccessor&);
-    WindowAccessor& getWindowAccessor();
+    WindowManager(std::shared_ptr<WindowAccessor> windowAccessor);
+    std::shared_ptr<WindowAccessor> getWindowAccessor();
 };
 
 

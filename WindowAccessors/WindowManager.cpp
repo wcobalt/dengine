@@ -4,8 +4,10 @@
 
 #include "WindowManager.h"
 
-WindowManager::WindowManager(WindowAccessor& windowAccessor):windowAccessor(windowAccessor) {}
+WindowManager::WindowManager(std::shared_ptr<WindowAccessor> windowAccessor) {
+    this->windowAccessor = windowAccessor;//@todo hmm
+}
 
-WindowAccessor& WindowManager::getWindowAccessor() {
+std::shared_ptr<WindowAccessor> WindowManager::getWindowAccessor() {
     return windowAccessor;
 }
