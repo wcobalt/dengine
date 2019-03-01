@@ -13,9 +13,9 @@
 #include "Events/EventsData.h"
 #include "Events/MousePosition.h"
 
-Dengine::Dengine(int windowX, int windowY, unsigned int windowWidth,
-                 unsigned int windowHeight, std::string windowTitle,
-                 WindowManager& windowManager):windowManager(windowManager) {
+Dengine::Dengine(int windowX, int windowY, unsigned windowWidth,
+                 unsigned windowHeight, std::string& windowTitle,
+                 std::shared_ptr<WindowManager> windowManager):windowManager(windowManager) {//memory-safe
 
     //this->windowManager = windowManager; (keeping for below comment)
     //@todo add parameters' names in header-files
@@ -28,29 +28,27 @@ Dengine::Dengine(int windowX, int windowY, unsigned int windowWidth,
 }
 
 void Dengine::update() {
-    const EventsData& data = windowManager.getWindowAccessor().checkEvents();
-
-    delete &data;
+    const std::shared_ptr<EventsData> data = windowManager.getWindowAccessor().checkEvents();
 }
 
-int Dengine::getFPS() const{
+float Dengine::getFPS() const {
     return fps;
 }
 
-void Dengine::setFPS(int fps) {
+void Dengine::setFPS(float fps) {
     this->fps = fps;
 }
 
-WindowManager& Dengine::getWindowManager() const{
+std::shared_ptr<WindowManager> Dengine::getWindowManager() const {
     return windowManager;
 }
 
 void Dengine::run() {
     while(!mIsPaused) {
-        std::async(&Dengine::update, *this);
+        std::future fut = std::async(&Dengine::update, *this);
 
         //@todo async may take some time real_fps != fps
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000 / fps));
+        std::this_thread::sleep_for(std::chrono::milliseconds((int)(1000.0 / fps)));
     }
 }
 
@@ -62,18 +60,18 @@ bool Dengine::isPaused() const {
     return mIsPaused;
 }
 
-void Dengine::addScene(Scene& scene) {
-    scenes.push_back(&scene);
+void Dengine::addScene(std::shared_ptr<Scene> scene) {
+    scenes.push_back(scene);
 }
 
-void Dengine::loadScene(std::string id) {
-    unsigned long count = scenes.size();
+void Dengine::loadScene(std::string& id) {
+    ulong count = scenes.size();
 
-    for (unsigned long i = 0; i < count; i++) {
-        if (scenes[i]->getID() == id) currentScene = scenes[i];
+    for (ulong i = 0; i < count; i++) {
+        if (scenes[i]->getID() == id) currentScene = i;
     }
 }
 
-Scene& Dengine::getLoadedScene() const{
-    return *currentScene;
+std::shared_ptr<Scene> Dengine::getCurrentScene() const {
+    return scenes[currentScene];
 }

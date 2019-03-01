@@ -1,11 +1,9 @@
-
-//#include "Scene.h"
-
 //
 // Created by wcobalt on 16.09.18.
 //
 #include <string>
 #include <vector>
+#include <memory>
 
 #ifndef DENGINE_DENGINE_H
 #define DENGINE_DENGINE_H
@@ -13,29 +11,29 @@
 #include "Scene.h"
 #include "WindowAccessors/WindowManager.h"
 
-class Dengine {
+class Dengine {//memory-safe
 private:
-    int fps;
-    WindowManager& windowManager;
+    float fps;
+    std::shared_ptr<WindowManager> windowManager;
     bool mIsPaused;
-    std::vector<Scene*> scenes;
-    Scene* currentScene;
+    std::vector<std::shared_ptr<Scene>> scenes;
+    ulong currentScene;
 public:
-    Dengine(int windowX, int windowY, unsigned int windowWidth,
-                     unsigned int windowHeight, std::string windowTitle,
-                     WindowManager& windowManager);
+    Dengine(int windowX, int windowY, unsigned windowWidth,
+                     unsigned windowHeight, std::string& windowTitle,
+                     std::shared_ptr<WindowManager> windowManager);
     //@todo to Window class
     //@todo getXXX() add
-    void setFPS(int fps);
-    int getFPS() const;
-    WindowManager& getWindowManager() const;
+    void setFPS(float fps);
+    float getFPS() const;
+    std::shared_ptr<WindowManager> getWindowManager() const;
     void run();
     void pause();
     bool isPaused() const;
     void update();
-    void addScene(Scene& scene);
-    void loadScene(std::string id);
-    Scene& getLoadedScene() const;
+    void addScene(std::shared_ptr<Scene> scene);
+    void loadScene(std::string& id);
+    std::shared_ptr<Scene> getCurrentScene() const;
 };
 
 
