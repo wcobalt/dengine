@@ -13,9 +13,9 @@
 #include "Events/EventsData.h"
 #include "Events/MousePosition.h"
 
-Dengine::Dengine(int windowX, int windowY, unsigned windowWidth,
-                 unsigned windowHeight, std::string& windowTitle,
-                 std::shared_ptr<WindowManager> windowManager) {//memory-safe
+Dengine::Dengine(int windowX, int windowY, uint windowWidth,
+                 uint windowHeight, std::string& windowTitle,
+                 std::shared_ptr<WindowManager> windowManager) {
 
     this->windowManager = windowManager;
 
@@ -30,7 +30,7 @@ Dengine::Dengine(int windowX, int windowY, unsigned windowWidth,
 }
 
 void Dengine::update() {
-    const std::shared_ptr<EventsData> data = windowManager.getWindowAccessor().checkEvents();
+    std::shared_ptr<const EventsData> data = windowManager.getWindowAccessor().checkEvents();
 }
 
 float Dengine::getFPS() const {

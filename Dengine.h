@@ -11,7 +11,7 @@
 #include "Scene.h"
 #include "WindowAccessors/WindowManager.h"
 
-class Dengine {//memory-safe
+class Dengine {
 private:
     float fps;
     std::shared_ptr<WindowManager> windowManager;
@@ -19,8 +19,8 @@ private:
     std::vector<std::shared_ptr<Scene>> scenes;
     ulong currentScene;
 public:
-    Dengine(int windowX, int windowY, unsigned windowWidth,
-                     unsigned windowHeight, std::string& windowTitle,
+    Dengine(int windowX, int windowY, uint windowWidth,
+                     uint windowHeight, std::string& windowTitle,
                      std::shared_ptr<WindowManager> windowManager);
     //@todo to Window class
     //@todo getXXX() add
