@@ -14,8 +14,8 @@
 
 WindowAccessorX::WindowAccessorX() = default;
 
-int WindowAccessorX::initialize(int x, int y, unsigned int width,
-                                unsigned int height, std::string& title) {
+int WindowAccessorX::initialize(int x, int y, uint width,
+                                uint height, const std::string& title) {
     //@todo to settings of WindowAccessor
     GLint attributes[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 24, None};
 
@@ -100,36 +100,36 @@ const std::string& WindowAccessorX::getWindowTitle() const {//ok
     return *result;
 }
 
-std::vector<int> WindowAccessorX::getMinimumSize() const {
+std::vector<uint> WindowAccessorX::getMinimumSize() const {
     XSizeHints xSizeHints = {};
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    return {xSizeHints.min_width, xSizeHints.min_height};
+    return {(uint)xSizeHints.min_width, (uint)xSizeHints.min_height};
 }
 
-std::vector<int> WindowAccessorX::getMaximumSize() const {
+std::vector<uint> WindowAccessorX::getMaximumSize() const {
     XSizeHints xSizeHints = {};
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    return {xSizeHints.max_width, xSizeHints.max_height};
+    return {(uint)xSizeHints.max_width, (uint)xSizeHints.max_height};
 }
 
-void WindowAccessorX::setMinimumSize(int minimumWidth, int minimumHeight) {//ok
-    std::vector<int> maximumSize = getMaximumSize();
+void WindowAccessorX::setMinimumSize(uint minimumWidth, uint minimumHeight) {//ok
+    std::vector<uint> maximumSize = getMaximumSize();
 
     setMinimumAndMaximumSize(maximumSize[0], maximumSize[1], minimumWidth, minimumHeight);
 }
 
-void WindowAccessorX::setMaximumSize(int maximumWidth, int maximumHeight) {//ok
-    std::vector<int> minimumSize = getMinimumSize();
+void WindowAccessorX::setMaximumSize(uint maximumWidth, uint maximumHeight) {//ok
+    std::vector<uint> minimumSize = getMinimumSize();
 
     setMinimumAndMaximumSize(maximumWidth, maximumHeight, minimumSize[0], minimumSize[1]);
 }
 
-void WindowAccessorX::setMinimumAndMaximumSize(int maximumWidth, int maximumHeight,
-                                               int minimumWidth, int minimumHeight) {
+void WindowAccessorX::setMinimumAndMaximumSize(uint maximumWidth, uint maximumHeight,
+                                               uint minimumWidth, uint minimumHeight) {
         XSizeHints xSizeHints = {};
 
         xSizeHints.flags = PMaxSize | PMinSize;
@@ -144,7 +144,7 @@ void WindowAccessorX::setMinimumAndMaximumSize(int maximumWidth, int maximumHeig
 }
 
 bool WindowAccessorX::isFullscreenEnabled() const {
-    GetPropertyData data = getProperty("_NET_WM_STATE", 0, LONG_MAX, window);
+    PropertyData data = getProperty("_NET_WM_STATE", 0, LONG_MAX, window);
 
     for(int i = 0; i < data.numberOfItems; i++) {
         if(((long*)(data.data))[i] == XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", false)) {
@@ -174,9 +174,9 @@ void WindowAccessorX::destroy() {
     XDestroyWindow(display, window);
 }
 
-const EventsData& WindowAccessorX::checkEvents() {
+std::shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
     //@todo do events' masks is configured out of engine
-    EventsData* eventsData = new EventsData();
+    std::shared_ptr<EventsData> eventsData(new EventsData());
 
     while(XEventsQueued(display, QueuedAlready)) {
         XEvent xEvent;
@@ -223,7 +223,7 @@ const EventsData& WindowAccessorX::checkEvents() {
             lastHeight = currentSize[1];
         }
 
-        GetPropertyData focusState = getProperty("_NET_ACTIVE_WINDOW", 0, LONG_MAX, rootWindow);
+        PropertyData focusState = getProperty("_NET_ACTIVE_WINDOW", 0, LONG_MAX, rootWindow);
 
         long activeWindowID = ((long *)(focusState.data))[0];
 
@@ -231,7 +231,7 @@ const EventsData& WindowAccessorX::checkEvents() {
 
         eventsData->setWindowFocused(currentFocusState);
 
-        GetPropertyData windowState;
+        PropertyData windowState;
 
         windowState = getProperty("_NET_WM_STATE", 0, LONG_MAX, window);
 
@@ -270,10 +270,10 @@ const EventsData& WindowAccessorX::checkEvents() {
         eventsData->setMousePosition(*mousePosition);
     }
 
-    return *eventsData;
+    return eventsData;
 }
 
-GetPropertyData WindowAccessorX::getProperty(char* propertyName, long offset,
+PropertyData WindowAccessorX::getProperty(char* propertyName, long offset,
                                              long size, Window window) const {
     Atom property, returnedProperty;
 

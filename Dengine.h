@@ -32,7 +32,7 @@ public:
     bool isPaused() const;
     void update();
     void addScene(std::shared_ptr<Scene> scene);
-    void loadScene(std::string& id);
+    void loadScene(const std::string& id);
     std::shared_ptr<Scene> getCurrentScene() const;
 };
 

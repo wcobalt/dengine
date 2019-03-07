@@ -30,7 +30,7 @@ Dengine::Dengine(int windowX, int windowY, uint windowWidth,
 }
 
 void Dengine::update() {
-    std::shared_ptr<const EventsData> data = windowManager.getWindowAccessor().checkEvents();
+    std::shared_ptr<const EventsData> data = windowManager->getWindowAccessor()->checkEvents();
 }
 
 float Dengine::getFPS() const {
@@ -66,7 +66,7 @@ void Dengine::addScene(std::shared_ptr<Scene> scene) {
     scenes.push_back(scene);
 }
 
-void Dengine::loadScene(std::string& id) {
+void Dengine::loadScene(const std::string& id) {
     ulong count = scenes.size();
 
     for (ulong i = 0; i < count; i++) {

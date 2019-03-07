@@ -20,7 +20,7 @@ public:
     //@todo add defualt constructors
     //@todo initalize vs constructor
     virtual int initialize(int x, int y, uint width,
-                           uint height, std::string& title) = 0;
+                           uint height, const std::string& title) = 0;
     virtual void setPosition(int x, int y) = 0;
     virtual std::vector<int> getPosition() = 0;
     virtual void setSize(uint width, uint height) = 0;
