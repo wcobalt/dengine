@@ -6,19 +6,22 @@
 
 //@TODO windows forms(later) support
 
-int main() {//memory safe
-    std::shared_ptr<WindowAccessor> accessor(new WindowAccessorX());
-    std::shared_ptr<WindowManager> windowManager(new WindowManager(*accessor));
-    std::shared_ptr<Dengine> engine(new Dengine(0, 0, 400, 200, "Test window", *windowManager));
+using namespace dengine;
+using namespace dengine::windowaccessors;
 
-    engine->setFPS(60);
+int main() {//memory safe
+    std::shared_ptr<WindowAccessor> accessor(new WindowAccessorX(0, 0, 400, 200, "Test window"));
+    std::shared_ptr<WindowManager> windowManager(new WindowManager(accessor));
+    std::shared_ptr<Dengine> dengine(new Dengine(windowManager));
+
+    dengine->setFPS(60);
 
     std::shared_ptr<Scene> mainScene(new Scene("MainScene", 400, 400));
 
-    engine->addScene(*mainScene);
-    engine->loadScene("MainScene");
+    dengine->addScene(mainScene);
+    dengine->loadScene("MainScene");
 
-    engine->run();
+    dengine->run();
 
     return 0;
 }

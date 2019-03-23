@@ -12,10 +12,11 @@
 
 //X11 windowAccessor
 
-WindowAccessorX::WindowAccessorX() = default;
+using namespace dengine::windowaccessors;
+using namespace dengine::events;
 
-int WindowAccessorX::initialize(int x, int y, uint width,
-                                uint height, const std::string& title) {
+WindowAccessorX::WindowAccessorX(int x, int y, uint width,
+                                uint height, const std::string& title):title(title) {
     //@todo to settings of WindowAccessor
     GLint attributes[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 24, None};
 
@@ -53,8 +54,6 @@ int WindowAccessorX::initialize(int x, int y, uint width,
 
     lastWidth = width;
     lastHeight = height;
-
-    return 0;
 }
 
 void WindowAccessorX::setPosition(int x, int y) {//ok
@@ -70,34 +69,25 @@ std::vector<int> WindowAccessorX::getPosition()  {//ok, but it's position of inn
     return result;
 }
 
-void WindowAccessorX::setSize(unsigned int width, unsigned int height) {//ok
+void WindowAccessorX::setSize(uint width, uint height) {//ok
     XResizeWindow(display, window, width, height);
     XFlush(display);
 }
 
-std::vector<unsigned int> WindowAccessorX::getSize() {//ok
+std::vector<uint> WindowAccessorX::getSize() {//ok
     XGetWindowAttributes(display, window, &xWindowAttributes);
 
-    return std::vector<unsigned int>{(unsigned int)xWindowAttributes.width,
-                                     (unsigned int)xWindowAttributes.height};
+    return std::vector<uint>{(uint)xWindowAttributes.width,
+                                     (uint)xWindowAttributes.height};
 }
 
-void WindowAccessorX::setWindowTitle(std::string title) {//ok
-    //@todo all char* to const char*
+void WindowAccessorX::setWindowTitle(const std::string& title) {//ok
     XStoreName(display, window, title.c_str());
     XFlush(display);
 }
 
 const std::string& WindowAccessorX::getWindowTitle() const {//ok
-    char* title;
-
-    XFetchName(display, window, &title);
-
-    std::string* result = new std::string(title);
-
-    delete title;
-
-    return *result;
+    return title;
 }
 
 std::vector<uint> WindowAccessorX::getMinimumSize() const {
@@ -214,7 +204,7 @@ std::shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
     }
 
     if(!eventsData->isWindowClosing()) {
-        std::vector<unsigned int> currentSize = getSize();
+        std::vector<uint> currentSize = getSize();
 
         if(currentSize[0] != lastWidth || currentSize[1] != lastHeight) {
             eventsData->setWindowResized(true);
@@ -231,9 +221,7 @@ std::shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
 
         eventsData->setWindowFocused(currentFocusState);
 
-        PropertyData windowState;
-
-        windowState = getProperty("_NET_WM_STATE", 0, LONG_MAX, window);
+        PropertyData windowState = getProperty("_NET_WM_STATE", 0, LONG_MAX, window);
 
         bool maximizedVert, maximizedHorz;
 
@@ -258,16 +246,17 @@ std::shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
 
         Window childWindow, rootWindow;
 
-        unsigned int mask;
+        uint mask;
 
         int rootMouseX, rootMouseY, windowMouseX, windowMouseY;
 
         XQueryPointer(display, window, &rootWindow, &childWindow, &rootMouseX,
                       &rootMouseY, &windowMouseX, &windowMouseY, &mask);
 
-        MousePosition* mousePosition = new MousePosition(rootMouseX, rootMouseY, windowMouseX, windowMouseY);
+        std::shared_ptr<MousePosition> mousePosition =
+                std::make_shared<MousePosition>(new MousePosition(rootMouseX, rootMouseY, windowMouseX, windowMouseY));
 
-        eventsData->setMousePosition(*mousePosition);
+        eventsData->setMousePosition(mousePosition);
     }
 
     return eventsData;
@@ -279,15 +268,17 @@ PropertyData WindowAccessorX::getProperty(char* propertyName, long offset,
 
     int returnedActualFormat;
 
-    unsigned long returnedNumberOfItems;
-    unsigned long returnedBytesToRead;
-    unsigned char* returnedData = {};
+    ulong returnedNumberOfItems;
+    ulong returnedBytesToRead;
+    unsigned char* returnedData;
 
     property = XInternAtom(display, propertyName, false);
+
+    delete[] propertyName;
 
     XGetWindowProperty(display, window, property, offset, size, false,
                          AnyPropertyType, &returnedProperty, &returnedActualFormat,
                          &returnedNumberOfItems, &returnedBytesToRead, &returnedData);
 
-    return {returnedData, returnedNumberOfItems};
+    return PropertyData(returnedData, returnedNumberOfItems);
 }

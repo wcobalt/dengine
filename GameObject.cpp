@@ -4,7 +4,10 @@
 
 #include "GameObject.h"
 
-GameObject::GameObject(unsigned int id):id(id) {
+using namespace dengine;
+using namespace dengine::components;
+
+GameObject::GameObject(uint id):id(id) {
 
 }
 
@@ -16,11 +19,11 @@ void GameObject::addComponent(Component &component) {
 
 }
 
-void GameObject::removeComponent(std::string name) {
+void GameObject::removeComponent(const std::string& name) {
 
 }
 
-void GameObject::removeChild(unsigned int id) {
+void GameObject::removeChild(uint id) {
 
 }
 
@@ -44,7 +47,7 @@ GameObject& GameObject::getParent() const {
 
 }
 
-unsigned int GameObject::getID() const {
+uint GameObject::getID() const {
 
 }
 

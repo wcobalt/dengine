@@ -9,13 +9,15 @@
 
 #include "WindowAccessor.h"
 
-class WindowManager {
-private:
-    std::shared_ptr<WindowAccessor> windowAccessor;
-public:
-    WindowManager(std::shared_ptr<WindowAccessor> windowAccessor);
-    std::shared_ptr<WindowAccessor> getWindowAccessor();
-};
+namespace dengine::windowaccessors {
+    class WindowManager {
+    private:
+        std::shared_ptr<WindowAccessor> windowAccessor;
+    public:
+        WindowManager(std::shared_ptr<WindowAccessor> windowAccessor);
 
+        std::shared_ptr<WindowAccessor> getWindowAccessor();
+    };
+}
 
 #endif //DENGINE_WINDOWMANAGER_H

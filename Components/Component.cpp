@@ -4,6 +4,8 @@
 
 #include "Component.h"
 
+using namespace dengine::components;
+
 Component::Component(const std::string& id):id(id) {
     mIsOnly = true;
     mIsEnabled = true;

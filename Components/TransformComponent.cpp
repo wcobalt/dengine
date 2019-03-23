@@ -4,6 +4,8 @@
 
 #include "TransformComponent.h"
 
+using namespace dengine::components;
+
 TransformComponent::TransformComponent(const std::string& id):Component(id) {
 
 }

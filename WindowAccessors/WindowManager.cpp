@@ -4,8 +4,10 @@
 
 #include "WindowManager.h"
 
+using namespace dengine::windowaccessors;
+
 WindowManager::WindowManager(std::shared_ptr<WindowAccessor> windowAccessor) {
-    this->windowAccessor = windowAccessor;//@todo hmm
+    this->windowAccessor = windowAccessor;
 }
 
 std::shared_ptr<WindowAccessor> WindowManager::getWindowAccessor() {

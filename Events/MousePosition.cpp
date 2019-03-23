@@ -4,6 +4,8 @@
 
 #include "MousePosition.h"
 
+using namespace dengine::events;
+
 MousePosition::MousePosition(int rootMouseX, int rootMouseY, int windowMouseX, int windowMouseY) {
     this->rootMouseX = rootMouseX;
     this->rootMouseY = rootMouseY;

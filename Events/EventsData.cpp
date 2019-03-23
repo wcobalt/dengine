@@ -4,6 +4,8 @@
 
 #include "EventsData.h"
 
+using namespace dengine::events;
+
 EventsData::EventsData() {
     windowMaximized = windowMinimized = windowWindowed = false;
 
@@ -56,8 +58,8 @@ int EventsData::getMouseWheelDirection() const {
     return mouseWheelDirection;
 }
 
-const MousePosition& EventsData::getMousePosition() const {
-    return *mousePosition;
+std::shared_ptr<const MousePosition> EventsData::getMousePosition() const {
+    return mousePosition;
 }
 
 bool EventsData::isWindowClosing() const {
@@ -104,9 +106,8 @@ void EventsData::setMouseWheelDirection(int mouseWheelDirection) {
     this->mouseWheelDirection = mouseWheelDirection;
 }
 
-void EventsData::setMousePosition(const MousePosition& mousePosition) {
-    this->mousePosition = &mousePosition;
-    //что происходит если this-mnousePosiiotn& не const и мы делаем &(this->mousePosition)=mousePosition
+void EventsData::setMousePosition(std::shared_ptr<const MousePosition> mousePosition) {
+    this->mousePosition = mousePosition;
 }
 
 void EventsData::setWindowClosing(bool windowClosing) {

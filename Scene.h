@@ -10,22 +10,27 @@
 
 #include "GameObject.h"
 
-class Scene {
-private:
-    const std::string& id;
-    std::vector<GameObject&> instances;
-    const unsigned int BASE_ID = 1000000;
-    unsigned int currentID;
-    unsigned int width, height;
-public:
-    Scene(const std::string& id);
-    Scene(const std::string& id, unsigned int width, unsigned int height);
-    void placeInstance(GameObject& instance);
-    void placeInstance(GameObject& instance, float x, float y);
-    unsigned int getUniqueGameObjectID();
-    const std::string& getID() const;
-    //@todo destructors everywhere
-};
+namespace dengine {
+    class Scene {
+    private:
+        const std::string &id;
+        std::vector<GameObject &> instances;
+        const uint BASE_ID = 1000000;
+        uint currentID;
+        uint width, height;
+    public:
+        Scene(const std::string &id);
 
+        Scene(const std::string &id, uint width, uint height);
+
+        void placeInstance(GameObject &instance);
+
+        void placeInstance(GameObject &instance, float x, float y);
+
+        uint getUniqueGameObjectID();
+
+        const std::string &getID() const;
+    };
+}
 
 #endif //DENGINE_SCENE_H
