@@ -6,18 +6,7 @@
 
 using namespace dengine::components;
 
-Component::Component(const std::string& id):id(id) {
-    mIsOnly = true;
-    mIsEnabled = true;
-}
-
-bool Component::isOnly() const {
-    return mIsOnly;
-}
-
-void Component::setOnly(bool isOnly) {
-    Component::mIsOnly = isOnly;
-}
+Component::Component() = default;
 
 bool Component::isEnabled() const {
     return mIsEnabled;
@@ -25,8 +14,4 @@ bool Component::isEnabled() const {
 
 void Component::setEnabled(bool isEnabled) {
     Component::mIsEnabled = isEnabled;
-}
-
-const std::string& Component::getID() const {
-    return id;
 }

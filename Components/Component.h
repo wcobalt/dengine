@@ -9,15 +9,9 @@
 namespace dengine::components {
     class Component {
     private:
-        const std::string &id;
-        bool mIsOnly;
         bool mIsEnabled;
     public:
-        Component(const std::string &id);
-
-        virtual void sceneLoad() = 0;
-
-        virtual void sceneUnload() = 0;
+        Component();
 
         virtual void componentLoad() = 0;
 
@@ -25,21 +19,15 @@ namespace dengine::components {
 
         virtual void update() = 0;
 
-        virtual void create() = 0;
+        virtual void instanceCreated() = 0;
 
-        virtual void destroy() = 0;
-
-        virtual void draw() = 0;//????
-        void setOnly(bool isOnly);
-
-        bool isOnly() const;
+        virtual void instanceDestroyed() = 0;
 
         void setEnabled(bool isEnabled);
 
         bool isEnabled() const;
 
-        const std::string &getID() const;
-        //@todo is compoennt neccessary required option? (in GameObject?)
+        //@todo make mechanism for pause-exceptions (object which still be calculated when game paused)
     };
 }
 

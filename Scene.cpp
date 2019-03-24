@@ -4,7 +4,7 @@
 
 #include "Scene.h"
 #include "Components/Component.h"
-#include "Components/TransformComponent.h"
+#include "Components/Transform3DComponent.h"
 
 using namespace dengine;
 using namespace dengine::components;
@@ -23,8 +23,8 @@ void Scene::placeInstance(GameObject& instance) {
 }
 
 void Scene::placeInstance(GameObject& instance, float x, float y) {
-    TransformComponent* transform =
-            static_cast<TransformComponent*>(instance.getComponentsByID("transform")[0]);
+    Transform3DComponent* transform =
+            static_cast<Transform3DComponent*>(instance.getComponentsByID("transform")[0]);
 
 
 

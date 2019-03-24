@@ -12,13 +12,19 @@
 #include <iostream>
 #include "Events/EventsData.h"
 #include "Events/MousePosition.h"
+#include "Exceptions/NoCurrentSceneException.h"
+#include "Exceptions/NoSuitableSceneException.h"
+#include "Exceptions/CurrentSceneRemovingException.h"
 
 using namespace dengine;
+using namespace dengine::exceptions;
 
 Dengine::Dengine(std::shared_ptr<WindowManager> windowManager) {
     this->windowManager = windowManager;
 
     mIsPaused = false;
+    isGameStopped = false;
+    lastAddedSceneId = 1;
 }
 
 void Dengine::update() {
@@ -38,7 +44,9 @@ std::shared_ptr<WindowManager> Dengine::getWindowManager() const {
 }
 
 void Dengine::run() {
-    while (!mIsPaused) {
+    isGameStopped = false;
+
+    while (!isGameStopped) {
         std::future fut = std::async(&Dengine::update, *this);
 
         //@todo async may take some time real_fps != fps
@@ -50,22 +58,71 @@ void Dengine::pause() {
     mIsPaused = true;
 }
 
+void Dengine::stop() {
+    isGameStopped = true;
+}
+
 bool Dengine::isPaused() const {
     return mIsPaused;
 }
 
-void Dengine::addScene(std::shared_ptr<Scene> scene) {
-    scenes.push_back(scene);
+ulong Dengine::getUniqueSceneId() {
+    return lastAddedSceneId++;
 }
 
-void Dengine::loadScene(const std::string &id) {
-    ulong count = scenes.size();
+ulong Dengine::addScene(std::shared_ptr<Scene> scene) {
+    std::shared_ptr<Entry<Scene>> newScene;
 
-    for (ulong i = 0; i < count; i++) {
-        if (scenes[i]->getID() == id) currentScene = i;
+    ulong id = getUniqueSceneId();
+
+    newScene = std::make_shared<Entry<Scene>>(new Entry<Scene>(scene, id));
+
+    scenes.push_back(newScene);
+
+    return id;
+}
+//@todo do add string scene ids?
+//@todo exceptions
+
+void Dengine::loadScene(ulong id) {
+    for (auto it = scenes.begin(); it != scenes.end(); it++)
+        if (it->get()->getId() == id) {
+            currentScene = id;
+
+            //
+            return;
+        }
+
+    throw NoSuitableSceneException();
+}
+
+void Dengine::removeScene(ulong id) {
+    if (id != currentScene) {
+        for (auto it = scenes.begin(); it != scenes.end(); it++)
+            if (it->get()->getId() == id) {
+
+                //
+
+                return;
+            }
+
+        throw NoSuitableSceneException();
     }
+
+    throw CurrentSceneRemovingException();
 }
 
-std::shared_ptr<Scene> Dengine::getCurrentScene() const {
-    return scenes[currentScene];
+std::shared_ptr<Scene> Dengine::getScene(ulong id) const {
+    for (auto it = scenes.begin(); it != scenes.end(); it++)
+        if (it->get()->getId() == id)
+            return it->get()->getObject();
+
+    throw NoSuitableSceneException();
+}
+
+ulong Dengine::getCurrentScene() const {
+    if (currentScene != 0)
+        return currentScene;
+
+    throw NoCurrentSceneException();
 }
