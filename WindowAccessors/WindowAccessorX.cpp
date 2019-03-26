@@ -61,12 +61,8 @@ void WindowAccessorX::setPosition(int x, int y) {//ok
     XFlush(display);
 }
 
-std::vector<int> WindowAccessorX::getPosition()  {//ok, but it's position of inner corner isn't of outer one.
-    std::vector<int> result = {0, 0};
-
-    XTranslateCoordinates(display, window, rootWindow, 0, 0, &(result[0]), &(result[1]), &window);
-
-    return result;
+void WindowAccessorX::setPosition(vec2i position) {
+    setPosition(position.x, position.y);
 }
 
 void WindowAccessorX::setSize(uint width, uint height) {//ok
@@ -74,11 +70,8 @@ void WindowAccessorX::setSize(uint width, uint height) {//ok
     XFlush(display);
 }
 
-std::vector<uint> WindowAccessorX::getSize() {//ok
-    XGetWindowAttributes(display, window, &xWindowAttributes);
-
-    return std::vector<uint>{(uint)xWindowAttributes.width,
-                                     (uint)xWindowAttributes.height};
+void WindowAccessorX::setSize(vec2i size) {
+    setSize(size.x, size.y);
 }
 
 void WindowAccessorX::setWindowTitle(const std::string& title) {//ok
@@ -86,36 +79,92 @@ void WindowAccessorX::setWindowTitle(const std::string& title) {//ok
     XFlush(display);
 }
 
+void WindowAccessorX::setMinimumSize(uint minimumWidth, uint minimumHeight) {//ok
+    vec2i maximumSize = getMaximumSize();
+
+    setMinimumAndMaximumSize(maximumSize.x, maximumSize.y, minimumWidth, minimumHeight);
+}
+
+void WindowAccessorX::setMinimumSize(vec2i size) {
+    setMinimumSize(size.x, size.y);//@todo add vec2ui vec3ui classes
+}
+
+void WindowAccessorX::setMaximumSize(uint maximumWidth, uint maximumHeight) {//ok
+    vec2i minimumSize = getMinimumSize();
+
+    setMinimumAndMaximumSize(maximumWidth, maximumHeight, minimumSize.x, minimumSize.y);
+}
+
+void WindowAccessorX::setMaximumSize(vec2i size) {
+    setMaximumSize(size.x, size.y);
+}
+
+void WindowAccessorX::setFullscreenEnabled(bool isEnabled) {
+    XEvent event;
+    std::memset(&event, 0, sizeof(event));
+    event.type = ClientMessage;
+    event.xclient.window = window;
+    event.xclient.message_type = XInternAtom(display, "_NET_WM_STATE", False);
+    event.xclient.format = 32;
+    event.xclient.data.l[0] = isEnabled?1:0;
+    event.xclient.data.l[1] = XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", False);
+    event.xclient.data.l[2] = 0;
+
+    XSendEvent(display, rootWindow, False,
+               SubstructureRedirectMask | SubstructureNotifyMask, &event);
+}
+
+vec2i WindowAccessorX::getPosition() {
+    XWindowAttributes xWindowAttributes;
+
+    XGetWindowAttributes(display, window, &xWindowAttributes);
+
+    vec2i result(0, 0);
+
+    XTranslateCoordinates(display, window, rootWindow,
+            xWindowAttributes.x, xWindowAttributes.y, &(result.x), &(result.y), &window);
+
+    result = result - vec2i(xWindowAttributes.x, xWindowAttributes.y);
+
+    return result;
+}
+
+vec2i WindowAccessorX::getRelativeClientAreaPosition() {
+    XWindowAttributes xWindowAttributes;
+
+    XGetWindowAttributes(display, window, &xWindowAttributes);
+
+    vec2i result(xWindowAttributes.x, xWindowAttributes.y);
+
+    return result;
+}
+
+vec2i WindowAccessorX::getSize() const {//ok
+    XWindowAttributes xWindowAttributes;
+
+    XGetWindowAttributes(display, window, &xWindowAttributes);
+
+    return vec2i(xWindowAttributes.width, xWindowAttributes.height);
+}
+
 const std::string& WindowAccessorX::getWindowTitle() const {//ok
     return title;
 }
 
-std::vector<uint> WindowAccessorX::getMinimumSize() const {
+vec2i WindowAccessorX::getMinimumSize() const {
     XSizeHints xSizeHints = {};
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    return {(uint)xSizeHints.min_width, (uint)xSizeHints.min_height};
+    return vec2i(xSizeHints.min_width, xSizeHints.min_height);
 }
 
-std::vector<uint> WindowAccessorX::getMaximumSize() const {
+vec2i WindowAccessorX::getMaximumSize() const {
     XSizeHints xSizeHints = {};
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    return {(uint)xSizeHints.max_width, (uint)xSizeHints.max_height};
-}
-
-void WindowAccessorX::setMinimumSize(uint minimumWidth, uint minimumHeight) {//ok
-    std::vector<uint> maximumSize = getMaximumSize();
-
-    setMinimumAndMaximumSize(maximumSize[0], maximumSize[1], minimumWidth, minimumHeight);
-}
-
-void WindowAccessorX::setMaximumSize(uint maximumWidth, uint maximumHeight) {//ok
-    std::vector<uint> minimumSize = getMinimumSize();
-
-    setMinimumAndMaximumSize(maximumWidth, maximumHeight, minimumSize[0], minimumSize[1]);
+    return vec2i(xSizeHints.max_width, xSizeHints.max_height);
 }
 
 void WindowAccessorX::setMinimumAndMaximumSize(uint maximumWidth, uint maximumHeight,
@@ -143,21 +192,6 @@ bool WindowAccessorX::isFullscreenEnabled() const {
     }
 
     return false;
-}
-
-void WindowAccessorX::setFullscreenEnabled(bool isEnabled) {
-    XEvent event;
-    std::memset(&event, 0, sizeof(event));
-    event.type = ClientMessage;
-    event.xclient.window = window;
-    event.xclient.message_type = XInternAtom(display, "_NET_WM_STATE", False);
-    event.xclient.format = 32;
-    event.xclient.data.l[0] = isEnabled?1:0;
-    event.xclient.data.l[1] = XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", False);
-    event.xclient.data.l[2] = 0;
-
-    XSendEvent(display, rootWindow, False,
-                SubstructureRedirectMask | SubstructureNotifyMask, &event);
 }
 
 void WindowAccessorX::destroy() {

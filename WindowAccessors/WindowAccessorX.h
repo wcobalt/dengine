@@ -38,7 +38,6 @@ namespace dengine::windowaccessors {
         XSetWindowAttributes xSetWindowAttributes;
         Window window;
         GLXContext glXContext;
-        XWindowAttributes xWindowAttributes;
 
         Atom wmDeleteWindow;
 
@@ -56,28 +55,38 @@ namespace dengine::windowaccessors {
 
         void setPosition(int x, int y);
 
-        std::vector<int> getPosition();//@todo may be mark as const, getSize() too?
+        void setPosition(vec2i position);
+
         void setSize(uint width, uint height);
 
-        std::vector<uint> getSize();
+        void setSize(vec2i size);
 
         void setWindowTitle(const std::string& title);
 
-        const std::string &getWindowTitle() const;
-
         void setMaximumSize(uint maximumWidth, uint maximumHeight);
 
-        std::vector<uint> getMaximumSize() const;
+        void setMaximumSize(vec2i size);
 
         void setMinimumSize(uint minimumWidth, uint minimumHeight);
 
-        std::vector<uint> getMinimumSize() const;
+        void setMinimumSize(vec2i size);
 
         void setFullscreenEnabled(bool isEnabled);
 
+        vec2i getPosition();
+
+        vec2i getRelativeClientAreaPosition();
+
+        vec2i getSize() const;
+
+        const std::string &getWindowTitle() const;
+
+        vec2i getMaximumSize() const;
+
+        vec2i getMinimumSize() const;
+
         bool isFullscreenEnabled() const;
 
-        //@todo vector2i vector2f 3f 3i as classes add
         std::shared_ptr<const EventsData> checkEvents();
 
         void destroy();

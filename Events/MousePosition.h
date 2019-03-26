@@ -8,18 +8,18 @@
 namespace dengine::events {
     class MousePosition {
     private:
-        int rootMouseX, rootMouseY;
-        int windowMouseX, windowMouseY;
+        long rootMouseX, rootMouseY;
+        long windowMouseX, windowMouseY;
     public:
-        MousePosition(int rootMouseX, int rootMouseY, int windowMouseX, int windowMouseY);
+        MousePosition(long rootMouseX, long rootMouseY, long windowMouseX, long windowMouseY);
 
-        int getRootMouseX() const;
+        long getRootMouseX() const;
 
-        int getRootMouseY() const;
+        long getRootMouseY() const;
 
-        int getWindowMouseX() const;
+        long getWindowMouseX() const;
 
-        int getWindowMouseY() const;
+        long getWindowMouseY() const;
     };
 }
 
