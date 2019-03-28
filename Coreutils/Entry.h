@@ -7,18 +7,20 @@
 #ifndef DENGINE_ENTRY_H
 #define DENGINE_ENTRY_H
 
+#include "../Dengine.h"
+
 namespace dengine::coreutils {
     template<class T>
     class Entry {
     private:
-        std::shared_ptr<T> object;
-        ulong id;
+        std::shared_ptr<T> object;//may be get out shared_ptr?
+        ID id;
     public:
-        Entry(std::shared_ptr<T> object, ulong id);
+        Entry(std::shared_ptr<T> object, ID id);
 
         std::shared_ptr<T> getObject();
 
-        ulong getId();
+        ID getId();
     };
 }
 

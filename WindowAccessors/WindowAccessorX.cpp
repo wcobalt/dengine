@@ -40,7 +40,7 @@ WindowAccessorX::WindowAccessorX(int x, int y, uint width,
 
     XMapWindow(display, window);
 
-    setPosition(x, y);
+    setWindowPosition(x, y);
 
     setWindowTitle(title);
 
@@ -56,13 +56,16 @@ WindowAccessorX::WindowAccessorX(int x, int y, uint width,
     lastHeight = height;
 }
 
-void WindowAccessorX::setPosition(int x, int y) {//ok
+WindowAccessorX::WindowAccessorX(vec2i position, dim2i size, const std::string &title)
+    :WindowAccessorX(position.x, position.y, size.width, size.height, title){}
+
+void WindowAccessorX::setWindowPosition(int x, int y) {//ok
     XMoveWindow(display, window, x, y);
     XFlush(display);
 }
 
-void WindowAccessorX::setPosition(vec2i position) {
-    setPosition(position.x, position.y);
+void WindowAccessorX::setWindowPosition(vec2i position) {
+    setWindowPosition(position.x, position.y);
 }
 
 void WindowAccessorX::setSize(uint width, uint height) {//ok
@@ -70,8 +73,8 @@ void WindowAccessorX::setSize(uint width, uint height) {//ok
     XFlush(display);
 }
 
-void WindowAccessorX::setSize(vec2i size) {
-    setSize(size.x, size.y);
+void WindowAccessorX::setSize(dim2i size) {
+    setSize(size.width, size.height);
 }
 
 void WindowAccessorX::setWindowTitle(const std::string& title) {//ok
@@ -80,26 +83,26 @@ void WindowAccessorX::setWindowTitle(const std::string& title) {//ok
 }
 
 void WindowAccessorX::setMinimumSize(uint minimumWidth, uint minimumHeight) {//ok
-    vec2i maximumSize = getMaximumSize();
+    dim2i maximumSize = getMaximumSize();
 
-    setMinimumAndMaximumSize(maximumSize.x, maximumSize.y, minimumWidth, minimumHeight);
+    setMinimumAndMaximumSize(maximumSize.width, maximumSize.height, minimumWidth, minimumHeight);
 }
 
-void WindowAccessorX::setMinimumSize(vec2i size) {
-    setMinimumSize(size.x, size.y);//@todo add vec2ui vec3ui classes
+void WindowAccessorX::setMinimumSize(dim2i size) {
+    setMinimumSize(size.width, size.height);
 }
 
 void WindowAccessorX::setMaximumSize(uint maximumWidth, uint maximumHeight) {//ok
-    vec2i minimumSize = getMinimumSize();
+    dim2i minimumSize = getMinimumSize();
 
-    setMinimumAndMaximumSize(maximumWidth, maximumHeight, minimumSize.x, minimumSize.y);
+    setMinimumAndMaximumSize(maximumWidth, maximumHeight, minimumSize.width, minimumSize.height);
 }
 
-void WindowAccessorX::setMaximumSize(vec2i size) {
-    setMaximumSize(size.x, size.y);
+void WindowAccessorX::setMaximumSize(dim2i size) {
+    setMaximumSize(size.width, size.height);
 }
 
-void WindowAccessorX::setFullscreenEnabled(bool isEnabled) {
+void WindowAccessorX::setFullScreenEnabled(bool isEnabled) {
     XEvent event;
     std::memset(&event, 0, sizeof(event));
     event.type = ClientMessage;
@@ -114,22 +117,24 @@ void WindowAccessorX::setFullscreenEnabled(bool isEnabled) {
                SubstructureRedirectMask | SubstructureNotifyMask, &event);
 }
 
-vec2i WindowAccessorX::getPosition() {
+vec2i WindowAccessorX::getWindowPosition() const {
     XWindowAttributes xWindowAttributes;
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
 
     vec2i result(0, 0);
 
+    Window w;
+
     XTranslateCoordinates(display, window, rootWindow,
-            xWindowAttributes.x, xWindowAttributes.y, &(result.x), &(result.y), &window);
+            xWindowAttributes.x, xWindowAttributes.y, &(result.x), &(result.y), &w);
 
     result = result - vec2i(xWindowAttributes.x, xWindowAttributes.y);
 
     return result;
 }
 
-vec2i WindowAccessorX::getRelativeClientAreaPosition() {
+vec2i WindowAccessorX::getRelativeClientAreaPosition() const {
     XWindowAttributes xWindowAttributes;
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
@@ -139,32 +144,32 @@ vec2i WindowAccessorX::getRelativeClientAreaPosition() {
     return result;
 }
 
-vec2i WindowAccessorX::getSize() const {//ok
+dim2i WindowAccessorX::getSize() const {//ok
     XWindowAttributes xWindowAttributes;
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
 
-    return vec2i(xWindowAttributes.width, xWindowAttributes.height);
+    return dim2i((uint)xWindowAttributes.width, (uint)xWindowAttributes.height);
 }
 
 const std::string& WindowAccessorX::getWindowTitle() const {//ok
     return title;
 }
 
-vec2i WindowAccessorX::getMinimumSize() const {
+dim2i WindowAccessorX::getMinimumSize() const {
     XSizeHints xSizeHints = {};
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    return vec2i(xSizeHints.min_width, xSizeHints.min_height);
+    return dim2i((uint)xSizeHints.min_width, (uint)xSizeHints.min_height);
 }
 
-vec2i WindowAccessorX::getMaximumSize() const {
+dim2i WindowAccessorX::getMaximumSize() const {
     XSizeHints xSizeHints = {};
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    return vec2i(xSizeHints.max_width, xSizeHints.max_height);
+    return dim2i((uint)xSizeHints.max_width, (uint)xSizeHints.max_height);
 }
 
 void WindowAccessorX::setMinimumAndMaximumSize(uint maximumWidth, uint maximumHeight,
@@ -182,7 +187,7 @@ void WindowAccessorX::setMinimumAndMaximumSize(uint maximumWidth, uint maximumHe
         XSetWMNormalHints(display, window, &xSizeHints);
 }
 
-bool WindowAccessorX::isFullscreenEnabled() const {
+bool WindowAccessorX::isFullScreenEnabled() const {
     PropertyData data = getProperty("_NET_WM_STATE", 0, LONG_MAX, window);
 
     for(int i = 0; i < data.numberOfItems; i++) {
@@ -238,18 +243,18 @@ std::shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
     }
 
     if(!eventsData->isWindowClosing()) {
-        std::vector<uint> currentSize = getSize();
+        dim2i currentSize = getSize();
 
-        if(currentSize[0] != lastWidth || currentSize[1] != lastHeight) {
+        if(currentSize.width != lastWidth || currentSize.height != lastHeight) {
             eventsData->setWindowResized(true);
 
-            lastWidth = currentSize[0];
-            lastHeight = currentSize[1];
+            lastWidth = currentSize.width;
+            lastHeight = currentSize.height;
         }
 
         PropertyData focusState = getProperty("_NET_ACTIVE_WINDOW", 0, LONG_MAX, rootWindow);
 
-        long activeWindowID = ((long *)(focusState.data))[0];
+        long activeWindowID = ((long*)(focusState.data))[0];
 
         bool currentFocusState = (activeWindowID == window);
 
@@ -262,7 +267,7 @@ std::shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
         maximizedVert = maximizedHorz = false;
 
         for(int i = 0; i < windowState.numberOfItems; i++) {
-            long atom = ((long *) (windowState.data))[i];
+            long atom = ((long*) (windowState.data))[i];
 
             if(atom == XInternAtom(display, "_NET_WM_STATE_HIDDEN", false)) {
                 eventsData->setWindowMinimized(true);
@@ -296,7 +301,7 @@ std::shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
     return eventsData;
 }
 
-PropertyData WindowAccessorX::getProperty(char* propertyName, long offset,
+PropertyData WindowAccessorX::getProperty(const char* propertyName, long offset,
                                              long size, Window window) const {
     Atom property, returnedProperty;
 

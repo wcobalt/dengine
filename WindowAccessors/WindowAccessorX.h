@@ -45,47 +45,48 @@ namespace dengine::windowaccessors {
 
         const std::string& title;
 
-        PropertyData getProperty(char *propertyName, long offset, long size, Window window) const;
+        PropertyData getProperty(const char *propertyName, long offset, long size, Window window) const;
 
         void setMinimumAndMaximumSize(uint maximumWidth, uint maximumHeight,
                                       uint minimumWidth, uint minimumHeight);
 
     public:
         WindowAccessorX(int x, int y, uint width, uint height, const std::string& title);
+        WindowAccessorX(vec2i position, dim2i size, const std::string &title);
 
-        void setPosition(int x, int y);
+        void setWindowPosition(int x, int y);
 
-        void setPosition(vec2i position);
+        void setWindowPosition(vec2i position);
 
         void setSize(uint width, uint height);
 
-        void setSize(vec2i size);
+        void setSize(dim2i size);
 
         void setWindowTitle(const std::string& title);
 
         void setMaximumSize(uint maximumWidth, uint maximumHeight);
 
-        void setMaximumSize(vec2i size);
+        void setMaximumSize(dim2i size);
 
         void setMinimumSize(uint minimumWidth, uint minimumHeight);
 
-        void setMinimumSize(vec2i size);
+        void setMinimumSize(dim2i size);
 
-        void setFullscreenEnabled(bool isEnabled);
+        void setFullScreenEnabled(bool isEnabled);
 
-        vec2i getPosition();
+        vec2i getWindowPosition() const;
 
-        vec2i getRelativeClientAreaPosition();
+        vec2i getRelativeClientAreaPosition() const;
 
-        vec2i getSize() const;
+        dim2i getSize() const;
 
         const std::string &getWindowTitle() const;
 
-        vec2i getMaximumSize() const;
+        dim2i getMaximumSize() const;
 
-        vec2i getMinimumSize() const;
+        dim2i getMinimumSize() const;
 
-        bool isFullscreenEnabled() const;
+        bool isFullScreenEnabled() const;
 
         std::shared_ptr<const EventsData> checkEvents();
 

@@ -9,7 +9,7 @@ using namespace dengine::geometry;
 
 template<class T>
 vector3<T>::vector3() {
-    x = y = z = 0;
+    x = y = z = (T)0;
 }
 
 template<class T>
@@ -57,6 +57,11 @@ vector3<T>& vector3<T>::operator=(vector3<T> b) {
 }
 
 template<class T>
+vector3<T> vector3<T>::operator+=(vector3<T> b) {
+    return *this + b;
+}
+
+template<class T>
 vector3<T> vector3<T>::operator+(vector3<T> b) {
     vector3<T> result(*this);
 
@@ -65,6 +70,11 @@ vector3<T> vector3<T>::operator+(vector3<T> b) {
     result.z += b.z;
 
     return result;
+}
+
+template<class T>
+vector3<T> vector3<T>::operator-=(vector3<T> b) {
+    return *this - b;
 }
 
 template<class T>

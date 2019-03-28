@@ -13,23 +13,22 @@
 namespace dengine {
     class Scene {
     private:
-        const std::string &id;
-        std::vector<GameObject &> instances;
-        const uint BASE_ID = 1000000;
-        uint currentID;
-        uint width, height;
+        vector<shared_ptr<Entry<GameObject>>> instances;
+
+        ID nextCreatedInstanceId;
+
+        ID getUniqueGameObjectId();
+
+        shared_ptr<GameObject> getInstance(ID id);
+
+        ID getID(shared_ptr<GameObject> instance);
     public:
-        Scene(const std::string &id);
+        Scene();
 
-        Scene(const std::string &id, uint width, uint height);
+        void placeInstance(shared_ptr<GameObject> instance);
 
-        void placeInstance(GameObject &instance);
-
-        void placeInstance(GameObject &instance, float x, float y);
-
-        uint getUniqueGameObjectID();
-
-        const std::string &getID() const;
+        void placeInstance(shared_ptr<GameObject> instance, float x, float y);
+        void placeInstance(shared_ptr<GameObject> instance, float x, float y, float z);
     };
 }
 

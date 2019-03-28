@@ -24,7 +24,7 @@ Dengine::Dengine(std::shared_ptr<WindowManager> windowManager) {
 
     mIsPaused = false;
     isGameStopped = false;
-    lastAddedSceneId = 1;
+    nextAddedSceneId = 1;
 }
 
 void Dengine::update() {
@@ -67,7 +67,7 @@ bool Dengine::isPaused() const {
 }
 
 ulong Dengine::getUniqueSceneId() {
-    return lastAddedSceneId++;
+    return nextAddedSceneId++;
 }
 
 ulong Dengine::addScene(std::shared_ptr<Scene> scene) {
@@ -86,7 +86,7 @@ ulong Dengine::addScene(std::shared_ptr<Scene> scene) {
 
 void Dengine::loadScene(ulong id) {
     for (auto it = scenes.begin(); it != scenes.end(); it++)
-        if (it->get()->getId() == id) {
+        if ((*it)->getId() == id) {
             currentScene = id;
 
             //

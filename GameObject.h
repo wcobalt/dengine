@@ -12,37 +12,37 @@
 
 namespace dengine {
     using namespace components;
+    using std::vector;
+    using std::shared_ptr;
 
     class GameObject {
     private:
-        const uint id;
-        std::vector<Component &> components;
-        GameObject *parent;
-        std::vector<GameObject &> children;
+        vector<shared_ptr<Component>> components;
+        shared_ptr<GameObject> parent;
+        vector<shared_ptr<GameObject>> children;
     public:
-        GameObject(uint id);
+        GameObject();
 
-        std::vector<Component &> &getAllComponents() const;
+        template<class T>
+        void addComponent(shared_ptr<Component> component);
 
-        std::vector<Component &> getComponentsByID(const std::string &name) const;
+        template<class T>
+        void removeComponent();
 
-        void addComponent(Component &component);
+        void setParent(shared_ptr<GameObject> id);
 
-        void removeComponent(const std::string &name);
+        void addChild(shared_ptr<GameObject> id);
 
-        void setParent(GameObject &parent);
+        void removeChild(shared_ptr<GameObject> id);
 
-        void addChild(GameObject &child);
+        shared_ptr<GameObject> getParent() const;
 
-        void removeChild(uint id);
+        vector<shared_ptr<GameObject>> getChildren() const;
 
-        std::vector<Component &> hui();
+        template<class T>
+        vector<shared_ptr<Component>> getComponents() const;
 
-        GameObject &getParent() const;
-
-        std::vector<GameObject &> getChildren() const;
-
-        uint getID() const;
+        vector<shared_ptr<Component>> getAllComponents() const;
     };
 }
 

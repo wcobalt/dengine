@@ -15,42 +15,48 @@
 namespace dengine {
     using namespace windowaccessors;
     using namespace coreutils;
+
+    using std::vector;
+    using std::shared_ptr;
+
+    typedef ulong ID;
+
     class Dengine {
     private:
         float fps;
 
-        std::shared_ptr<WindowManager> windowManager;
+        shared_ptr<WindowManager> windowManager;
 
-        std::vector<std::shared_ptr<Entry<Scene>>> scenes;
+        vector<shared_ptr<Entry<Scene>>> scenes;
 
         bool mIsPaused;
         bool isGameStopped;
 
-        ulong currentScene;
+        ID currentScene;
 
-        ulong lastAddedSceneId;
+        ID nextAddedSceneId;
 
         void update();
-        ulong getUniqueSceneId();
+        ID getUniqueSceneId();
     public:
-        Dengine(std::shared_ptr<WindowManager> windowManager);
+        Dengine(shared_ptr<WindowManager> windowManager);
 
-        //@todo to Window class
         void setFPS(float fps);
         float getFPS() const;
 
-        std::shared_ptr<WindowManager> getWindowManager() const;
+        shared_ptr<WindowManager> getWindowManager() const;
 
         void run();
         void pause();
         void stop();
         bool isPaused() const;
 
-        ulong addScene(std::shared_ptr<Scene> scene);
-        void removeScene(ulong id);
-        void loadScene(ulong id);
-        ulong getCurrentScene() const;
-        std::shared_ptr<Scene> getScene(ulong id) const;
+        ID addScene(shared_ptr<Scene> scene);
+        void removeScene(ID id);
+        void loadScene(ID id);
+        ID getCurrentScene() const;
+
+        shared_ptr<Scene> getScene(ID id) const;
     };
 }
 

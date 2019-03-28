@@ -50,7 +50,3 @@ GameObject& GameObject::getParent() const {
 uint GameObject::getID() const {
 
 }
-
-std::vector<Component&> GameObject::hui() {
-
-}

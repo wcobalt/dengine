@@ -20,7 +20,9 @@ namespace dengine::geometry {
         vector3 getNormalizedVector();
 
         vector3& operator=(vector3 b);
+        vector3 operator+=(vector3 b);
         vector3 operator+(vector3 b);
+        vector3 operator-=(vector3 b);
         vector3 operator-(vector3 b);
         vector3 operator-();
     };
