@@ -54,6 +54,10 @@ namespace dengine::windowaccessors {
         WindowAccessorX(int x, int y, uint width, uint height, const std::string& title);
         WindowAccessorX(vec2i position, dim2i size, const std::string &title);
 
+        void setVisible(bool isVisible);
+
+        void setDecorated(bool isDecorated);
+
         void setWindowPosition(int x, int y);
 
         void setWindowPosition(vec2i position);
@@ -74,9 +78,13 @@ namespace dengine::windowaccessors {
 
         void setFullScreenEnabled(bool isEnabled);
 
+        bool isVisible();
+
+        bool isDecorated();
+
         vec2i getWindowPosition() const;
 
-        vec2i getRelativeClientAreaPosition() const;
+        vec2i getClientAreaPosition() const;
 
         dim2i getSize() const;
 
@@ -89,6 +97,8 @@ namespace dengine::windowaccessors {
         bool isFullScreenEnabled() const;
 
         std::shared_ptr<const EventsData> checkEvents();
+
+        ~WindowAccessorX();
 
         void destroy();
     };

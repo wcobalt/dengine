@@ -3,10 +3,12 @@
 //
 
 #include "Entry.h"
+
+using namespace dengine;
 using namespace dengine::coreutils;
 
 template <class T>
-Entry<T>::Entry(std::shared_ptr<T> object, ulong id) {
+Entry<T>::Entry(std::shared_ptr<T> object, ID id) {
     this->object = object;
     this->id = id;
 }
@@ -17,6 +19,6 @@ std::shared_ptr<T> Entry<T>::getObject() {
 }
 
 template <class T>
-ulong Entry<T>::getId() {
+ID Entry<T>::getID() {
     return id;
 }

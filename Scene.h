@@ -15,7 +15,7 @@ namespace dengine {
     private:
         vector<shared_ptr<Entry<GameObject>>> instances;
 
-        ID nextCreatedInstanceId;
+        ID nextInstanceId;
 
         ID getUniqueGameObjectId();
 
@@ -29,6 +29,14 @@ namespace dengine {
 
         void placeInstance(shared_ptr<GameObject> instance, float x, float y);
         void placeInstance(shared_ptr<GameObject> instance, float x, float y, float z);
+
+        void destroyInstance(shared_ptr<GameObject> instance);
+
+        template<class T>
+        vector<shared_ptr<GameObject>> getInstances();
+
+        template<class T>
+        vector<shared_ptr<GameObject>> getNearestInstance();
     };
 }
 

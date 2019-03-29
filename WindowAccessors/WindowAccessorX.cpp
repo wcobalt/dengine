@@ -59,7 +59,15 @@ WindowAccessorX::WindowAccessorX(int x, int y, uint width,
 WindowAccessorX::WindowAccessorX(vec2i position, dim2i size, const std::string &title)
     :WindowAccessorX(position.x, position.y, size.width, size.height, title){}
 
-void WindowAccessorX::setWindowPosition(int x, int y) {//ok
+void WindowAccessorX::setVisible(bool isVisible) {
+    //@todo implement
+}
+
+void WindowAccessorX::setDecorated(bool isDecorated) {
+    //@todo implement
+}
+
+void WindowAccessorX::setWindowPosition(int x, int y) {
     XMoveWindow(display, window, x, y);
     XFlush(display);
 }
@@ -68,7 +76,7 @@ void WindowAccessorX::setWindowPosition(vec2i position) {
     setWindowPosition(position.x, position.y);
 }
 
-void WindowAccessorX::setSize(uint width, uint height) {//ok
+void WindowAccessorX::setSize(uint width, uint height) {
     XResizeWindow(display, window, width, height);
     XFlush(display);
 }
@@ -77,12 +85,12 @@ void WindowAccessorX::setSize(dim2i size) {
     setSize(size.width, size.height);
 }
 
-void WindowAccessorX::setWindowTitle(const std::string& title) {//ok
+void WindowAccessorX::setWindowTitle(const std::string& title) {
     XStoreName(display, window, title.c_str());
     XFlush(display);
 }
 
-void WindowAccessorX::setMinimumSize(uint minimumWidth, uint minimumHeight) {//ok
+void WindowAccessorX::setMinimumSize(uint minimumWidth, uint minimumHeight) {
     dim2i maximumSize = getMaximumSize();
 
     setMinimumAndMaximumSize(maximumSize.width, maximumSize.height, minimumWidth, minimumHeight);
@@ -92,7 +100,7 @@ void WindowAccessorX::setMinimumSize(dim2i size) {
     setMinimumSize(size.width, size.height);
 }
 
-void WindowAccessorX::setMaximumSize(uint maximumWidth, uint maximumHeight) {//ok
+void WindowAccessorX::setMaximumSize(uint maximumWidth, uint maximumHeight) {
     dim2i minimumSize = getMinimumSize();
 
     setMinimumAndMaximumSize(maximumWidth, maximumHeight, minimumSize.width, minimumSize.height);
@@ -117,6 +125,14 @@ void WindowAccessorX::setFullScreenEnabled(bool isEnabled) {
                SubstructureRedirectMask | SubstructureNotifyMask, &event);
 }
 
+bool WindowAccessorX::isVisible() {
+    //@todo implement
+}
+
+bool WindowAccessorX::isDecorated() {
+    //@todo implement
+}
+
 vec2i WindowAccessorX::getWindowPosition() const {
     XWindowAttributes xWindowAttributes;
 
@@ -129,12 +145,12 @@ vec2i WindowAccessorX::getWindowPosition() const {
     XTranslateCoordinates(display, window, rootWindow,
             xWindowAttributes.x, xWindowAttributes.y, &(result.x), &(result.y), &w);
 
-    result = result - vec2i(xWindowAttributes.x, xWindowAttributes.y);
+    result -= vec2i(xWindowAttributes.x, xWindowAttributes.y);
 
     return result;
 }
 
-vec2i WindowAccessorX::getRelativeClientAreaPosition() const {
+vec2i WindowAccessorX::getClientAreaPosition() const {
     XWindowAttributes xWindowAttributes;
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
@@ -144,7 +160,7 @@ vec2i WindowAccessorX::getRelativeClientAreaPosition() const {
     return result;
 }
 
-dim2i WindowAccessorX::getSize() const {//ok
+dim2i WindowAccessorX::getSize() const {
     XWindowAttributes xWindowAttributes;
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
@@ -152,7 +168,7 @@ dim2i WindowAccessorX::getSize() const {//ok
     return dim2i((uint)xWindowAttributes.width, (uint)xWindowAttributes.height);
 }
 
-const std::string& WindowAccessorX::getWindowTitle() const {//ok
+const std::string& WindowAccessorX::getWindowTitle() const {
     return title;
 }
 
@@ -199,10 +215,8 @@ bool WindowAccessorX::isFullScreenEnabled() const {
     return false;
 }
 
-void WindowAccessorX::destroy() {
-    XDestroyWindow(display, window);
-}
-
+//@todo logging
+//@todo tests
 std::shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
     //@todo do events' masks is configured out of engine
     std::shared_ptr<EventsData> eventsData(new EventsData());
@@ -299,6 +313,17 @@ std::shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
     }
 
     return eventsData;
+}
+
+WindowAccessorX::~WindowAccessorX() {
+    destroy();
+}
+
+void WindowAccessorX::destroy() {
+    XDestroyWindow(display, window);
+
+    delete display;//@todo what is uncomplete type?
+    delete xVisualInfo;
 }
 
 PropertyData WindowAccessorX::getProperty(const char* propertyName, long offset,

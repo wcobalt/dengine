@@ -23,8 +23,11 @@ namespace dengine::windowaccessors {
     public:
         const int NOT_FIXED_SIZE = -1;
 
-        //@todo borders
         //@todo add defualt constructors
+
+        virtual void setVisible(bool isVisible) = 0;
+
+        virtual void setDecorated(bool isDecorated) = 0;
 
         virtual void setWindowPosition(int x, int y) = 0;
 
@@ -46,6 +49,10 @@ namespace dengine::windowaccessors {
 
         virtual void setFullScreenEnabled(bool isEnabled) = 0;
 
+        virtual bool isVisible() = 0;
+
+        virtual bool isDecorated() = 0;
+
         virtual vec2i getWindowPosition() const = 0;
 
         virtual vec2i getClientAreaPosition() const = 0;
@@ -63,6 +70,8 @@ namespace dengine::windowaccessors {
         virtual std::shared_ptr<const EventsData> checkEvents() = 0;
 
         virtual void destroy() = 0;
+
+        virtual ~WindowAccessor() = 0;
     };
 }
 

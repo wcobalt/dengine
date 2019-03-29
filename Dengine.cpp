@@ -18,29 +18,26 @@
 
 using namespace dengine;
 using namespace dengine::exceptions;
+using namespace dengine::coreutils;
 
 Dengine::Dengine(std::shared_ptr<WindowManager> windowManager) {
-    this->windowManager = windowManager;
+    setWindowManager(windowManager);
 
     mIsPaused = false;
     isGameStopped = false;
-    nextAddedSceneId = 1;
+    nextSceneId = 3;
 }
 
 void Dengine::update() {
     std::shared_ptr<const EventsData> data = windowManager->getWindowAccessor()->checkEvents();
 }
 
-float Dengine::getFPS() const {
-    return fps;
-}
-
 void Dengine::setFPS(float fps) {
     this->fps = fps;
 }
 
-std::shared_ptr<WindowManager> Dengine::getWindowManager() const {
-    return windowManager;
+void Dengine::setWindowManager(std::shared_ptr<WindowManager> windowManager) {
+    this->windowManager = windowManager;
 }
 
 void Dengine::run() {
@@ -54,39 +51,37 @@ void Dengine::run() {
     }
 }
 
-void Dengine::pause() {
-    mIsPaused = true;
+void Dengine::setPaused(bool isPaused) {
+    mIsPaused = isPaused;
 }
 
 void Dengine::stop() {
     isGameStopped = true;
 }
 
-bool Dengine::isPaused() const {
-    return mIsPaused;
-}
-
-ulong Dengine::getUniqueSceneId() {
-    return nextAddedSceneId++;
-}
-
-ulong Dengine::addScene(std::shared_ptr<Scene> scene) {
+ID Dengine::addScene(std::shared_ptr<Scene> scene) {
     std::shared_ptr<Entry<Scene>> newScene;
 
-    ulong id = getUniqueSceneId();
+    ID id = getUniqueSceneId();
 
     newScene = std::make_shared<Entry<Scene>>(new Entry<Scene>(scene, id));
 
     scenes.push_back(newScene);
 
+    scenes[0]->getObject();
+
     return id;
 }
-//@todo do add string scene ids?
-//@todo exceptions
 
-void Dengine::loadScene(ulong id) {
+ID Dengine::addScene(std::shared_ptr<Scene> scene, String alias) {
+    ID id = addScene(scene);
+
+    aliases.insert(aliases.end(), std::pair<String, ID>(alias, id));
+}
+
+void Dengine::loadScene(ID id) {
     for (auto it = scenes.begin(); it != scenes.end(); it++)
-        if ((*it)->getId() == id) {
+        if ((*it)->getID() == id) {
             currentScene = id;
 
             //
@@ -96,10 +91,14 @@ void Dengine::loadScene(ulong id) {
     throw NoSuitableSceneException();
 }
 
-void Dengine::removeScene(ulong id) {
+void Dengine::loadScene(String alias) {
+
+}
+
+void Dengine::removeScene(ID id) {
     if (id != currentScene) {
         for (auto it = scenes.begin(); it != scenes.end(); it++)
-            if (it->get()->getId() == id) {
+            if (it->get()->getID() == id) {
 
                 //
 
@@ -112,17 +111,54 @@ void Dengine::removeScene(ulong id) {
     throw CurrentSceneRemovingException();
 }
 
-std::shared_ptr<Scene> Dengine::getScene(ulong id) const {
+void Dengine::removeScene(String alias) {
+
+}
+
+std::shared_ptr<Scene> Dengine::getScene(ID id) const {
     for (auto it = scenes.begin(); it != scenes.end(); it++)
-        if (it->get()->getId() == id)
+        if ((*it)->getID() == id)
             return it->get()->getObject();
 
     throw NoSuitableSceneException();
 }
 
-ulong Dengine::getCurrentScene() const {
+shared_ptr<Scene> Dengine::getScene(String alias) const {
+    for (auto it = scenes.begin(); it != scenes.end(); it++)
+        if (it->get()->getID() == id &&)
+            return it->get()->getObject();
+
+    throw NoSuitableSceneException();
+}
+
+ID Dengine::getCurrentScene() const {
     if (currentScene != 0)
         return currentScene;
 
     throw NoCurrentSceneException();
+}
+
+std::shared_ptr<WindowManager> Dengine::getWindowManager() const {
+    return windowManager;
+}
+
+float Dengine::getFPS() const {
+    return fps;
+}
+
+bool Dengine::isPaused() const {
+    return mIsPaused;
+}
+
+ID Dengine::getIDByAlias(String alias) const {
+    auto it = aliases.find(alias);
+
+    if (it != aliases.end())
+        return it->second;
+    else
+        return NOT_EXIST_SCENE;
+}
+
+ID Dengine::getUniqueSceneId() {
+    return nextSceneId++;
 }

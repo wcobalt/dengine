@@ -10,7 +10,8 @@
 #include "../Dengine.h"
 
 namespace dengine::coreutils {
-    template<class T>
+    using namespace dengine;
+    template <class T>
     class Entry {
     private:
         std::shared_ptr<T> object;//may be get out shared_ptr?
@@ -20,7 +21,7 @@ namespace dengine::coreutils {
 
         std::shared_ptr<T> getObject();
 
-        ID getId();
+        ID getID();
     };
 }
 
