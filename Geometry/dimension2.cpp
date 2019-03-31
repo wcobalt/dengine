@@ -10,16 +10,15 @@ template<class T>
 dimension2<T>::dimension2():dimension3<T>() {}
 
 template<class T>
-dimension2<T>::dimension2(vector2<T> vec):dimension3<T>(vec) {
+dimension2<T>::dimension2(vector2<T> vec):dimension3<T>(vec) {}
+
+template<class T>
+dimension2<T>::dimension2(const dimension2<T> &dimension):dimension2<T>(dimension) {}
+
+template <class T>
+dimension2<T>::dimension2(const dimension3<T> &dimension) {
     dimension3<T>::depth = (T)0;
 }
 
 template<class T>
-dimension2<T>::dimension2(dimension2<T> &dimension):dimension3<T>(dimension) {
-    dimension3<T>::depth = (T)0;
-}
-
-template<class T>
-dimension2<T>::dimension2(T width, T height):dimension3<T>(width, height) {
-    dimension3<T>::depth = (T)0;
-}
+dimension2<T>::dimension2(T width, T height):dimension3<T>(width, height, (T)0) {}

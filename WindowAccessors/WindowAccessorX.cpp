@@ -217,9 +217,9 @@ bool WindowAccessorX::isFullScreenEnabled() const {
 
 //@todo logging
 //@todo tests
-std::shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
+shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
     //@todo do events' masks is configured out of engine
-    std::shared_ptr<EventsData> eventsData(new EventsData());
+    shared_ptr<EventsData> eventsData(new EventsData());
 
     while(XEventsQueued(display, QueuedAlready)) {
         XEvent xEvent;
@@ -306,7 +306,7 @@ std::shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
         XQueryPointer(display, window, &rootWindow, &childWindow, &rootMouseX,
                       &rootMouseY, &windowMouseX, &windowMouseY, &mask);
 
-        std::shared_ptr<MousePosition> mousePosition =
+        shared_ptr<MousePosition> mousePosition =
                 std::make_shared<MousePosition>(new MousePosition(rootMouseX, rootMouseY, windowMouseX, windowMouseY));
 
         eventsData->setMousePosition(mousePosition);

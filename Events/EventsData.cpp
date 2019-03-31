@@ -18,19 +18,19 @@ EventsData::EventsData() {
     windowClosing = false;
 }
 
-std::set<int> EventsData::getPressedKeys() const {
+set<int> EventsData::getPressedKeys() const {
     return pressedKeys;
 }
 
-std::set<int> EventsData::getReleasedKeys() const {
+set<int> EventsData::getReleasedKeys() const {
     return releasedKeys;
 }
 
-std::set<int> EventsData::getPressedButtons() const {
+set<int> EventsData::getPressedButtons() const {
     return pressedButtons;
 }
 
-std::set<int> EventsData::getReleasedButtons() const {
+set<int> EventsData::getReleasedButtons() const {
     return releasedButtons;
 }
 
@@ -58,7 +58,7 @@ int EventsData::getMouseWheelDirection() const {
     return mouseWheelDirection;
 }
 
-std::shared_ptr<const MousePosition> EventsData::getMousePosition() const {
+shared_ptr<const MousePosition> EventsData::getMousePosition() const {
     return mousePosition;
 }
 
@@ -106,7 +106,7 @@ void EventsData::setMouseWheelDirection(int mouseWheelDirection) {
     this->mouseWheelDirection = mouseWheelDirection;
 }
 
-void EventsData::setMousePosition(std::shared_ptr<const MousePosition> mousePosition) {
+void EventsData::setMousePosition(shared_ptr<const MousePosition> mousePosition) {
     this->mousePosition = mousePosition;
 }
 

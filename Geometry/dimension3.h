@@ -15,7 +15,7 @@ namespace dengine::geometry {
 
         dimension3();
         dimension3(vector3<T> vec);
-        dimension3(dimension3<T> &dimension);
+        dimension3(const dimension3<T> &dimension);
         dimension3(T width, T height, T depth);
     };
 }

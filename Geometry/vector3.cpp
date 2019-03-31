@@ -13,7 +13,7 @@ vector3<T>::vector3() {
 }
 
 template<class T>
-vector3<T>::vector3(vector3<T> &vec) {
+vector3<T>::vector3(const vector3<T> &vec) {
     *this = vec;
 }
 
@@ -25,7 +25,7 @@ vector3<T>::vector3(T x, T y, T z) {
 }
 
 template<class T>
-T vector3<T>::getModule() {
+T vector3<T>::getModule() const {
     return (T)std::sqrt(x * x + y * y + z * z);
 }
 
@@ -39,7 +39,7 @@ void vector3<T>::normalize() {
 }
 
 template<class T>
-vector3<T> vector3<T>::getNormalizedVector() {
+vector3<T> vector3<T>::getNormalizedVector() const {
     vector3<T> result(*this);
 
     result.normalize();
@@ -48,7 +48,7 @@ vector3<T> vector3<T>::getNormalizedVector() {
 }
 
 template<class T>
-vector3<T>& vector3<T>::operator=(vector3<T> b) {
+vector3<T>& vector3<T>::operator=(const vector3<T>& b) {
     x = b.x;
     y = b.y;
     z = b.z;

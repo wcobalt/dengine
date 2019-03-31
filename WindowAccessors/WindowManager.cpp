@@ -6,10 +6,18 @@
 
 using namespace dengine::windowaccessors;
 
-WindowManager::WindowManager(std::shared_ptr<WindowAccessor> windowAccessor) {
+WindowManager::WindowManager(shared_ptr<WindowAccessor> windowAccessor) {
     this->windowAccessor = windowAccessor;
 }
 
-std::shared_ptr<WindowAccessor> WindowManager::getWindowAccessor() {
+void WindowManager::checkEvents() {
+    eventsData = windowAccessor->checkEvents();
+}
+
+shared_ptr<WindowAccessor> WindowManager::getWindowAccessor() {
     return windowAccessor;
+}
+
+shared_ptr<const EventsData> WindowManager::getEventsData() const {
+    return eventsData;
 }

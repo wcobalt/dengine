@@ -19,7 +19,7 @@ dimension3<T>::dimension3(vector3<T> vec) {
 }
 
 template<class T>
-dimension3<T>::dimension3(dimension3<T> &dimension) {
+dimension3<T>::dimension3(const dimension3<T> &dimension) {
     width = dimension.width;
     height = dimension.height;
     depth = dimension.depth;

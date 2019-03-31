@@ -7,18 +7,18 @@
 using namespace dengine;
 using namespace dengine::coreutils;
 
-template <class T>
-Entry<T>::Entry(std::shared_ptr<T> object, ID id) {
+template <class K, class V>
+Entry<K, V>::Entry(K id, std::shared_ptr<V> object) {
     this->object = object;
     this->id = id;
 }
 
-template <class T>
-std::shared_ptr<T> Entry<T>::getObject() {
+template <class K, class V>
+std::shared_ptr<V> Entry<K, V>::getObject() const {
     return object;
 }
 
-template <class T>
-ID Entry<T>::getID() {
+template <class K, class V>
+K Entry<K, V>::getID() const {
     return id;
 }

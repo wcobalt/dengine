@@ -10,7 +10,10 @@ template<class T>
 vector2<T>::vector2():vector3<T>() {}
 
 template<class T>
-vector2<T>::vector2(vector2<T> &vec):vector3<T>(vec) {
+vector2<T>::vector2(const vector2<T> &vec):vector2<T>(vec) {}
+
+template <class T>
+vector2<T>::vector2(const vector3<T> &vec):vector3<T>(vec) {
     vector3<T>::z = (T)0;
 }
 
@@ -18,9 +21,8 @@ template<class T>
 vector2<T>::vector2(T x, T y):vector3<T>(x, y, (T)0) {}
 
 template<class T>
-vector2<T>& vector2<T>::operator=(vector2<T> b) {
-    vector3<T>::x = b.x;
-    vector3<T>::y = b.y;
+vector2<T>& vector2<T>::operator=(const vector2<T>& b) {
+    (vector3<T>)*this = b;
 
     return *this;
 }
@@ -32,10 +34,11 @@ vector2<T> vector2<T>::operator+=(dengine::geometry::vector2<T> b) {
 
 template<class T>
 vector2<T> vector2<T>::operator+(vector2<T> b) {
-    vector2<T> result(*this);
+    vector3<T> a(*this);
 
-    result.x += b.x;
-    result.y += b.y;
+    a += b;
+
+    vector2<T> result(a);
 
     return result;
 }
@@ -47,10 +50,11 @@ vector2<T> vector2<T>::operator-=(dengine::geometry::vector2<T> b) {
 
 template<class T>
 vector2<T> vector2<T>::operator-(vector2<T> b) {
-    vector2<T> result(*this);
+    vector3<T> a(*this);
 
-    result.x -= b.x;
-    result.y -= b.y;
+    a -= b;
+
+    vector2<T> result(a);
 
     return result;
 }

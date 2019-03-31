@@ -11,17 +11,18 @@
 
 namespace dengine::coreutils {
     using namespace dengine;
-    template <class T>
+
+    template <class K, class V>
     class Entry {
     private:
-        std::shared_ptr<T> object;//may be get out shared_ptr?
-        ID id;
+        std::shared_ptr<V> object;//may be get out shared_ptr?
+        K id;
     public:
-        Entry(std::shared_ptr<T> object, ID id);
+        Entry(K id, std::shared_ptr<V> object);
 
-        std::shared_ptr<T> getObject();
+        std::shared_ptr<V> getObject() const;
 
-        ID getID();
+        K getID() const;
     };
 }
 

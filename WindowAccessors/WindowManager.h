@@ -10,13 +10,21 @@
 #include "WindowAccessor.h"
 
 namespace dengine::windowaccessors {
+    using std::shared_ptr;
+
     class WindowManager {
     private:
-        std::shared_ptr<WindowAccessor> windowAccessor;
-    public:
-        WindowManager(std::shared_ptr<WindowAccessor> windowAccessor);
+        shared_ptr<WindowAccessor> windowAccessor;
 
-        std::shared_ptr<WindowAccessor> getWindowAccessor();
+        shared_ptr<const EventsData> eventsData;
+    public:
+        WindowManager(shared_ptr<WindowAccessor> windowAccessor);
+
+        void checkEvents();
+
+        shared_ptr<WindowAccessor> getWindowAccessor();
+
+        shared_ptr<const EventsData> getEventsData() const;
     };
 }
 

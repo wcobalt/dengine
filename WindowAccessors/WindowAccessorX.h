@@ -15,6 +15,8 @@
 namespace dengine::windowaccessors {
     using namespace events;
 
+    using std::shared_ptr;
+
     struct PropertyData {
         unsigned char *data;
         ulong numberOfItems;
@@ -96,7 +98,7 @@ namespace dengine::windowaccessors {
 
         bool isFullScreenEnabled() const;
 
-        std::shared_ptr<const EventsData> checkEvents();
+        shared_ptr<const EventsData> checkEvents();
 
         ~WindowAccessorX();
 

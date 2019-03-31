@@ -2,7 +2,6 @@
 // Created by wcobalt on 19.09.18.
 //
 #include <set>
-#include <map>
 #include <memory>
 
 #ifndef DENGINE_EVENTSDATA_H
@@ -11,13 +10,16 @@
 #include "MousePosition.h"
 
 namespace dengine::events {
+    using std::set;
+    using std::shared_ptr;
+
     class EventsData {
     private:
-        std::set<int> pressedKeys;
-        std::set<int> releasedKeys;
+        set<int> pressedKeys;
+        set<int> releasedKeys;
 
-        std::set<int> pressedButtons;
-        std::set<int> releasedButtons;
+        set<int> pressedButtons;
+        set<int> releasedButtons;
 
         bool windowMaximized, windowMinimized,
                 windowWindowed;
@@ -28,19 +30,19 @@ namespace dengine::events {
 
         int mouseWheelDirection;
 
-        std::shared_ptr<const MousePosition> mousePosition;
+        shared_ptr<const MousePosition> mousePosition;
 
         bool windowClosing;
     public:
         EventsData();
 
-        std::set<int> getPressedKeys() const;
+        set<int> getPressedKeys() const;
 
-        std::set<int> getReleasedKeys() const;
+        set<int> getReleasedKeys() const;
 
-        std::set<int> getPressedButtons() const;
+        set<int> getPressedButtons() const;
 
-        std::set<int> getReleasedButtons() const;
+        set<int> getReleasedButtons() const;
 
         bool isWindowMaximized() const;
 
@@ -54,7 +56,7 @@ namespace dengine::events {
 
         int getMouseWheelDirection() const;
 
-        std::shared_ptr<const MousePosition> getMousePosition() const;
+        shared_ptr<const MousePosition> getMousePosition() const;
 
         bool isWindowClosing() const;
 
@@ -78,7 +80,7 @@ namespace dengine::events {
 
         void setMouseWheelDirection(int mouseWheelDirection);
 
-        void setMousePosition(std::shared_ptr<const MousePosition> mousePosition);
+        void setMousePosition(shared_ptr<const MousePosition> mousePosition);
 
         void setWindowClosing(bool windowClosing);
     };

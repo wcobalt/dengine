@@ -19,6 +19,8 @@ namespace dengine::windowaccessors {
     using namespace events;
     using namespace dengine::geometry;
 
+    using std::shared_ptr;
+
     class WindowAccessor {
     public:
         const int NOT_FIXED_SIZE = -1;
@@ -67,7 +69,7 @@ namespace dengine::windowaccessors {
 
         virtual bool isFullScreenEnabled() const = 0;
 
-        virtual std::shared_ptr<const EventsData> checkEvents() = 0;
+        virtual shared_ptr<const EventsData> checkEvents() = 0;
 
         virtual void destroy() = 0;
 

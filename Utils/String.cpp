@@ -10,7 +10,11 @@ String::String() {
     string = std::make_shared<std::string>(new std::string());
 }
 
-String::String(String &str) {
+String::String(const String &str) {
+    *this = str;
+}
+
+String::String(const char *str) {
     *this = str;
 }
 
@@ -24,12 +28,22 @@ String& String::operator=(const std::string &str) {
     return *this;
 }
 
-String& String::operator=(String str) {
+String& String::operator=(const char *str) {
+    string = std::make_shared<std::string>(new std::string(str));
+
+    return *this;
+}
+
+String& String::operator=(const String& str) {
     string = std::make_shared<std::string>(new std::string(*(str.get())));
 
     return *this;
 }
 
-shared_ptr<std::string> String::get() {
+bool String::operator==(const String &str) const {
+    return *string == *(str.get());
+}
+
+shared_ptr<std::string> String::get() const {
     return string;
 }

@@ -11,10 +11,13 @@
 namespace dengine::geometry {
     template<class T>
     class dimension2 : public dimension3<T> {
+    private:
+        T depth;
     public:
         dimension2();
         dimension2(vector2<T> vec);
-        dimension2(dimension2<T> &dimension);
+        dimension2(const dimension2<T> &dimension);
+        dimension2(const dimension3<T> &dimension);
         dimension2(T width, T height);
     };
 }

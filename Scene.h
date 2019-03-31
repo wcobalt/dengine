@@ -3,27 +3,34 @@
 //
 
 #include <string>
-#include <vector>
+#include <map>
 
 #ifndef DENGINE_SCENE_H
 #define DENGINE_SCENE_H
 
 #include "GameObject.h"
+#include "Coreutils/Entry.h"
+#include "ScenesManager.h"
 
 namespace dengine {
+    using namespace dengine::coreutils;
+
+    using std::shared_ptr;
+
     class Scene {
+    public:
+        const float ROOT_GAME_OBJECT_X = 0;
+        const float ROOT_GAME_OBJECT_Y = 0;
+        const float ROOT_GAME_OBJECT_Z = 0;
     private:
-        vector<shared_ptr<Entry<GameObject>>> instances;
-
-        ID nextInstanceId;
-
-        ID getUniqueGameObjectId();
-
-        shared_ptr<GameObject> getInstance(ID id);
-
-        ID getID(shared_ptr<GameObject> instance);
+        shared_ptr<GameObject> root;
     public:
         Scene();
+
+        void update();
+
+        virtual void sceneLoad();
+        virtual void sceneUnload();
 
         void placeInstance(shared_ptr<GameObject> instance);
 
@@ -32,11 +39,12 @@ namespace dengine {
 
         void destroyInstance(shared_ptr<GameObject> instance);
 
-        template<class T>
-        vector<shared_ptr<GameObject>> getInstances();
+        void clean();
 
-        template<class T>
-        vector<shared_ptr<GameObject>> getNearestInstance();
+        template <class T>
+        vector<shared_ptr<GameObject>> getInstances() const;
+
+        shared_ptr<GameObject> getRoot() const;
     };
 }
 

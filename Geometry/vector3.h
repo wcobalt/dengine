@@ -12,19 +12,19 @@ namespace dengine::geometry {
         T x, y, z;
 
         vector3();
-        vector3(vector3& vec);
+        vector3(const vector3<T>& vec);
         vector3(T x, T y, T z);
 
-        T getModule();
+        T getModule() const;
         void normalize();
-        vector3 getNormalizedVector();
+        vector3<T> getNormalizedVector() const;
 
-        vector3& operator=(vector3 b);
-        vector3 operator+=(vector3 b);
-        vector3 operator+(vector3 b);
-        vector3 operator-=(vector3 b);
-        vector3 operator-(vector3 b);
-        vector3 operator-();
+        vector3<T>& operator=(const vector3<T>& b);
+        vector3<T> operator+=(vector3<T> b);
+        vector3<T> operator+(vector3<T> b);
+        vector3<T> operator-=(vector3<T> b);
+        vector3<T> operator-(vector3<T> b);
+        vector3<T> operator-();
     };
 }
 
