@@ -77,7 +77,7 @@ shared_ptr<ScenesManager> Dengine::getScenesManager() const {
     return scenesManager;
 }
 
-shared_ptr<Dengine> Dengine::get() const {
+shared_ptr<Dengine> Dengine::get() {
     if (!dengine)
         return dengine;
 

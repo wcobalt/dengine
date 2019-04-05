@@ -57,7 +57,7 @@ namespace dengine {
 
         shared_ptr<ScenesManager> getScenesManager() const;
 
-        static shared_ptr<Dengine> get() const;
+        static shared_ptr<Dengine> get();
     };
 }
 
