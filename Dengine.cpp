@@ -31,7 +31,7 @@ void Dengine::init(shared_ptr<WindowManager> windowManager) {
 
 void Dengine::update() {
     windowManager->checkEvents();
-    scenesManager->update();
+    scenesManager->update({});
 }
 
 void Dengine::setFPS(float fps) {

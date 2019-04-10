@@ -17,9 +17,9 @@ ScenesManager::ScenesManager():currentScene(NOT_EXIST_SCENE, nullptr) {
     nextSceneId = Dengine::MINIMAL_SAFE_ID;
 }
 
-void ScenesManager::update() {
+void ScenesManager::update(DengineAccessor dengineAccessor) {
     if (currentScene.getID() != NOT_EXIST_SCENE) {
-        currentScene.getObject()->update();
+        currentScene.getObject()->update({});
 
         return;
     }
@@ -101,15 +101,12 @@ void ScenesManager::removeScene(String alias) {
 }
 
 void ScenesManager::setCurrentScene(Entry<ID, Scene> scene) {
-    if (currentScene.getID() != NOT_EXIST_SCENE) {
-        currentScene.getObject()->sceneUnload();
-
-        currentScene.getObject()->clean();
-    }
+    if (currentScene.getID() != NOT_EXIST_SCENE)
+        currentScene.getObject()->destroy({});
 
     currentScene = scene;
 
-    currentScene.getObject()->sceneLoad();
+    currentScene.getObject()->create({});
 }
 
 shared_ptr<Scene> ScenesManager::getScene(ID id) const {

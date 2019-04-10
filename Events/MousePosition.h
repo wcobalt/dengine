@@ -2,24 +2,23 @@
 // Created by wcobalt on 21.09.18.
 //
 
+#include "../Geometry/vectors.h"
+
 #ifndef DENGINE_MOUSEPOSITION_H
 #define DENGINE_MOUSEPOSITION_H
 
 namespace dengine::events {
+    using namespace dengine::geometry;
+
     class MousePosition {
     private:
-        long rootMouseX, rootMouseY;
-        long windowMouseX, windowMouseY;
+        vec2i rootMousePosition, windowMousePosition;
     public:
-        MousePosition(long rootMouseX, long rootMouseY, long windowMouseX, long windowMouseY);
+        MousePosition(int rootMouseX, int rootMouseY, int windowMouseX, int windowMouseY);
 
-        long getRootMouseX() const;
+        vec2i getRootMousePosition() const;
 
-        long getRootMouseY() const;
-
-        long getWindowMouseX() const;
-
-        long getWindowMouseY() const;
+        vec2i getWindowMousePosition() const;
     };
 }
 

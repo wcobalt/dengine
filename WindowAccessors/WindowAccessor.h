@@ -14,6 +14,7 @@
 #include "../Events/EventsData.h"
 #include "../Geometry/vectors.h"
 #include "../Geometry/dimensions.h"
+#include "../DObject.h"
 
 namespace dengine::windowaccessors {
     using namespace events;
@@ -21,7 +22,7 @@ namespace dengine::windowaccessors {
 
     using std::shared_ptr;
 
-    class WindowAccessor {
+    class WindowAccessor : public DObject {
     public:
         const int NOT_FIXED_SIZE = -1;
 
@@ -30,6 +31,8 @@ namespace dengine::windowaccessors {
         virtual void setVisible(bool isVisible) = 0;
 
         virtual void setDecorated(bool isDecorated) = 0;
+
+        virtual void setCursorVisible(bool isVisible) = 0;
 
         virtual void setWindowPosition(int x, int y) = 0;
 
@@ -51,9 +54,11 @@ namespace dengine::windowaccessors {
 
         virtual void setFullScreenEnabled(bool isEnabled) = 0;
 
-        virtual bool isVisible() = 0;
+        virtual bool isVisible() const = 0;
 
-        virtual bool isDecorated() = 0;
+        virtual bool isDecorated() const = 0;
+
+        virtual bool isCursorVisible() const = 0;
 
         virtual vec2i getWindowPosition() const = 0;
 

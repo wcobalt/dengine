@@ -9,6 +9,7 @@
 #include <climits>
 #include <thread>
 #include <cstring>
+#include <memory>
 
 //X11 windowAccessor
 
@@ -60,10 +61,19 @@ WindowAccessorX::WindowAccessorX(vec2i position, dim2i size, const std::string &
     :WindowAccessorX(position.x, position.y, size.width, size.height, title){}
 
 void WindowAccessorX::setVisible(bool isVisible) {
+    if (isVisible)
+        XMapWindow(display, window);
+    else
+        XUnmapWindow(display, window);
     //@todo implement
+
 }
 
 void WindowAccessorX::setDecorated(bool isDecorated) {
+    //@todo implement
+}
+
+void WindowAccessorX::setCursorVisible(bool isVisible) {
     //@todo implement
 }
 
@@ -125,11 +135,15 @@ void WindowAccessorX::setFullScreenEnabled(bool isEnabled) {
                SubstructureRedirectMask | SubstructureNotifyMask, &event);
 }
 
-bool WindowAccessorX::isVisible() {
+bool WindowAccessorX::isVisible() const {
     //@todo implement
 }
 
-bool WindowAccessorX::isDecorated() {
+bool WindowAccessorX::isDecorated() const {
+    //@todo implement
+}
+
+bool WindowAccessorX::isCursorVisible() const {
     //@todo implement
 }
 
@@ -322,7 +336,7 @@ WindowAccessorX::~WindowAccessorX() {
 void WindowAccessorX::destroy() {
     XDestroyWindow(display, window);
 
-    delete display;//@todo what is uncomplete type?
+    delete display;//@todo what is incomplete type?
     delete xVisualInfo;
 }
 

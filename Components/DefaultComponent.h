@@ -16,17 +16,17 @@ namespace dengine::components {
     public:
         DefaultComponent();
 
-        virtual void componentLoad(shared_ptr<GameObject> instance);
+        virtual void componentLoad(DengineAccessor dengineAccessor, shared_ptr<GameObject> instance);
 
-        virtual void componentUnload();
+        virtual void componentUnload(DengineAccessor dengineAccessor);
 
-        virtual void update();
+        virtual void update(DengineAccessor dengineAccessor);
 
-        virtual void instanceCreate();
+        virtual void instanceCreate(DengineAccessor dengineAccessor);
 
-        virtual void instanceDestroy();
+        virtual void instanceDestroy(DengineAccessor dengineAccessor);
 
-        virtual void sceneUnload();
+        virtual void sceneUnload(DengineAccessor dengineAccessor);
 
         virtual void setEnabled(bool isEnabled);
 

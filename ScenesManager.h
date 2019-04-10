@@ -10,12 +10,16 @@
 
 #include "Coreutils/ID.h"
 #include "Scene.h"
+#include "DObject.h"
+#include "DengineAccessor.h"
 
 namespace dengine {
+    using namespace dengine::utils;
+
     using std::shared_ptr;
     using std::map;
 
-    class ScenesManager {
+    class ScenesManager : public DObject {
     public:
         static const ID NOT_EXIST_SCENE = 0;
     private:
@@ -31,7 +35,7 @@ namespace dengine {
     public:
         ScenesManager();
 
-        void update();
+        void update(DengineAccessor dengineAccessor);
 
         ID addScene(shared_ptr<Scene> scene);
         ID addScene(shared_ptr<Scene> scene, String alias);

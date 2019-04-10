@@ -7,8 +7,8 @@
 #ifndef DENGINE_GAMEOBJECT_H
 #define DENGINE_GAMEOBJECT_H
 
+#include "DObject.h"
 #include "Components/Component.h"
-#include "Dengine.h"
 #include "Components/Transform3DComponent.h"
 
 namespace dengine {
@@ -17,18 +17,26 @@ namespace dengine {
     using std::vector;
     using std::shared_ptr;
 
-    class GameObject {
+    class GameObject : public DObject {
     private:
         vector<shared_ptr<Component>> components;
 
         shared_ptr<GameObject> parent;
         vector<shared_ptr<GameObject>> children;
 
+        void safelyRemoveComponent(vector<shared_ptr<Component>>::iterator it);
         void removeComponent(vector<shared_ptr<Component>>::iterator it);
+        void removeChild(vector<shared_ptr<GameObject>>::iterator it);
+
+        void initParent();
     public:
+        GameObject();
         GameObject(shared_ptr<Transform3DComponent> transform);
 
         void addComponent(shared_ptr<Component> component);
+
+        template<class T>
+        void addComponent();
 
         template <class T>
         void removeComponent();
@@ -49,6 +57,10 @@ namespace dengine {
         shared_ptr<T> getComponent() const;
 
         vector<shared_ptr<Component>> getAllComponents() const;
+
+        void create(DengineAccessor dengineAccessor);
+        void destroy(DengineAccessor dengineAccessor, bool isSceneUnloading);
+        void update(DengineAccessor dengineAccessor);
     };
 }
 

@@ -8,12 +8,13 @@
 #define DENGINE_ENTRY_H
 
 #include "../Dengine.h"
+#include "../DObject.h"
 
 namespace dengine::coreutils {
     using namespace dengine;
 
     template <class K, class V>
-    class Entry {
+    class Entry : public DObject {
     private:
         std::shared_ptr<V> object;//may be get out shared_ptr?
         K id;

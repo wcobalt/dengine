@@ -5,9 +5,11 @@
 #ifndef DENGINE_VECTOR3_H
 #define DENGINE_VECTOR3_H
 
+#include "../DObject.h"
+
 namespace dengine::geometry {
     template<typename T>
-    class vector3 {
+    class vector3 : public DObject {
     public:
         T x, y, z;
 

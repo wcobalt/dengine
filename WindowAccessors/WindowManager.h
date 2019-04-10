@@ -8,11 +8,12 @@
 #define DENGINE_WINDOWMANAGER_H
 
 #include "WindowAccessor.h"
+#include "../DObject.h"
 
 namespace dengine::windowaccessors {
     using std::shared_ptr;
 
-    class WindowManager {
+    class WindowManager : public DObject {
     private:
         shared_ptr<WindowAccessor> windowAccessor;
 

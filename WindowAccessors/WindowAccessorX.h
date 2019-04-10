@@ -13,7 +13,7 @@
 #include "../Events/EventsData.h"
 
 namespace dengine::windowaccessors {
-    using namespace events;
+    using namespace dengine::events;
 
     using std::shared_ptr;
 
@@ -60,6 +60,8 @@ namespace dengine::windowaccessors {
 
         void setDecorated(bool isDecorated);
 
+        void setCursorVisible(bool isVisible);
+
         void setWindowPosition(int x, int y);
 
         void setWindowPosition(vec2i position);
@@ -80,9 +82,11 @@ namespace dengine::windowaccessors {
 
         void setFullScreenEnabled(bool isEnabled);
 
-        bool isVisible();
+        bool isVisible() const;
 
-        bool isDecorated();
+        bool isDecorated() const;
+
+        bool isCursorVisible() const;
 
         vec2i getWindowPosition() const;
 

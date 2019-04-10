@@ -8,12 +8,13 @@
 #define DENGINE_EVENTSDATA_H
 
 #include "MousePosition.h"
+#include "../DObject.h"
 
 namespace dengine::events {
     using std::set;
     using std::shared_ptr;
 
-    class EventsData {
+    class EventsData : public DObject {
     private:
         set<int> pressedKeys;
         set<int> releasedKeys;

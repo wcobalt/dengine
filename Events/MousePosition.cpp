@@ -6,25 +6,18 @@
 
 using namespace dengine::events;
 
-MousePosition::MousePosition(long rootMouseX, long rootMouseY, long windowMouseX, long windowMouseY) {
-    this->rootMouseX = rootMouseX;
-    this->rootMouseY = rootMouseY;
-    this->windowMouseX = windowMouseX;
-    this->windowMouseY = windowMouseY;
+MousePosition::MousePosition(int rootMouseX, int rootMouseY, int windowMouseX, int windowMouseY) {
+    this->rootMousePosition.x = rootMouseX;
+    this->rootMousePosition.y = rootMouseY;
+
+    this->windowMousePosition.x = windowMouseX;
+    this->windowMousePosition.y = windowMouseY;
 }
 
-long MousePosition::getRootMouseX() const {
-    return rootMouseX;
+vec2i MousePosition::getRootMousePosition() const {
+    return rootMousePosition;
 }
 
-long MousePosition::getRootMouseY() const {
-    return rootMouseY;
-}
-
-long MousePosition::getWindowMouseX() const {
-    return windowMouseX;
-}
-
-long MousePosition::getWindowMouseY() const {
-    return windowMouseY;
+vec2i MousePosition::getWindowMousePosition() const {
+    return windowMousePosition;
 }

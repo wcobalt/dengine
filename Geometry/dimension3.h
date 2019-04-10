@@ -6,10 +6,11 @@
 #define DENGINE_DIMENSION3_H
 
 #include "vector3.h"
+#include "../DObject.h"
 
 namespace dengine::geometry {
     template<class T>
-    class dimension3 {
+    class dimension3 : public DObject {
     public:
         T width, height, depth;
 

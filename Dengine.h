@@ -7,12 +7,13 @@
 #ifndef DENGINE_DENGINE_H
 #define DENGINE_DENGINE_H
 
-#include "Scene.h"
 #include "WindowAccessors/WindowManager.h"
 #include "Utils/String.h"
 #include "Coreutils/Entry.h"
 #include "ScenesManager.h"
 #include "Coreutils/ID.h"
+#include "DObject.h"
+#include "Scene.h"
 
 namespace dengine {
     using namespace windowaccessors;
@@ -20,7 +21,8 @@ namespace dengine {
     using namespace events;
     using namespace coreutils;
 
-    class Dengine {
+    //singleton
+    class Dengine : public DObject {
     public:
         static const ID MINIMAL_SAFE_ID = 3;
     private:
@@ -37,6 +39,7 @@ namespace dengine {
         void update();
         void run();
 
+        //@todo NetworkManager, AudioManager
         Dengine(shared_ptr<WindowManager> windowManager);
     public:
         //SOLID

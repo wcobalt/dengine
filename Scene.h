@@ -8,29 +8,30 @@
 #ifndef DENGINE_SCENE_H
 #define DENGINE_SCENE_H
 
-#include "GameObject.h"
-#include "Coreutils/Entry.h"
+#include "DObject.h"
 #include "ScenesManager.h"
+#include "Coreutils/Entry.h"
+#include "GameObject.h"
 
 namespace dengine {
     using namespace dengine::coreutils;
 
     using std::shared_ptr;
 
-    class Scene {
+    class Scene : public DObject {
     public:
         const float ROOT_GAME_OBJECT_X = 0;
         const float ROOT_GAME_OBJECT_Y = 0;
         const float ROOT_GAME_OBJECT_Z = 0;
     private:
         shared_ptr<GameObject> root;
+
+        void deleteInstance(shared_ptr<GameObject> instance, bool isSceneUnloading);
+    protected:
+        virtual void sceneLoad(DengineAccessor dengineAccessor);
+        virtual void sceneUnload(DengineAccessor dengineAccessor);
     public:
         Scene();
-
-        void update();
-
-        virtual void sceneLoad();
-        virtual void sceneUnload();
 
         void placeInstance(shared_ptr<GameObject> instance);
 
@@ -39,7 +40,11 @@ namespace dengine {
 
         void destroyInstance(shared_ptr<GameObject> instance);
 
-        void clean();
+        void update(DengineAccessor dengineAccessor);
+
+        void create(DengineAccessor dengineAccessor);
+
+        void destroy(DengineAccessor dengineAccessor);
 
         template <class T>
         vector<shared_ptr<GameObject>> getInstances() const;

@@ -8,12 +8,14 @@
 #ifndef DENGINE_STRING_H
 #define DENGINE_STRING_H
 
+#include "../DObject.h"
+
 namespace dengine::utils {
     using std::shared_ptr;
 
     //@todo make non-virtual functions as virtual where it needed
     //With love from Java!
-    class String {
+    class String : public DObject {
     private:
         shared_ptr<std::string> string;
     public:

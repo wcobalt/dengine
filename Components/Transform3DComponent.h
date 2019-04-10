@@ -28,13 +28,13 @@ namespace dengine::components {
         Transform3DComponent(float x, float y, float z);
         Transform3DComponent(vec3f position, vec3f rotation, vec3f scale);
 
-        virtual void componentUnload();
+        virtual void componentUnload(DengineAccessor dengineAccessor);
 
-        virtual void update();
+        virtual void update(DengineAccessor dengineAccessor);
 
-        virtual void instanceCreate();
+        virtual void instanceCreate(DengineAccessor dengineAccessor);
 
-        virtual void instanceDestroy();
+        virtual void instanceDestroy(DengineAccessor dengineAccessor);
 
         void setPosition(float x, float y, float z);
         void setPosition(vec3f vec);

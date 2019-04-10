@@ -22,12 +22,14 @@ Scene::Scene() {
     root = std::make_shared<GameObject>(new GameObject(transform));
 }
 
-void Scene::sceneLoad() {}
+void Scene::sceneLoad(DengineAccessor dengineAccessor) {}
 
-void Scene::sceneUnload() {}
+void Scene::sceneUnload(DengineAccessor dengineAccessor) {}
 
 void Scene::placeInstance(shared_ptr<GameObject> instance) {
     root->addChild(instance);
+
+    instance->create({});
 }
 
 void Scene::placeInstance(shared_ptr<GameObject> instance, float x, float y) {
@@ -45,29 +47,11 @@ void Scene::placeInstance(shared_ptr<GameObject> instance, float x, float y, flo
 }
 
 void Scene::destroyInstance(shared_ptr<GameObject> instance) {
-    //@todo check memory safety
-    instance->removeAllChildren();
-
-    instance->getParent()->removeChild(instance);
+    deleteInstance(instance, false);
 }
 
-void Scene::clean() {
-    queue<shared_ptr<GameObject>> q;
-
-    q.push(root);
-
-    while (!q.empty()) {
-        shared_ptr<GameObject> currentInstance = q.front();
-
-        q.pop();
-
-        vector<shared_ptr<GameObject>> children = currentInstance->getChildren();
-
-        for (const auto& instance : children)
-            q.push(instance);
-
-        destroyInstance(currentInstance);
-    }
+void Scene::deleteInstance(shared_ptr<GameObject> instance, bool isSceneUnloading) {
+    instance->destroy({}, isSceneUnloading);
 }
 
 template <class T>
@@ -101,6 +85,46 @@ shared_ptr<GameObject> Scene::getRoot() const {
     return root;
 }
 
-void Scene::update() {
-    //
+void Scene::update(DengineAccessor dengineAccessor) {
+    queue<shared_ptr<GameObject>> q;
+
+    q.push(root);
+
+    while (!q.empty()) {
+        shared_ptr<GameObject> currentInstance = q.front();
+
+        q.pop();
+
+        vector<shared_ptr<GameObject>> children = currentInstance->getChildren();
+
+        for (const auto& instance : children)
+            q.push(instance);
+
+        currentInstance->update({});
+    }
+}
+
+void Scene::destroy(DengineAccessor dengineAccessor) {
+    sceneUnload({});
+
+    queue<shared_ptr<GameObject>> q;
+
+    q.push(root);
+
+    while (!q.empty()) {
+        shared_ptr<GameObject> currentInstance = q.front();
+
+        q.pop();
+
+        vector<shared_ptr<GameObject>> children = currentInstance->getChildren();
+
+        for (const auto& instance : children)
+            q.push(instance);
+
+        deleteInstance(currentInstance, true);
+    }
+}
+
+void Scene::create(DengineAccessor dengineAccessor) {
+    sceneLoad({});
 }

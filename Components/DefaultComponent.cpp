@@ -11,17 +11,17 @@ using namespace dengine::exceptions;
 
 DefaultComponent::DefaultComponent() = default;
 
-void DefaultComponent::componentUnload() {}
+void DefaultComponent::componentUnload(DengineAccessor dengineAccessor) {}
 
-void DefaultComponent::update() {}
+void DefaultComponent::update(DengineAccessor dengineAccessor) {}
 
-void DefaultComponent::instanceCreate() {}
+void DefaultComponent::instanceCreate(DengineAccessor dengineAccessor) {}
 
-void DefaultComponent::instanceDestroy() {}
+void DefaultComponent::instanceDestroy(DengineAccessor dengineAccessor) {}
 
-void DefaultComponent::sceneUnload() {}
+void DefaultComponent::sceneUnload(DengineAccessor dengineAccessor) {}
 
-void DefaultComponent::componentLoad(shared_ptr<GameObject> instance) {
+void DefaultComponent::componentLoad(DengineAccessor dengineAccessor, shared_ptr<GameObject> instance) {
     boundInstance = instance;
 }
 
