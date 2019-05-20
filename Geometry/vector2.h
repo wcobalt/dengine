@@ -15,6 +15,7 @@ namespace dengine::geometry {
     public:
         vector2();
         vector2(const vector2<T>& vec);
+        //@todo explicit warning
         vector2(const vector3<T>& vec);
         vector2(T x, T y);
 

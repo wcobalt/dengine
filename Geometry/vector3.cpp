@@ -2,8 +2,9 @@
 // Created by wcobalt on 3/23/19.
 //
 
-#include "vector3.h"
 #include <cmath>
+
+#include "vector3.h"
 
 using namespace dengine::geometry;
 

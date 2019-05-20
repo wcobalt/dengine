@@ -2,23 +2,24 @@
 // Created by wcobalt on 21.09.18.
 //
 
-#include "../Geometry/vectors.h"
-
 #ifndef DENGINE_MOUSEPOSITION_H
 #define DENGINE_MOUSEPOSITION_H
 
-namespace dengine::events {
-    using namespace dengine::geometry;
+#include "../Geometry/vectors.h"
+#include "../DObject.h"
 
-    class MousePosition {
+namespace dengine::events {
+    //@todo think about Dobject
+    //@todo make WindowAccessor independent from vec2 and dimension (make MousePosition for Dengine, return for user with vec2)
+    class MousePosition : public DObject {
     private:
-        vec2i rootMousePosition, windowMousePosition;
+        dengine::geometry::vec2i rootMousePosition, windowMousePosition;
     public:
         MousePosition(int rootMouseX, int rootMouseY, int windowMouseX, int windowMouseY);
 
-        vec2i getRootMousePosition() const;
+        dengine::geometry::vec2i getRootMousePosition() const;
 
-        vec2i getWindowMousePosition() const;
+        dengine::geometry::vec2i getWindowMousePosition() const;
     };
 }
 

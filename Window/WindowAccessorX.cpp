@@ -1,20 +1,25 @@
 //For this libraries you should install libgl1-mesa-dev
 #include <X11/Xlib.h>
+#include <X11/Xatom.h>
 #include <GL/glx.h>
 #include <GL/gl.h>
-#include <X11/Xatom.h>
-#include "WindowAccessorX.h"
-#include <iostream>
+
 #include <string>
 #include <climits>
 #include <thread>
 #include <cstring>
 #include <memory>
 
-//X11 windowAccessor
+#include "WindowAccessorX.h"
+#include "../Geometry/vectors.h"
+#include "../Geometry/dimensions.h"
+#include "../Events/MousePosition.h"
+#include "../Events/EventsData.h"
 
-using namespace dengine::windowaccessors;
+using std::shared_ptr;
+using namespace dengine::window;
 using namespace dengine::events;
+using namespace dengine::geometry;
 
 WindowAccessorX::WindowAccessorX(int x, int y, uint width,
                                 uint height, const std::string& title):title(title) {
@@ -320,8 +325,7 @@ shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
         XQueryPointer(display, window, &rootWindow, &childWindow, &rootMouseX,
                       &rootMouseY, &windowMouseX, &windowMouseY, &mask);
 
-        shared_ptr<MousePosition> mousePosition =
-                std::make_shared<MousePosition>(new MousePosition(rootMouseX, rootMouseY, windowMouseX, windowMouseY));
+        shared_ptr<MousePosition> mousePosition(new MousePosition(rootMouseX, rootMouseY, windowMouseX, windowMouseY));
 
         eventsData->setMousePosition(mousePosition);
     }

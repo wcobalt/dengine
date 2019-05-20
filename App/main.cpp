@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../WindowAccessors/WindowAccessorX.h"
+#include "../Window/WindowAccessorX.h"
 #include <string>
 #include "../Dengine.h"
 #include <memory>
@@ -9,7 +9,7 @@
 //@TODO windows forms(later) support
 
 using namespace dengine;
-using namespace dengine::windowaccessors;
+using namespace dengine::window;
 
 int main() {//memory safe
     std::shared_ptr<WindowAccessor> accessor(new WindowAccessorX(0, 0, 400, 200, "Test window"));

@@ -2,17 +2,19 @@
 // Created by wcobalt on 16.09.18.
 //
 
-#include <GL/glx.h>
-#include <GL/gl.h>
 #include <future>
 #include <thread>
 #include <chrono>
-#include <iostream>
+#include <memory>
 
 #include "Dengine.h"
+#include "Window/WindowManager.h"
+#include "ScenesManager.h"
 #include "Exceptions/DengineIsNotInitializedException.h"
 
+using std::shared_ptr;
 using namespace dengine;
+using namespace dengine::window;
 using namespace dengine::exceptions;
 
 Dengine::Dengine(shared_ptr<WindowManager> windowManager) {
@@ -21,12 +23,17 @@ Dengine::Dengine(shared_ptr<WindowManager> windowManager) {
     mIsPaused = false;
     isGameStopped = false;
 
-    scenesManager = std::make_shared<ScenesManager>(new ScenesManager());
+    scenesManager = std::make_shared<ScenesManager>();
 }
 
 void Dengine::init(shared_ptr<WindowManager> windowManager) {
-    if (!dengine)
-        dengine = std::make_shared<Dengine>(new Dengine(windowManager));
+    if (!dengine) {
+        Dengine* dengine = new Dengine(windowManager);
+
+        shared_ptr<Dengine> fake(dengine);
+
+        Dengine::dengine = fake;
+    }
 }
 
 void Dengine::update() {

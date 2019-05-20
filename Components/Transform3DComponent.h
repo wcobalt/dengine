@@ -2,56 +2,44 @@
 // Created by wcobalt on 2/23/19.
 //
 
-#include <memory>
-
 #ifndef DENGINE_TRANSFORM3DCOMPONENT_H
 #define DENGINE_TRANSFORM3DCOMPONENT_H
 
+#include <memory>
+
 #include "DefaultComponent.h"
 #include "../GameObject.h"
-#include "../Dengine.h"
 #include "../Geometry/vectors.h"
 
 namespace dengine::components {
-    using namespace dengine::geometry;
-    using namespace dengine;
-    using std::shared_ptr;
-
     class Transform3DComponent : public DefaultComponent {
     private:
-        vec3f position;
-        vec3f rotation;
-        vec3f scale;
+        dengine::geometry::vec3f position;
+        dengine::geometry::vec3f rotation;
+        dengine::geometry::vec3f scale;
     public:
         Transform3DComponent();
-        Transform3DComponent(vec3f position);
+        Transform3DComponent(dengine::geometry::vec3f position);
         Transform3DComponent(float x, float y, float z);
-        Transform3DComponent(vec3f position, vec3f rotation, vec3f scale);
-
-        virtual void componentUnload(DengineAccessor dengineAccessor);
-
-        virtual void update(DengineAccessor dengineAccessor);
-
-        virtual void instanceCreate(DengineAccessor dengineAccessor);
-
-        virtual void instanceDestroy(DengineAccessor dengineAccessor);
+        Transform3DComponent(dengine::geometry::vec3f position, dengine::geometry::vec3f rotation,
+                             dengine::geometry::vec3f scale);
 
         void setPosition(float x, float y, float z);
-        void setPosition(vec3f vec);
+        void setPosition(dengine::geometry::vec3f vec);
         void setRotation(float x, float y, float z);
-        void setRotation(vec3f vec);
+        void setRotation(dengine::geometry::vec3f vec);
         void setScale(float x, float y, float z);
-        void setScale(vec3f vec);
+        void setScale(dengine::geometry::vec3f vec);
 
-        vec3f getPosition() const;
-        vec3f getRotation() const;
-        vec3f getScale() const;
+        dengine::geometry::vec3f getPosition() const;
+        dengine::geometry::vec3f getRotation() const;
+        dengine::geometry::vec3f getScale() const;
 
-        double getDistanceTo(shared_ptr<GameObject> instance) const;
-        double getDistanceTo(vec3f position) const;
+        double getDistanceTo(std::shared_ptr<dengine::GameObject> instance) const;
+        double getDistanceTo(dengine::geometry::vec3f position) const;
 
         template <class T>
-        shared_ptr<GameObject> getNearestInstance() const;
+        std::shared_ptr<dengine::GameObject> getNearestInstance() const;
     };
 }
 

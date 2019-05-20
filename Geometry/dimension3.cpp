@@ -3,6 +3,7 @@
 //
 
 #include "dimension3.h"
+#include "vector3.h"
 
 using namespace dengine::geometry;
 

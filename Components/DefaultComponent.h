@@ -5,34 +5,38 @@
 #ifndef DENGINE_DEFAULTCOMPONENT_H
 #define DENGINE_DEFAULTCOMPONENT_H
 
+#include <memory>
+
 #include "Component.h"
+#include "../GameObject.h"
+#include "../DengineAccessor.h"
 
 namespace dengine::components {
     class DefaultComponent : public Component {
     private:
         bool mIsEnabled;
 
-        shared_ptr<GameObject> boundInstance;
+        std::shared_ptr<dengine::GameObject> boundInstance;
     public:
         DefaultComponent();
 
-        virtual void componentLoad(DengineAccessor dengineAccessor, shared_ptr<GameObject> instance);
+        virtual void componentLoad(dengine::DengineAccessor dengineAccessor, std::shared_ptr<dengine::GameObject> instance);
 
-        virtual void componentUnload(DengineAccessor dengineAccessor);
+        virtual void componentUnload(dengine::DengineAccessor dengineAccessor);
 
-        virtual void update(DengineAccessor dengineAccessor);
+        virtual void update(dengine::DengineAccessor dengineAccessor);
 
-        virtual void instanceCreate(DengineAccessor dengineAccessor);
+        virtual void instanceCreate(dengine::DengineAccessor dengineAccessor);
 
-        virtual void instanceDestroy(DengineAccessor dengineAccessor);
+        virtual void instanceDestroy(dengine::DengineAccessor dengineAccessor);
 
-        virtual void sceneUnload(DengineAccessor dengineAccessor);
+        virtual void sceneUnload(dengine::DengineAccessor dengineAccessor);
 
         virtual void setEnabled(bool isEnabled);
 
         virtual bool isEnabled() const;
 
-        virtual shared_ptr<GameObject> getBoundInstance() const;
+        virtual std::shared_ptr<dengine::GameObject> getBoundInstance() const;
     };
 }
 

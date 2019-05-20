@@ -1,7 +1,7 @@
 //
 // Created by wcobalt on 19.09.18.
 //
-#include <string>
+
 #include <memory>
 
 #ifndef DENGINE_COMPONENT_H
@@ -16,28 +16,25 @@ namespace dengine {
 }
 
 namespace dengine::components {
-    using namespace dengine;
-    using std::shared_ptr;
-
     class Component : public DObject {
     public:
-        virtual void componentLoad(DengineAccessor dengineAccessor, shared_ptr<GameObject> instance) = 0;
+        virtual void componentLoad(dengine::DengineAccessor dengineAccessor, std::shared_ptr<dengine::GameObject> instance) = 0;
 
-        virtual void componentUnload(DengineAccessor dengineAccessor) = 0;
+        virtual void componentUnload(dengine::DengineAccessor dengineAccessor) = 0;
 
-        virtual void update(DengineAccessor dengineAccessor) = 0;
+        virtual void update(dengine::DengineAccessor dengineAccessor) = 0;
 
-        virtual void instanceCreate(DengineAccessor dengineAccessor) = 0;
+        virtual void instanceCreate(dengine::DengineAccessor dengineAccessor) = 0;
 
-        virtual void instanceDestroy(DengineAccessor dengineAccessor) = 0;
+        virtual void instanceDestroy(dengine::DengineAccessor dengineAccessor) = 0;
 
-        virtual void sceneUnload(DengineAccessor dengineAccessor) = 0;
+        virtual void sceneUnload(dengine::DengineAccessor dengineAccessor) = 0;
 
         virtual void setEnabled(bool isEnabled) = 0;
 
         virtual bool isEnabled() const = 0;
 
-        virtual shared_ptr<GameObject> getBoundInstance() const = 0;
+        virtual std::shared_ptr<dengine::GameObject> getBoundInstance() const = 0;
 
         //@todo make mechanism for pause-exceptions (object which still be calculated when game paused)
     };

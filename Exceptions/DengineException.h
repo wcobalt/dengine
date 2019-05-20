@@ -9,7 +9,7 @@
 
 #include "../DObject.h"
 
-//@todo is exceptions need to extend DObject?
+//@todo does exceptions need to extend DObject?
 namespace dengine::exceptions {
     class DengineException : public std::exception, DObject {
         virtual const char* what() const noexcept = 0;

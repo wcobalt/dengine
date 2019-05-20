@@ -3,3 +3,8 @@
 //
 
 #include "DengineAccessor.h"
+
+using namespace dengine;
+
+DengineAccessor::DengineAccessor() = default;
+DengineAccessor* DengineAccessor::operator=(dengine::DengineAccessor accessor) {}

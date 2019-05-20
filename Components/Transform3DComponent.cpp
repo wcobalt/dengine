@@ -5,14 +5,20 @@
 #include <queue>
 #include <vector>
 #include <float.h>
+#include <memory>
 
 #include "Transform3DComponent.h"
 #include "../Geometry/Geometry.h"
+#include "../GameObject.h"
+#include "../Scene.h"
 
+using namespace dengine;
 using namespace dengine::components;
+using namespace dengine::geometry;
 
 using std::queue;
 using std::vector;
+using std::shared_ptr;
 
 Transform3DComponent::Transform3DComponent() = default;
 

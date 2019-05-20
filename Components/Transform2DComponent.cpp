@@ -3,8 +3,11 @@
 //
 
 #include "Transform2DComponent.h"
+#include "Transform3DComponent.h"
+#include "../Geometry/vectors.h"
 
 using namespace dengine::components;
+using namespace dengine::geometry;
 
 Transform2DComponent::Transform2DComponent() = default;
 

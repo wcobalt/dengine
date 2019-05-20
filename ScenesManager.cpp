@@ -2,12 +2,20 @@
 // Created by wcobalt on 3/30/19.
 //
 
+#include <map>
+#include <memory>
+#include <string>
+
 #include "ScenesManager.h"
-#include "Events/EventsData.h"
-#include "Events/MousePosition.h"
+#include "Coreutils/ID.h"
+#include "Scene.h"
+#include "DengineAccessor.h"
 #include "Exceptions/NoCurrentSceneException.h"
 #include "Exceptions/NoSuitableSceneException.h"
 #include "Exceptions/CurrentSceneRemovingException.h"
+
+using std::shared_ptr;
+using std::string;
 
 using namespace dengine;
 using namespace dengine::coreutils;
@@ -18,8 +26,8 @@ ScenesManager::ScenesManager():currentScene(NOT_EXIST_SCENE, nullptr) {
 }
 
 void ScenesManager::update(DengineAccessor dengineAccessor) {
-    if (currentScene.getID() != NOT_EXIST_SCENE) {
-        currentScene.getObject()->update({});
+    if (currentScene.first != NOT_EXIST_SCENE) {
+        currentScene.second->update({});
 
         return;
     }
@@ -31,11 +39,11 @@ ID ScenesManager::addScene(shared_ptr<Scene> scene) {
     return addScene(scene, "");
 }
 
-ID ScenesManager::addScene(shared_ptr<Scene> scene, String alias) {
+ID ScenesManager::addScene(shared_ptr<Scene> scene, const string& alias) {
     ID id = getUniqueSceneId();
 
-    scenesIds.insert(std::pair<ID, Entry<String, Scene>>(id, Entry(alias, scene)));
-    scenesAliases.insert(std::pair<String, Entry<ID, Scene>>(alias, Entry(id, scene)));
+    scenesIds.insert(std::make_pair(id, std::make_pair(alias, scene)));
+    scenesAliases.insert(std::make_pair(alias, std::make_pair(id, scene)));
 
     return id;
 }
@@ -44,7 +52,7 @@ void ScenesManager::loadScene(ID id) {
     auto it = scenesIds.find(id);
 
     if (it != scenesIds.end()) {
-        setCurrentScene(Entry<ID, Scene>(id, it->second.getObject()));
+        setCurrentScene(std::make_pair(id, it->second.second));
 
         return;
     }
@@ -52,7 +60,7 @@ void ScenesManager::loadScene(ID id) {
     throw NoSuitableSceneException();
 }
 
-void ScenesManager::loadScene(String alias) {
+void ScenesManager::loadScene(const string& alias) {
     auto it = scenesAliases.find(alias);
 
     if (it != scenesAliases.end()) {
@@ -65,11 +73,11 @@ void ScenesManager::loadScene(String alias) {
 }
 
 void ScenesManager::removeScene(ID id) {
-    if (id != currentScene.getID()) {
+    if (id != currentScene.first) {
         auto it = scenesIds.find(id);
 
         if (it != scenesIds.end()) {
-            scenesAliases.erase(it->second.getID());
+            scenesAliases.erase(it->second.first);
             scenesIds.erase(it);
 
             return;
@@ -81,13 +89,13 @@ void ScenesManager::removeScene(ID id) {
     throw CurrentSceneRemovingException();
 }
 
-void ScenesManager::removeScene(String alias) {
+void ScenesManager::removeScene(const string& alias) {
     auto it = scenesAliases.find(alias);
 
     if (it != scenesAliases.end()) {
-        ID id = it->second.getID();
+        ID id = it->second.first;
 
-        if (id != currentScene.getID()) {
+        if (id != currentScene.first) {
             scenesIds.erase(id);
             scenesAliases.erase(it);
 
@@ -100,61 +108,62 @@ void ScenesManager::removeScene(String alias) {
     throw NoSuitableSceneException();
 }
 
-void ScenesManager::setCurrentScene(Entry<ID, Scene> scene) {
-    if (currentScene.getID() != NOT_EXIST_SCENE)
-        currentScene.getObject()->destroy({});
+void ScenesManager::setCurrentScene(std::pair<ID, shared_ptr<Scene>> scene) {
+    if (currentScene.first != NOT_EXIST_SCENE)
+        currentScene.second->destroy({});
 
-    currentScene = scene;
+    currentScene.first = scene.first;
+    currentScene.second = scene.second;
 
-    currentScene.getObject()->create({});
+    currentScene.second->create({});
 }
 
 shared_ptr<Scene> ScenesManager::getScene(ID id) const {
     auto it = scenesIds.find(id);
 
     if (it != scenesIds.end())
-        return it->second.getObject();
+        return it->second.second;
 
     throw NoSuitableSceneException();
 }
 
-shared_ptr<Scene> ScenesManager::getScene(String alias) const {
+shared_ptr<Scene> ScenesManager::getScene(const string& alias) const {
     auto it = scenesAliases.find(alias);
 
     if (it != scenesAliases.end())
-        return it->second.getObject();
+        return it->second.second;
 
     throw NoSuitableSceneException(); //may be better return NOT_EXIST_SCENE?
 }
 
 ID ScenesManager::getCurrentSceneID() const {
-    if (currentScene.getID() != NOT_EXIST_SCENE)
-        return currentScene.getID();
+    if (currentScene.first != NOT_EXIST_SCENE)
+        return currentScene.first;
 
     throw NoCurrentSceneException();
 }
 
 shared_ptr<Scene> ScenesManager::getCurrentScene() const {
-    if (currentScene.getID() != NOT_EXIST_SCENE)
-        return currentScene.getObject();
+    if (currentScene.first != NOT_EXIST_SCENE)
+        return currentScene.second;
 
     throw NoCurrentSceneException();
 }
 
-ID ScenesManager::getIDByAlias(String alias) const {
+ID ScenesManager::getIDByAlias(const string& alias) const {
     auto it = scenesAliases.find(alias);
 
     if (it != scenesAliases.end())
-        return it->second.getID();
+        return it->second.first;
 
     throw NoSuitableSceneException();
 }
 
-String ScenesManager::getAliasByID(ID id) const {
+const string& ScenesManager::getAliasByID(ID id) const {
     auto it = scenesIds.find(id);
 
     if (it != scenesIds.end())
-        return it->second.getID();
+        return it->second.first;
 
     throw NoSuitableSceneException();
 }

@@ -4,52 +4,48 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 #ifndef DENGINE_SCENE_H
 #define DENGINE_SCENE_H
 
 #include "DObject.h"
-#include "ScenesManager.h"
-#include "Coreutils/Entry.h"
 #include "GameObject.h"
+#include "DengineAccessor.h"
 
 namespace dengine {
-    using namespace dengine::coreutils;
-
-    using std::shared_ptr;
-
     class Scene : public DObject {
     public:
         const float ROOT_GAME_OBJECT_X = 0;
         const float ROOT_GAME_OBJECT_Y = 0;
         const float ROOT_GAME_OBJECT_Z = 0;
     private:
-        shared_ptr<GameObject> root;
+        std::shared_ptr<dengine::GameObject> root;
 
-        void deleteInstance(shared_ptr<GameObject> instance, bool isSceneUnloading);
+        void deleteInstance(std::shared_ptr<dengine::GameObject> instance, bool isSceneUnloading);
     protected:
-        virtual void sceneLoad(DengineAccessor dengineAccessor);
-        virtual void sceneUnload(DengineAccessor dengineAccessor);
+        virtual void sceneLoad(dengine::DengineAccessor dengineAccessor);
+        virtual void sceneUnload(dengine::DengineAccessor dengineAccessor);
     public:
         Scene();
 
-        void placeInstance(shared_ptr<GameObject> instance);
+        void placeInstance(std::shared_ptr<dengine::GameObject> instance);
 
-        void placeInstance(shared_ptr<GameObject> instance, float x, float y);
-        void placeInstance(shared_ptr<GameObject> instance, float x, float y, float z);
+        void placeInstance(std::shared_ptr<dengine::GameObject> instance, float x, float y);
+        void placeInstance(std::shared_ptr<dengine::GameObject> instance, float x, float y, float z);
 
-        void destroyInstance(shared_ptr<GameObject> instance);
+        void destroyInstance(std::shared_ptr<dengine::GameObject> instance);
 
-        void update(DengineAccessor dengineAccessor);
+        void update(dengine::DengineAccessor dengineAccessor);
 
-        void create(DengineAccessor dengineAccessor);
+        void create(dengine::DengineAccessor dengineAccessor);
 
-        void destroy(DengineAccessor dengineAccessor);
+        void destroy(dengine::DengineAccessor dengineAccessor);
 
         template <class T>
-        vector<shared_ptr<GameObject>> getInstances() const;
+        std::vector<std::shared_ptr<GameObject>> getInstances() const;
 
-        shared_ptr<GameObject> getRoot() const;
+        std::shared_ptr<dengine::GameObject> getRoot() const;
     };
 }
 

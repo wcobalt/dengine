@@ -1,13 +1,18 @@
 //
 // Created by wcobalt on 3/30/19.
 //
+#include <memory>
 
 #include "DefaultComponent.h"
+#include "../DengineAccessor.h"
+#include "../GameObject.h"
 #include "../Exceptions/ComponentIsNotBoundException.h"
 
 using namespace dengine;
 using namespace dengine::components;
 using namespace dengine::exceptions;
+
+using std::shared_ptr;
 
 DefaultComponent::DefaultComponent() = default;
 

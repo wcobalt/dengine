@@ -3,6 +3,7 @@
 //
 
 #include "vector2.h"
+#include "vector3.h"
 
 using namespace dengine::geometry;
 
@@ -28,7 +29,7 @@ vector2<T>& vector2<T>::operator=(const vector2<T>& b) {
 }
 
 template<class T>
-vector2<T> vector2<T>::operator+=(dengine::geometry::vector2<T> b) {
+vector2<T> vector2<T>::operator+=(vector2<T> b) {
     return *this + b;
 }
 
@@ -44,7 +45,7 @@ vector2<T> vector2<T>::operator+(vector2<T> b) {
 }
 
 template<class T>
-vector2<T> vector2<T>::operator-=(dengine::geometry::vector2<T> b) {
+vector2<T> vector2<T>::operator-=(vector2<T> b) {
     return *this - b;
 }
 

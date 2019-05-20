@@ -3,6 +3,8 @@
 //
 
 #include "dimension2.h"
+#include "dimension3.h"
+#include "vector2.h"
 
 using namespace dengine::geometry;
 
@@ -16,7 +18,7 @@ template<class T>
 dimension2<T>::dimension2(const dimension2<T> &dimension):dimension2<T>(dimension) {}
 
 template <class T>
-dimension2<T>::dimension2(const dimension3<T> &dimension) {
+dimension2<T>::dimension2(const dimension3<T> &dimension):dimension3<T>(dimension) {
     dimension3<T>::depth = (T)0;
 }
 

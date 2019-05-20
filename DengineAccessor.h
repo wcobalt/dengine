@@ -5,9 +5,14 @@
 #ifndef DENGINE_DENGINEACCESSOR_H
 #define DENGINE_DENGINEACCESSOR_H
 
+#include "Scene.h"
 #include "Dengine.h"
+#include "GameObject.h"
+#include "ScenesManager.h"
 
 namespace dengine {
+    class ScenesManager;
+
     class DengineAccessor : public DObject {
         friend class Scene;
         friend class GameObject;

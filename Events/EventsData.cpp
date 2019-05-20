@@ -2,8 +2,13 @@
 // Created by wcobalt on 19.09.18.
 //
 
+#include <memory>
+#include <set>
+#include "MousePosition.h"
 #include "EventsData.h"
 
+using std::shared_ptr;
+using std::set;
 using namespace dengine::events;
 
 EventsData::EventsData() {

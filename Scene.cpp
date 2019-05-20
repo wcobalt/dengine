@@ -4,8 +4,11 @@
 
 #include <queue>
 #include <vector>
+#include <memory>
 
 #include "Scene.h"
+#include "GameObject.h"
+#include "DengineAccessor.h"
 #include "Components/Component.h"
 #include "Components/Transform3DComponent.h"
 
@@ -14,12 +17,13 @@ using namespace dengine::components;
 
 using std::queue;
 using std::vector;
+using std::shared_ptr;
 
 Scene::Scene() {
-    shared_ptr<Transform3DComponent> transform = std::make_shared<Transform3DComponent>(
+    shared_ptr<Transform3DComponent> transform(
             new Transform3DComponent(ROOT_GAME_OBJECT_X, ROOT_GAME_OBJECT_Y, ROOT_GAME_OBJECT_Z));
 
-    root = std::make_shared<GameObject>(new GameObject(transform));
+    root = std::make_shared<GameObject>(transform);
 }
 
 void Scene::sceneLoad(DengineAccessor dengineAccessor) {}

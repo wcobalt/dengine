@@ -2,7 +2,13 @@
 // Created by wcobalt on 19.09.18.
 //
 
+#include <vector>
+#include <string>
+#include <memory>
+
 #include "GameObject.h"
+#include "Components/Component.h"
+#include "Components/Transform3DComponent.h"
 #include "Exceptions/NoSuitableComponentException.h"
 #include "Exceptions/TransformComponentRemovingException.h"
 #include "Exceptions/ComponentAlreadyAddedException.h"
@@ -12,11 +18,10 @@ using namespace dengine;
 using namespace dengine::components;
 using namespace dengine::exceptions;
 
-GameObject::GameObject() {
-    addComponent(std::make_shared<Component>(new Transform3DComponent()));
+using std::shared_ptr;
+using std::vector;
 
-    initParent();
-}
+GameObject::GameObject():GameObject(std::make_shared<Transform3DComponent>()) {}
 
 GameObject::GameObject(shared_ptr<Transform3DComponent> transform) {
     addComponent(std::dynamic_pointer_cast<Component>(transform));
@@ -36,13 +41,15 @@ void GameObject::addComponent(shared_ptr<Component> component) {
 
     components.push_back(component);
 
-    component->componentLoad({}, std::make_shared<GameObject>(*this));
-}
+    shared_ptr<GameObject> th(this);
 
+    component->componentLoad({}, th);
+}
+//@todo think about weak_ptr
 //only if T has default constructor
 template<class T>
 void GameObject::addComponent() {
-    shared_ptr<T> object = std::make_shared(new T());//exceptionable
+    shared_ptr<T> object = std::make_shared<T>();//exceptionable
     shared_ptr<Component> component = std::dynamic_pointer_cast<Component>(object);
 
     if (component)
@@ -94,7 +101,8 @@ void GameObject::removeComponent(vector<shared_ptr<Component>>::iterator it) {
 void GameObject::addChild(shared_ptr<GameObject> instance) {
     children.push_back(instance);
 
-    instance->parent = std::make_shared<GameObject>(this);
+    shared_ptr<GameObject> th(this);
+    instance->parent = std::make_shared<GameObject>(th);
 }
 
 void GameObject::removeChild(shared_ptr<GameObject> instance) {
@@ -157,7 +165,9 @@ void GameObject::destroy(DengineAccessor dengineAccessor, bool isSceneUnloading)
 
     removeAllChildren();
 
-    getParent()->removeChild(std::make_shared<GameObject>(*this));
+    shared_ptr<GameObject> th(this);
+
+    getParent()->removeChild(std::make_shared<GameObject>(th));
 }
 
 void GameObject::update(DengineAccessor dengineAccessor) {

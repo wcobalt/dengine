@@ -6,16 +6,18 @@
 #define DENGINE_TRANSFORM2DCOMPONENT_H
 
 #include "Transform3DComponent.h"
+#include "../Geometry/vectors.h"
 
 namespace dengine::components {
-    using namespace dengine::geometry;
-
     class Transform2DComponent : public Transform3DComponent {
     public:
         Transform2DComponent();
-        Transform2DComponent(vec2f position);
+        //@todo some warning need to be removed
+        Transform2DComponent(dengine::geometry::vec2f position);
         Transform2DComponent(float x, float y);
-        Transform2DComponent(vec2f position, vec2f rotation, vec2f scale);
+        Transform2DComponent(dengine::geometry::vec2f position,
+                             dengine::geometry::vec2f rotation,
+                             dengine::geometry::vec2f scale);
 
         void setPosition(float x, float y);
 
@@ -23,11 +25,11 @@ namespace dengine::components {
 
         void setScale(float x, float y);
 
-        vec2f getPosition() const;
-        vec2f getRotation() const;
-        vec2f getScale() const;
+        dengine::geometry::vec2f getPosition() const;
+        dengine::geometry::vec2f getRotation() const;
+        dengine::geometry::vec2f getScale() const;
 
-        double getDistanceTo(vec2f position) const;
+        double getDistanceTo(dengine::geometry::vec2f position) const;
     };
 }
 
