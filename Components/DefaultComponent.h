@@ -2,14 +2,17 @@
 // Created by wcobalt on 3/30/19.
 //
 
+#include <memory>
+
 #ifndef DENGINE_DEFAULTCOMPONENT_H
 #define DENGINE_DEFAULTCOMPONENT_H
 
-#include <memory>
+namespace dengine {
+    class GameObject;
+    class DengineAccessor;
+}
 
 #include "Component.h"
-#include "../GameObject.h"
-#include "../DengineAccessor.h"
 
 namespace dengine::components {
     class DefaultComponent : public Component {
@@ -20,17 +23,17 @@ namespace dengine::components {
     public:
         DefaultComponent();
 
-        virtual void componentLoad(dengine::DengineAccessor dengineAccessor, std::shared_ptr<dengine::GameObject> instance);
+        virtual void componentLoad(const dengine::DengineAccessor& dengineAccessor, std::shared_ptr<dengine::GameObject> instance);
 
-        virtual void componentUnload(dengine::DengineAccessor dengineAccessor);
+        virtual void componentUnload(const dengine::DengineAccessor& dengineAccessor);
 
-        virtual void update(dengine::DengineAccessor dengineAccessor);
+        virtual void update(const dengine::DengineAccessor& dengineAccessor);
 
-        virtual void instanceCreate(dengine::DengineAccessor dengineAccessor);
+        virtual void instanceCreate(const dengine::DengineAccessor& dengineAccessor);
 
-        virtual void instanceDestroy(dengine::DengineAccessor dengineAccessor);
+        virtual void instanceDestroy(const dengine::DengineAccessor& dengineAccessor);
 
-        virtual void sceneUnload(dengine::DengineAccessor dengineAccessor);
+        virtual void sceneUnload(const dengine::DengineAccessor& dengineAccessor);
 
         virtual void setEnabled(bool isEnabled);
 

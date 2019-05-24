@@ -8,13 +8,14 @@
 #ifndef DENGINE_GAMEOBJECT_H
 #define DENGINE_GAMEOBJECT_H
 
-#include "DObject.h"
-#include "Components/Component.h"
-#include "Components/Transform3DComponent.h"
+#include "Components/TransformComponent.h"
 
 namespace dengine::components {
     class Component;
+    class TransformComponent;
 }
+
+#include "DObject.h"
 
 namespace dengine {
     class GameObject : public DObject {
@@ -31,11 +32,11 @@ namespace dengine {
         void initParent();
     public:
         GameObject();
-        GameObject(std::shared_ptr<dengine::components::Transform3DComponent> transform);
+        GameObject(std::shared_ptr<dengine::components::TransformComponent> transform);
 
         void addComponent(std::shared_ptr<dengine::components::Component> component);
 
-        template<class T>
+        template <class T>
         void addComponent();
 
         template <class T>
@@ -58,9 +59,9 @@ namespace dengine {
 
         std::vector<std::shared_ptr<dengine::components::Component>> getAllComponents() const;
 
-        void create(dengine::DengineAccessor dengineAccessor);
-        void destroy(dengine::DengineAccessor dengineAccessor, bool isSceneUnloading);
-        void update(dengine::DengineAccessor dengineAccessor);
+        void create(const dengine::DengineAccessor& dengineAccessor);
+        void destroy(const dengine::DengineAccessor& dengineAccessor, bool isSceneUnloading);
+        void update(const dengine::DengineAccessor& dengineAccessor);
     };
 }
 

@@ -7,10 +7,12 @@
 #include <float.h>
 #include <memory>
 
-#include "Transform3DComponent.h"
+#include "TransformComponent.h"
 #include "../Geometry/Geometry.h"
 #include "../GameObject.h"
 #include "../Scene.h"
+#include "../Dengine.h"
+#include "../ScenesManager.h"
 
 using namespace dengine;
 using namespace dengine::components;
@@ -20,109 +22,97 @@ using std::queue;
 using std::vector;
 using std::shared_ptr;
 
-Transform3DComponent::Transform3DComponent() = default;
+TransformComponent::TransformComponent() = default;
 
-Transform3DComponent::Transform3DComponent(vec3f position) {
-    this->position = position;
-}
+TransformComponent::TransformComponent(const vec3f& position):position(position) {}
 
-Transform3DComponent::Transform3DComponent(float x, float y, float z) {
-    this->position = vec3f(x, y, z);
-}
+TransformComponent::TransformComponent(float x, float y, float z):position(vec3f(x, y, z)) {}
 
-Transform3DComponent::Transform3DComponent(vec3f position, vec3f rotation, vec3f scale) {
-    this->position = position;
-    this->rotation = rotation;
-    this->scale = scale;
-}
+TransformComponent::TransformComponent(const vec3f& position, const vec3f& rotation, const vec3f& scale):
+    position(position),
+    rotation(rotation),
+    scale(scale) {}
 
-void Transform3DComponent::setPosition(float x, float y, float z) {
+void TransformComponent::setPosition(float x, float y, float z) {
     setPosition(vec3f(x, y, z));
 }
 
-void Transform3DComponent::setPosition(vec3f vec) {
+void TransformComponent::setPosition(const vec3f& vec) {
     vec3f delta = vec - position;
 
-    position = vec3f(vec);
+    position = vec;
 
     vector<shared_ptr<GameObject>> children = getBoundInstance()->getChildren();
 
     for (shared_ptr<GameObject>& child : children) {
-        shared_ptr<Transform3DComponent> transform = child->getComponent<Transform3DComponent>();
+        shared_ptr<TransformComponent> transform = child->getComponent<TransformComponent>();
 
-        vec3f childPosition = transform->getPosition();
-
-        transform->setPosition(childPosition + delta);
+        transform->setPosition(transform->getPosition() + delta);
     }
 }
 
-void Transform3DComponent::setRotation(float x, float y, float z) {
+void TransformComponent::setRotation(float x, float y, float z) {
     setRotation(vec3f(x, y, z));
 }
 
-void Transform3DComponent::setRotation(vec3f vec) {
+void TransformComponent::setRotation(const vec3f& vec) {
     vec3f delta = vec - rotation;
 
-    rotation = vec3f(vec);
+    rotation = vec;
 
     vector<shared_ptr<GameObject>> children = getBoundInstance()->getChildren();
 
     for (shared_ptr<GameObject>& child : children) {
-        shared_ptr<Transform3DComponent> transform = child->getComponent<Transform3DComponent>();
+        shared_ptr<TransformComponent> transform = child->getComponent<TransformComponent>();
 
-        vec3f childRotation = transform->getRotation();
-
-        transform->setRotation(childRotation + delta);
+        transform->setRotation(transform->getRotation() + delta);
     }
 }
 
-void Transform3DComponent::setScale(float x, float y, float z) {
+void TransformComponent::setScale(float x, float y, float z) {
     setScale(vec3f(x, y, z));
 }
 
-void Transform3DComponent::setScale(vec3f vec) {
+void TransformComponent::setScale(const vec3f& vec) {
     vec3f delta = vec - scale;
 
-    scale = vec3f(vec);
+    scale = vec;
 
     vector<shared_ptr<GameObject>> children = getBoundInstance()->getChildren();
 
     for (shared_ptr<GameObject>& child : children) {
-        shared_ptr<Transform3DComponent> transform = child->getComponent<Transform3DComponent>();
+        shared_ptr<TransformComponent> transform = child->getComponent<TransformComponent>();
 
-        vec3f childScale = transform->getScale();
-
-        transform->setRotation(childScale + delta);
+        transform->setScale(transform->getScale() + delta);
     }
 }
 
-vec3f Transform3DComponent::getPosition() const {
+vec3f TransformComponent::getPosition() const {
     return position;
 }
 
-vec3f Transform3DComponent::getRotation() const {
+vec3f TransformComponent::getRotation() const {
     return rotation;
 }
 
-vec3f Transform3DComponent::getScale() const {
+vec3f TransformComponent::getScale() const {
     return scale;
 }
 
-double Transform3DComponent::getDistanceTo(shared_ptr<GameObject> instance) const {
+double TransformComponent::getDistanceTo(shared_ptr<GameObject> instance) const {
     return Geometry::getDistance(this->getPosition(),
-            instance->getComponent<Transform3DComponent>()->getPosition());
+            instance->getComponent<TransformComponent>()->getPosition());
 }
 
-double Transform3DComponent::getDistanceTo(vec3f position) const {
+double TransformComponent::getDistanceTo(const vec3f& position) const {
     return Geometry::getDistance(this->getPosition(), position);
 }
 
-template<class T>
-shared_ptr<GameObject> Transform3DComponent::getNearestInstance() const {
+template <class T>
+shared_ptr<GameObject> TransformComponent::getNearestInstance() const {
     shared_ptr<Scene> currentScene = Dengine::get()->getScenesManager()->getCurrentScene();
 
     shared_ptr<GameObject> root = currentScene->getRoot();
-
 
     shared_ptr<GameObject> result;
 

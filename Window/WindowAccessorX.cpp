@@ -9,14 +9,14 @@
 #include <thread>
 #include <cstring>
 #include <memory>
+#include <vector>
 
 #include "WindowAccessorX.h"
-#include "../Geometry/vectors.h"
-#include "../Geometry/dimensions.h"
 #include "../Events/MousePosition.h"
 #include "../Events/EventsData.h"
 
 using std::shared_ptr;
+using std::vector;
 using namespace dengine::window;
 using namespace dengine::events;
 using namespace dengine::geometry;
@@ -62,9 +62,6 @@ WindowAccessorX::WindowAccessorX(int x, int y, uint width,
     lastHeight = height;
 }
 
-WindowAccessorX::WindowAccessorX(vec2i position, dim2i size, const std::string &title)
-    :WindowAccessorX(position.x, position.y, size.width, size.height, title){}
-
 void WindowAccessorX::setVisible(bool isVisible) {
     if (isVisible)
         XMapWindow(display, window);
@@ -87,17 +84,9 @@ void WindowAccessorX::setWindowPosition(int x, int y) {
     XFlush(display);
 }
 
-void WindowAccessorX::setWindowPosition(vec2i position) {
-    setWindowPosition(position.x, position.y);
-}
-
 void WindowAccessorX::setSize(uint width, uint height) {
     XResizeWindow(display, window, width, height);
     XFlush(display);
-}
-
-void WindowAccessorX::setSize(dim2i size) {
-    setSize(size.width, size.height);
 }
 
 void WindowAccessorX::setWindowTitle(const std::string& title) {
@@ -106,26 +95,18 @@ void WindowAccessorX::setWindowTitle(const std::string& title) {
 }
 
 void WindowAccessorX::setMinimumSize(uint minimumWidth, uint minimumHeight) {
-    dim2i maximumSize = getMaximumSize();
+    vector<uint> maximumSize = getMaximumSize();
 
-    setMinimumAndMaximumSize(maximumSize.width, maximumSize.height, minimumWidth, minimumHeight);
-}
-
-void WindowAccessorX::setMinimumSize(dim2i size) {
-    setMinimumSize(size.width, size.height);
+    setMinimumAndMaximumSize(maximumSize[0], maximumSize[1], minimumWidth, minimumHeight);
 }
 
 void WindowAccessorX::setMaximumSize(uint maximumWidth, uint maximumHeight) {
-    dim2i minimumSize = getMinimumSize();
+    vector<uint> minimumSize = getMinimumSize();
 
-    setMinimumAndMaximumSize(maximumWidth, maximumHeight, minimumSize.width, minimumSize.height);
+    setMinimumAndMaximumSize(maximumWidth, maximumHeight, minimumSize[0], minimumSize[1]);
 }
 
-void WindowAccessorX::setMaximumSize(dim2i size) {
-    setMaximumSize(size.width, size.height);
-}
-
-void WindowAccessorX::setFullScreenEnabled(bool isEnabled) {
+void WindowAccessorX::setFullscreenEnabled(bool isEnabled) {
     XEvent event;
     std::memset(&event, 0, sizeof(event));
     event.type = ClientMessage;
@@ -152,59 +133,80 @@ bool WindowAccessorX::isCursorVisible() const {
     //@todo implement
 }
 
-vec2i WindowAccessorX::getWindowPosition() const {
+vector<int> WindowAccessorX::getWindowPosition() const {
     XWindowAttributes xWindowAttributes;
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
 
-    vec2i result(0, 0);
+    int x, y;
 
     Window w;
 
     XTranslateCoordinates(display, window, rootWindow,
-            xWindowAttributes.x, xWindowAttributes.y, &(result.x), &(result.y), &w);
+            xWindowAttributes.x, xWindowAttributes.y, &x, &y, &w);
 
-    result -= vec2i(xWindowAttributes.x, xWindowAttributes.y);
+    vector<int> vec;
 
-    return result;
+    vec.emplace_back(x - (uint)xWindowAttributes.x);
+    vec.emplace_back(y - (uint)xWindowAttributes.y);
+
+    return vec;
 }
 
-vec2i WindowAccessorX::getClientAreaPosition() const {
+vector<int> WindowAccessorX::getClientAreaPosition() const {
     XWindowAttributes xWindowAttributes;
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
 
-    vec2i result(xWindowAttributes.x, xWindowAttributes.y);
+    vector<int> vec;
 
-    return result;
+    vec.emplace_back((uint)xWindowAttributes.x);
+    vec.emplace_back((uint)xWindowAttributes.y);
+
+    return vec;
 }
 
-dim2i WindowAccessorX::getSize() const {
+vector<uint> WindowAccessorX::getSize() const {
     XWindowAttributes xWindowAttributes;
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
 
-    return dim2i((uint)xWindowAttributes.width, (uint)xWindowAttributes.height);
+    vector<uint> vec;
+
+    vec.emplace_back((uint)xWindowAttributes.width);
+    vec.emplace_back((uint)xWindowAttributes.height);
+
+    return vec;
 }
 
 const std::string& WindowAccessorX::getWindowTitle() const {
     return title;
 }
 
-dim2i WindowAccessorX::getMinimumSize() const {
+vector<uint> WindowAccessorX::getMinimumSize() const {
     XSizeHints xSizeHints = {};
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    return dim2i((uint)xSizeHints.min_width, (uint)xSizeHints.min_height);
+    vector<uint> vec;
+
+    vec.emplace_back((uint)xSizeHints.min_width);
+    vec.emplace_back((uint)xSizeHints.min_height);
+
+    return vec;
 }
 
-dim2i WindowAccessorX::getMaximumSize() const {
+vector<uint> WindowAccessorX::getMaximumSize() const {
     XSizeHints xSizeHints = {};
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    return dim2i((uint)xSizeHints.max_width, (uint)xSizeHints.max_height);
+    vector<uint> vec;
+
+    vec.emplace_back((uint)xSizeHints.max_width);
+    vec.emplace_back((uint)xSizeHints.max_height);
+
+    return vec;
 }
 
 void WindowAccessorX::setMinimumAndMaximumSize(uint maximumWidth, uint maximumHeight,
@@ -222,7 +224,7 @@ void WindowAccessorX::setMinimumAndMaximumSize(uint maximumWidth, uint maximumHe
         XSetWMNormalHints(display, window, &xSizeHints);
 }
 
-bool WindowAccessorX::isFullScreenEnabled() const {
+bool WindowAccessorX::isFullscreenEnabled() const {
     PropertyData data = getProperty("_NET_WM_STATE", 0, LONG_MAX, window);
 
     for(int i = 0; i < data.numberOfItems; i++) {
@@ -276,13 +278,13 @@ shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
     }
 
     if(!eventsData->isWindowClosing()) {
-        dim2i currentSize = getSize();
+        vector<uint> currentSize = getSize();
 
-        if(currentSize.width != lastWidth || currentSize.height != lastHeight) {
+        if(currentSize[0] != lastWidth || currentSize[1] != lastHeight) {
             eventsData->setWindowResized(true);
 
-            lastWidth = currentSize.width;
-            lastHeight = currentSize.height;
+            lastWidth = currentSize[0];
+            lastHeight = currentSize[1];
         }
 
         PropertyData focusState = getProperty("_NET_ACTIVE_WINDOW", 0, LONG_MAX, rootWindow);
@@ -340,7 +342,7 @@ WindowAccessorX::~WindowAccessorX() {
 void WindowAccessorX::destroy() {
     XDestroyWindow(display, window);
 
-    delete display;//@todo what is incomplete type?
+    delete display;
     delete xVisualInfo;
 }
 

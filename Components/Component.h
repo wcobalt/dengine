@@ -8,27 +8,26 @@
 #define DENGINE_COMPONENT_H
 
 #include "../DObject.h"
-#include "../DengineAccessor.h"
-#include "../GameObject.h"
 
 namespace dengine {
     class GameObject;
+    class DengineAccessor;
 }
 
 namespace dengine::components {
     class Component : public DObject {
     public:
-        virtual void componentLoad(dengine::DengineAccessor dengineAccessor, std::shared_ptr<dengine::GameObject> instance) = 0;
+        virtual void componentLoad(const dengine::DengineAccessor& dengineAccessor, std::shared_ptr<dengine::GameObject> instance) = 0;
 
-        virtual void componentUnload(dengine::DengineAccessor dengineAccessor) = 0;
+        virtual void componentUnload(const dengine::DengineAccessor& dengineAccessor) = 0;
 
-        virtual void update(dengine::DengineAccessor dengineAccessor) = 0;
+        virtual void update(const dengine::DengineAccessor& dengineAccessor) = 0;
 
-        virtual void instanceCreate(dengine::DengineAccessor dengineAccessor) = 0;
+        virtual void instanceCreate(const dengine::DengineAccessor& dengineAccessor) = 0;
 
-        virtual void instanceDestroy(dengine::DengineAccessor dengineAccessor) = 0;
+        virtual void instanceDestroy(const dengine::DengineAccessor& dengineAccessor) = 0;
 
-        virtual void sceneUnload(dengine::DengineAccessor dengineAccessor) = 0;
+        virtual void sceneUnload(const dengine::DengineAccessor& dengineAccessor) = 0;
 
         virtual void setEnabled(bool isEnabled) = 0;
 

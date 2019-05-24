@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "Dengine.h"
+#include "DengineAccessor.h"
 #include "Window/WindowManager.h"
 #include "ScenesManager.h"
 #include "Exceptions/DengineIsNotInitializedException.h"
@@ -17,11 +18,8 @@ using namespace dengine;
 using namespace dengine::window;
 using namespace dengine::exceptions;
 
-Dengine::Dengine(shared_ptr<WindowManager> windowManager) {
+Dengine::Dengine(shared_ptr<WindowManager> windowManager):mIsPaused(0), isGameStopped(0) {
     setWindowManager(windowManager);
-
-    mIsPaused = false;
-    isGameStopped = false;
 
     scenesManager = std::make_shared<ScenesManager>();
 }

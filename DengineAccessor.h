@@ -5,22 +5,24 @@
 #ifndef DENGINE_DENGINEACCESSOR_H
 #define DENGINE_DENGINEACCESSOR_H
 
-#include "Scene.h"
-#include "Dengine.h"
-#include "GameObject.h"
-#include "ScenesManager.h"
+namespace dengine {
+    class Scene;
+    class GameObject;
+    class Dengine;
+    class ScenesManager;
+}
 
 namespace dengine {
     class ScenesManager;
 
-    class DengineAccessor : public DObject {
+    class DengineAccessor {
         friend class Scene;
         friend class GameObject;
         friend class Dengine;
         friend class ScenesManager;
     private:
         DengineAccessor();
-        DengineAccessor* operator=(DengineAccessor accessor);
+        DengineAccessor& operator=(const DengineAccessor& accessor);
     };
 }
 

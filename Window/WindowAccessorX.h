@@ -6,16 +6,17 @@
 #include <X11/Xlib.h>
 #include <string>
 #include <memory>
+#include <vector>
 
 #ifndef DENGINE_WINDOWACCESSORX_H
 #define DENGINE_WINDOWACCESSORX_H
 
-#include "WindowAccessor.h"
-#include "../Geometry/vectors.h"
-#include "../Geometry/dimensions.h"
-#include "../Events/EventsData.h"
+namespace dengine::events {
+    class EventsData;
+}
 
-//@todo do something with ulong, uint and other
+#include "WindowAccessor.h"
+
 namespace dengine::window {
     struct PropertyData {
         unsigned char *data;
@@ -45,7 +46,7 @@ namespace dengine::window {
 
         uint lastWidth, lastHeight;
 
-        const std::string& title;
+        std::string title;
 
         PropertyData getProperty(const char *propertyName, long offset, long size, Window window) const;
 
@@ -54,8 +55,6 @@ namespace dengine::window {
 
     public:
         WindowAccessorX(int x, int y, uint width, uint height, const std::string& title);
-        WindowAccessorX(dengine::geometry::vec2i position,
-                        dengine::geometry::dim2i size, const std::string &title);
 
         void setVisible(bool isVisible);
 
@@ -65,23 +64,15 @@ namespace dengine::window {
 
         void setWindowPosition(int x, int y);
 
-        void setWindowPosition(dengine::geometry::vec2i position);
-
         void setSize(uint width, uint height);
-
-        void setSize(dengine::geometry::dim2i size);
 
         void setWindowTitle(const std::string& title);
 
         void setMaximumSize(uint maximumWidth, uint maximumHeight);
 
-        void setMaximumSize(dengine::geometry::dim2i size);
-
         void setMinimumSize(uint minimumWidth, uint minimumHeight);
 
-        void setMinimumSize(dengine::geometry::dim2i size);
-
-        void setFullScreenEnabled(bool isEnabled);
+        void setFullscreenEnabled(bool isEnabled);
 
         bool isVisible() const;
 
@@ -89,19 +80,19 @@ namespace dengine::window {
 
         bool isCursorVisible() const;
 
-        dengine::geometry::vec2i getWindowPosition() const;
+        std::vector<int> getWindowPosition() const;
 
-        dengine::geometry::vec2i getClientAreaPosition() const;
+        std::vector<int> getClientAreaPosition() const;
 
-        dengine::geometry::dim2i getSize() const;
+        std::vector<uint> getSize() const;
 
         const std::string &getWindowTitle() const;
 
-        dengine::geometry::dim2i getMaximumSize() const;
+        std::vector<uint> getMaximumSize() const;
 
-        dengine::geometry::dim2i getMinimumSize() const;
+        std::vector<uint> getMinimumSize() const;
 
-        bool isFullScreenEnabled() const;
+        bool isFullscreenEnabled() const;
 
         std::shared_ptr<const dengine::events::EventsData> checkEvents();
 

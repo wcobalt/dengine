@@ -7,8 +7,12 @@
 #include <memory>
 
 #include "GameObject.h"
+#include "Scene.h"
+#include "ScenesManager.h"
+#include "DengineAccessor.h"
+#include "Dengine.h"
 #include "Components/Component.h"
-#include "Components/Transform3DComponent.h"
+#include "Components/TransformComponent.h"
 #include "Exceptions/NoSuitableComponentException.h"
 #include "Exceptions/TransformComponentRemovingException.h"
 #include "Exceptions/ComponentAlreadyAddedException.h"
@@ -21,9 +25,9 @@ using namespace dengine::exceptions;
 using std::shared_ptr;
 using std::vector;
 
-GameObject::GameObject():GameObject(std::make_shared<Transform3DComponent>()) {}
+GameObject::GameObject():GameObject(std::make_shared<TransformComponent>()) {}
 
-GameObject::GameObject(shared_ptr<Transform3DComponent> transform) {
+GameObject::GameObject(shared_ptr<TransformComponent> transform) {
     addComponent(std::dynamic_pointer_cast<Component>(transform));
 
     initParent();
@@ -47,7 +51,7 @@ void GameObject::addComponent(shared_ptr<Component> component) {
 }
 //@todo think about weak_ptr
 //only if T has default constructor
-template<class T>
+template <class T>
 void GameObject::addComponent() {
     shared_ptr<T> object = std::make_shared<T>();//exceptionable
     shared_ptr<Component> component = std::dynamic_pointer_cast<Component>(object);
@@ -84,7 +88,7 @@ void GameObject::removeComponent(shared_ptr<Component> component) {
 }
 
 void GameObject::safelyRemoveComponent(vector<shared_ptr<Component>>::iterator it) {
-    if (!std::dynamic_pointer_cast<Transform3DComponent>(*it))
+    if (!std::dynamic_pointer_cast<TransformComponent>(*it))
         removeComponent(it);
     else
         throw TransformComponentRemovingException();
@@ -101,8 +105,7 @@ void GameObject::removeComponent(vector<shared_ptr<Component>>::iterator it) {
 void GameObject::addChild(shared_ptr<GameObject> instance) {
     children.push_back(instance);
 
-    shared_ptr<GameObject> th(this);
-    instance->parent = std::make_shared<GameObject>(th);
+    instance->parent = shared_ptr<GameObject>(this);
 }
 
 void GameObject::removeChild(shared_ptr<GameObject> instance) {
@@ -146,31 +149,29 @@ vector<shared_ptr<Component>> GameObject::getAllComponents() const {
     return components;
 }
 
-void GameObject::create(DengineAccessor dengineAccessor) {
+void GameObject::create(const DengineAccessor& dengineAccessor) {
     for (shared_ptr<Component>& component : components)
-        component->instanceCreate({});
+        component->instanceCreate(dengineAccessor);
 }
 
-void GameObject::destroy(DengineAccessor dengineAccessor, bool isSceneUnloading) {
+void GameObject::destroy(const DengineAccessor& dengineAccessor, bool isSceneUnloading) {
     for (auto it = components.begin(); it != components.end(); it++) {
         if (isSceneUnloading) {
             shared_ptr<Component> component = *it;
 
             removeComponent(it);
 
-            component->instanceDestroy({});
+            component->instanceDestroy(dengineAccessor);
         } else
             removeComponent(it);
     }
 
     removeAllChildren();
 
-    shared_ptr<GameObject> th(this);
-
-    getParent()->removeChild(std::make_shared<GameObject>(th));
+    getParent()->removeChild(shared_ptr<GameObject>(this));
 }
 
-void GameObject::update(DengineAccessor dengineAccessor) {
+void GameObject::update(const DengineAccessor& dengineAccessor) {
     for (shared_ptr<Component>& component : components)
-        component->update({});
+        component->update(dengineAccessor);
 }

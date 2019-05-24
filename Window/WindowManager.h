@@ -7,8 +7,16 @@
 #ifndef DENGINE_WINDOWMANAGER_H
 #define DENGINE_WINDOWMANAGER_H
 
-#include "WindowAccessor.h"
-#include "../Events/EventsData.h"
+namespace dengine {
+    namespace events {
+        class EventsData;
+    }
+
+    namespace window {
+        class WindowAccessor;
+    }
+}
+
 #include "../DObject.h"
 
 namespace dengine::window {

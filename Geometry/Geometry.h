@@ -10,7 +10,7 @@
 namespace dengine::geometry {
     class Geometry {
     public:
-        static double getDistance(vec3f from, vec3f to);
+        static double getDistance(const vec3f& from, const vec3f& to);
     };
 }
 

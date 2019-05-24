@@ -7,6 +7,7 @@
 #include <string>
 
 #include "ScenesManager.h"
+#include "Dengine.h"
 #include "Coreutils/ID.h"
 #include "Scene.h"
 #include "DengineAccessor.h"
@@ -21,13 +22,11 @@ using namespace dengine;
 using namespace dengine::coreutils;
 using namespace dengine::exceptions;
 
-ScenesManager::ScenesManager():currentScene(NOT_EXIST_SCENE, nullptr) {
-    nextSceneId = Dengine::MINIMAL_SAFE_ID;
-}
+ScenesManager::ScenesManager():currentScene(NOT_EXIST_SCENE, nullptr), nextSceneId(Dengine::MINIMAL_SAFE_ID) {}
 
-void ScenesManager::update(DengineAccessor dengineAccessor) {
+void ScenesManager::update(const DengineAccessor& dengineAccessor) {
     if (currentScene.first != NOT_EXIST_SCENE) {
-        currentScene.second->update({});
+        currentScene.second->update(dengineAccessor);
 
         return;
     }
@@ -109,13 +108,15 @@ void ScenesManager::removeScene(const string& alias) {
 }
 
 void ScenesManager::setCurrentScene(std::pair<ID, shared_ptr<Scene>> scene) {
+    DengineAccessor key;
+
     if (currentScene.first != NOT_EXIST_SCENE)
-        currentScene.second->destroy({});
+        currentScene.second->destroy(key);
 
     currentScene.first = scene.first;
     currentScene.second = scene.second;
 
-    currentScene.second->create({});
+    currentScene.second->create(key);
 }
 
 shared_ptr<Scene> ScenesManager::getScene(ID id) const {
@@ -133,7 +134,7 @@ shared_ptr<Scene> ScenesManager::getScene(const string& alias) const {
     if (it != scenesAliases.end())
         return it->second.second;
 
-    throw NoSuitableSceneException(); //may be better return NOT_EXIST_SCENE?
+    throw NoSuitableSceneException();
 }
 
 ID ScenesManager::getCurrentSceneID() const {
@@ -159,7 +160,7 @@ ID ScenesManager::getIDByAlias(const string& alias) const {
     throw NoSuitableSceneException();
 }
 
-const string& ScenesManager::getAliasByID(ID id) const {
+string ScenesManager::getAliasByID(ID id) const {
     auto it = scenesIds.find(id);
 
     if (it != scenesIds.end())

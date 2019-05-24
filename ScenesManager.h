@@ -9,15 +9,15 @@
 #ifndef DENGINE_SCENESMANAGER_H
 #define DENGINE_SCENESMANAGER_H
 
-#include "Coreutils/ID.h"
-#include "Scene.h"
-#include "DObject.h"
-#include "DengineAccessor.h"
-
 namespace dengine {
     class Scene;
     class DengineAccessor;
+}
 
+#include "Coreutils/ID.h"
+#include "DObject.h"
+
+namespace dengine {
     class ScenesManager : public DObject {
     public:
         static const coreutils::ID NOT_EXIST_SCENE = 0;
@@ -30,11 +30,12 @@ namespace dengine {
         coreutils::ID nextSceneId;
 
         void setCurrentScene(std::pair<coreutils::ID, std::shared_ptr<dengine::Scene>> scene);
+
         coreutils::ID getUniqueSceneId();
     public:
         ScenesManager();
 
-        void update(dengine::DengineAccessor dengineAccessor);
+        void update(const dengine::DengineAccessor& dengineAccessor);
 
         coreutils::ID addScene(std::shared_ptr<dengine::Scene> scene);
         coreutils::ID addScene(std::shared_ptr<dengine::Scene> scene, const std::string& alias);
@@ -53,7 +54,7 @@ namespace dengine {
         std::shared_ptr<dengine::Scene> getScene(const std::string& alias) const;
 
         coreutils::ID getIDByAlias(const std::string& alias) const;
-        const std::string& getAliasByID(coreutils::ID id) const;
+        std::string getAliasByID(coreutils::ID id) const;
     };
 }
 

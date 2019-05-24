@@ -16,17 +16,17 @@ using std::shared_ptr;
 
 DefaultComponent::DefaultComponent() = default;
 
-void DefaultComponent::componentUnload(DengineAccessor dengineAccessor) {}
+void DefaultComponent::componentUnload(const DengineAccessor& dengineAccessor) {}
 
-void DefaultComponent::update(DengineAccessor dengineAccessor) {}
+void DefaultComponent::update(const DengineAccessor& dengineAccessor) {}
 
-void DefaultComponent::instanceCreate(DengineAccessor dengineAccessor) {}
+void DefaultComponent::instanceCreate(const DengineAccessor& dengineAccessor) {}
 
-void DefaultComponent::instanceDestroy(DengineAccessor dengineAccessor) {}
+void DefaultComponent::instanceDestroy(const DengineAccessor& dengineAccessor) {}
 
-void DefaultComponent::sceneUnload(DengineAccessor dengineAccessor) {}
+void DefaultComponent::sceneUnload(const DengineAccessor& dengineAccessor) {}
 
-void DefaultComponent::componentLoad(DengineAccessor dengineAccessor, shared_ptr<GameObject> instance) {
+void DefaultComponent::componentLoad(const DengineAccessor& dengineAccessor, shared_ptr<GameObject> instance) {
     boundInstance = instance;
 }
 

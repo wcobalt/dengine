@@ -7,4 +7,5 @@
 using namespace dengine;
 
 DengineAccessor::DengineAccessor() = default;
-DengineAccessor* DengineAccessor::operator=(dengine::DengineAccessor accessor) {}
+
+DengineAccessor& DengineAccessor::operator=(const DengineAccessor& accessor) = default;

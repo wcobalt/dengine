@@ -5,13 +5,17 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <vector>
 
 #ifndef DENGINE_SCENE_H
 #define DENGINE_SCENE_H
 
+namespace dengine {
+    class DengineAccessor;
+    class GameObject;
+}
+
 #include "DObject.h"
-#include "GameObject.h"
-#include "DengineAccessor.h"
 
 namespace dengine {
     class Scene : public DObject {
@@ -24,8 +28,8 @@ namespace dengine {
 
         void deleteInstance(std::shared_ptr<dengine::GameObject> instance, bool isSceneUnloading);
     protected:
-        virtual void sceneLoad(dengine::DengineAccessor dengineAccessor);
-        virtual void sceneUnload(dengine::DengineAccessor dengineAccessor);
+        virtual void sceneLoad(const dengine::DengineAccessor& dengineAccessor);
+        virtual void sceneUnload(const dengine::DengineAccessor& dengineAccessor);
     public:
         Scene();
 
@@ -36,11 +40,11 @@ namespace dengine {
 
         void destroyInstance(std::shared_ptr<dengine::GameObject> instance);
 
-        void update(dengine::DengineAccessor dengineAccessor);
+        void update(const dengine::DengineAccessor& dengineAccessor);
 
-        void create(dengine::DengineAccessor dengineAccessor);
+        void create(const dengine::DengineAccessor& dengineAccessor);
 
-        void destroy(dengine::DengineAccessor dengineAccessor);
+        void destroy(const dengine::DengineAccessor& dengineAccessor);
 
         template <class T>
         std::vector<std::shared_ptr<GameObject>> getInstances() const;

@@ -7,11 +7,24 @@
 #ifndef DENGINE_DENGINE_H
 #define DENGINE_DENGINE_H
 
-#include "Window/WindowManager.h"
-#include "ScenesManager.h"
+namespace dengine {
+    class ScenesManager;
+
+    namespace window {
+        class WindowManager;
+    }
+}
+
 #include "Coreutils/ID.h"
 #include "DObject.h"
-#include "Scene.h"
+
+/*
+ * optimize by assignments, init list and other
+ * windowaccessor -> manager
+ * implement windowaccessor
+ * keyboard, mouse and window state (with builders)
+ * windoaccessor checkevents split
+ */
 
 namespace dengine {
     //singleton
@@ -27,7 +40,7 @@ namespace dengine {
         bool mIsPaused;
         bool isGameStopped;
 
-        static std::shared_ptr<Dengine> dengine;
+        static std::shared_ptr<dengine::Dengine> dengine;
 
         void update();
         void run();
@@ -53,7 +66,7 @@ namespace dengine {
 
         std::shared_ptr<ScenesManager> getScenesManager() const;
 
-        static std::shared_ptr<Dengine> get();
+        static std::shared_ptr<dengine::Dengine> get();
     };
 }
 

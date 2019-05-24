@@ -10,7 +10,7 @@
 #include "GameObject.h"
 #include "DengineAccessor.h"
 #include "Components/Component.h"
-#include "Components/Transform3DComponent.h"
+#include "Components/TransformComponent.h"
 
 using namespace dengine;
 using namespace dengine::components;
@@ -20,15 +20,15 @@ using std::vector;
 using std::shared_ptr;
 
 Scene::Scene() {
-    shared_ptr<Transform3DComponent> transform(
-            new Transform3DComponent(ROOT_GAME_OBJECT_X, ROOT_GAME_OBJECT_Y, ROOT_GAME_OBJECT_Z));
+    shared_ptr<TransformComponent> transform(
+            new TransformComponent(ROOT_GAME_OBJECT_X, ROOT_GAME_OBJECT_Y, ROOT_GAME_OBJECT_Z));
 
     root = std::make_shared<GameObject>(transform);
 }
 
-void Scene::sceneLoad(DengineAccessor dengineAccessor) {}
+void Scene::sceneLoad(const DengineAccessor& dengineAccessor) {}
 
-void Scene::sceneUnload(DengineAccessor dengineAccessor) {}
+void Scene::sceneUnload(const DengineAccessor& dengineAccessor) {}
 
 void Scene::placeInstance(shared_ptr<GameObject> instance) {
     root->addChild(instance);
@@ -37,13 +37,13 @@ void Scene::placeInstance(shared_ptr<GameObject> instance) {
 }
 
 void Scene::placeInstance(shared_ptr<GameObject> instance, float x, float y) {
-    auto transform3d = instance->getComponent<Transform3DComponent>();
+    auto transform3d = instance->getComponent<TransformComponent>();
 
     placeInstance(instance, x, y, transform3d->getPosition().z);
 }
 
 void Scene::placeInstance(shared_ptr<GameObject> instance, float x, float y, float z) {
-    auto transform3d = instance->getComponent<Transform3DComponent>();
+    auto transform3d = instance->getComponent<TransformComponent>();
 
     transform3d->setPosition(x, y, z);
 
@@ -89,7 +89,7 @@ shared_ptr<GameObject> Scene::getRoot() const {
     return root;
 }
 
-void Scene::update(DengineAccessor dengineAccessor) {
+void Scene::update(const DengineAccessor& dengineAccessor) {
     queue<shared_ptr<GameObject>> q;
 
     q.push(root);
@@ -104,12 +104,12 @@ void Scene::update(DengineAccessor dengineAccessor) {
         for (const auto& instance : children)
             q.push(instance);
 
-        currentInstance->update({});
+        currentInstance->update(dengineAccessor);
     }
 }
 
-void Scene::destroy(DengineAccessor dengineAccessor) {
-    sceneUnload({});
+void Scene::destroy(const DengineAccessor& dengineAccessor) {
+    sceneUnload(dengineAccessor);
 
     queue<shared_ptr<GameObject>> q;
 
@@ -129,6 +129,6 @@ void Scene::destroy(DengineAccessor dengineAccessor) {
     }
 }
 
-void Scene::create(DengineAccessor dengineAccessor) {
-    sceneLoad({});
+void Scene::create(const DengineAccessor& dengineAccessor) {
+    sceneLoad(dengineAccessor);
 }
