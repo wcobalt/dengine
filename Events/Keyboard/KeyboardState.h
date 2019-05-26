@@ -7,7 +7,7 @@
 #ifndef DENGINE_KEYBOARDSTATE_H
 #define DENGINE_KEYBOARDSTATE_H
 
-#include "../DObject.h"
+#include "../../DObject.h"
 
 namespace dengine::events {
     class KeyboardState : public DObject {

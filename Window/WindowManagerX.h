@@ -3,6 +3,7 @@
 //
 
 #include <GL/glx.h>
+#include <GL/gl.h>
 #include <X11/Xlib.h>
 #include <string>
 #include <memory>
@@ -11,11 +12,17 @@
 #ifndef DENGINE_WINDOWACCESSORX_H
 #define DENGINE_WINDOWACCESSORX_H
 
-namespace dengine::events {
-    class EventsData;
+namespace dengine {
+    namespace events {
+        class EventsData;
+    }
+
+    namespace graphics {
+        class PNGImage;
+    }
 }
 
-#include "WindowAccessor.h"
+#include "WindowManager.h"
 
 namespace dengine::window {
     struct PropertyData {
@@ -32,7 +39,7 @@ namespace dengine::window {
         }
     };
 
-    class WindowAccessorX : public WindowAccessor {
+    class WindowManagerX : public WindowManager {
     private:
         Display *display;
         Window rootWindow;
@@ -54,7 +61,7 @@ namespace dengine::window {
                                       uint minimumWidth, uint minimumHeight);
 
     public:
-        WindowAccessorX(int x, int y, uint width, uint height, const std::string& title);
+        WindowManagerX(int x, int y, uint width, uint height, const std::string& title);
 
         void setVisible(bool isVisible);
 
@@ -66,13 +73,19 @@ namespace dengine::window {
 
         void setSize(uint width, uint height);
 
-        void setWindowTitle(const std::string& title);
+        void setIcon(const dengine::graphics::PNGImage& image);
+
+        void setHiddenToTray(bool isHidden);
+
+        void setWindowTitle(const std::string &title);
 
         void setMaximumSize(uint maximumWidth, uint maximumHeight);
 
         void setMinimumSize(uint minimumWidth, uint minimumHeight);
 
         void setFullscreenEnabled(bool isEnabled);
+
+        void destroyWindow();
 
         bool isVisible() const;
 
@@ -86,6 +99,8 @@ namespace dengine::window {
 
         std::vector<uint> getSize() const;
 
+        bool isHiddenToTray() const;
+
         const std::string &getWindowTitle() const;
 
         std::vector<uint> getMaximumSize() const;
@@ -94,11 +109,15 @@ namespace dengine::window {
 
         bool isFullscreenEnabled() const;
 
-        std::shared_ptr<const dengine::events::EventsData> checkEvents();
+        //@todo GLXContext
 
-        ~WindowAccessorX();
+        std::shared_ptr<dengine::events::MouseState> getMouseState() const;
 
-        void destroy();
+        std::shared_ptr<dengine::events::KeyboardState> getKeyboardState() const;
+
+        std::shared_ptr<dengine::events::WindowState> getWindowState() const;
+
+        ~WindowManagerX();
     };
 }
 

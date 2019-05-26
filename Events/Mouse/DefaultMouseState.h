@@ -2,7 +2,7 @@
 // Created by wcobalt on 23.05.19.
 //
 
-#include <vector>
+#include <unordered_set>
 
 #ifndef DENGINE_DEFAULTMOUSESTATE_H
 #define DENGINE_DEFAULTMOUSESTATE_H
@@ -12,20 +12,21 @@
 namespace dengine::events {
     class DefaultMouseState : public MouseState {
     private:
-        std::vector<int> pressedButtons;
-        std::vector<int> releasedButtons;
+        std::unordered_set<int> pressedButtons;
+        std::unordered_set<int> releasedButtons;
 
         int mouseWheelDirection;
 
         int rootX, rootY,
             windowX, windowY;
     public:
-        DefaultMouseState(const std::vector<int>& pressedButtons, const std::vector<int>& releasedButtons,
+        DefaultMouseState(const std::unordered_set<int>& pressedButtons,
+                          const std::unordered_set<int>& releasedButtons,
                           int mouseWheelDirection, int rootX, int rootY, int windowX, int windowY);
 
-        bool isButtonPressed(int mouseButton) const;
+        bool isButtonPressed(int button) const;
 
-        bool isButtonReleased(int mouseButton) const;
+        bool isButtonReleased(int button) const;
 
         int getMouseWheelDirection() const;
 

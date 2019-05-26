@@ -5,7 +5,7 @@
 #ifndef DENGINE_WINDOWSTATE_H
 #define DENGINE_WINDOWSTATE_H
 
-#include "../DObject.h"
+#include "../../DObject.h"
 
 namespace dengine::events {
     class WindowState : DObject {

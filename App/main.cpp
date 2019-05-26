@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../Window/WindowAccessorX.h"
+#include "../Window/WindowManagerX.h"
 #include <string>
 #include "../Dengine.h"
 #include <memory>
@@ -12,11 +12,11 @@ using namespace dengine;
 using namespace dengine::window;
 
 int main() {//memory safe
-    std::shared_ptr<WindowAccessor> accessor(new WindowAccessorX(0, 0, 400, 200, "Test window"));
+    std::shared_ptr<WindowManager> manager(new WindowManagerX(0, 0, 400, 200, "Test window"));
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
-    accessor->setVisible(false);
+    //manager->setVisible(false);
 
     //std::shared_ptr<WindowManager> windowManager(new WindowManager(accessor));
     //std::shared_ptr<Dengine> dengine(new Dengine(windowManager));

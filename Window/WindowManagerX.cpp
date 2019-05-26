@@ -11,17 +11,17 @@
 #include <memory>
 #include <vector>
 
-#include "WindowAccessorX.h"
-#include "../Events/MousePosition.h"
-#include "../Events/EventsData.h"
+#include "WindowManagerX.h"
+#include "../Graphics/PNGImage.h"
 
 using std::shared_ptr;
 using std::vector;
+
 using namespace dengine::window;
 using namespace dengine::events;
-using namespace dengine::geometry;
+using namespace dengine::graphics;
 
-WindowAccessorX::WindowAccessorX(int x, int y, uint width,
+WindowManagerX::WindowManagerX(int x, int y, uint width,
                                 uint height, const std::string& title):title(title) {
     //@todo to settings of WindowAccessor
     GLint attributes[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 24, None};
@@ -62,7 +62,7 @@ WindowAccessorX::WindowAccessorX(int x, int y, uint width,
     lastHeight = height;
 }
 
-void WindowAccessorX::setVisible(bool isVisible) {
+void WindowManagerX::setVisible(bool isVisible) {
     if (isVisible)
         XMapWindow(display, window);
     else
@@ -71,42 +71,50 @@ void WindowAccessorX::setVisible(bool isVisible) {
 
 }
 
-void WindowAccessorX::setDecorated(bool isDecorated) {
+void WindowManagerX::setDecorated(bool isDecorated) {
     //@todo implement
 }
 
-void WindowAccessorX::setCursorVisible(bool isVisible) {
+void WindowManagerX::setCursorVisible(bool isVisible) {
     //@todo implement
 }
 
-void WindowAccessorX::setWindowPosition(int x, int y) {
+void WindowManagerX::setWindowPosition(int x, int y) {
     XMoveWindow(display, window, x, y);
     XFlush(display);
 }
 
-void WindowAccessorX::setSize(uint width, uint height) {
+void WindowManagerX::setSize(uint width, uint height) {
     XResizeWindow(display, window, width, height);
     XFlush(display);
 }
 
-void WindowAccessorX::setWindowTitle(const std::string& title) {
+void WindowManagerX::setIcon(const dengine::graphics::PNGImage& image) {
+
+}
+
+void WindowManagerX::setHiddenToTray(bool isHidden) {
+
+}
+
+void WindowManagerX::setWindowTitle(const std::string& title) {
     XStoreName(display, window, title.c_str());
     XFlush(display);
 }
 
-void WindowAccessorX::setMinimumSize(uint minimumWidth, uint minimumHeight) {
+void WindowManagerX::setMinimumSize(uint minimumWidth, uint minimumHeight) {
     vector<uint> maximumSize = getMaximumSize();
 
     setMinimumAndMaximumSize(maximumSize[0], maximumSize[1], minimumWidth, minimumHeight);
 }
 
-void WindowAccessorX::setMaximumSize(uint maximumWidth, uint maximumHeight) {
+void WindowManagerX::setMaximumSize(uint maximumWidth, uint maximumHeight) {
     vector<uint> minimumSize = getMinimumSize();
 
     setMinimumAndMaximumSize(maximumWidth, maximumHeight, minimumSize[0], minimumSize[1]);
 }
 
-void WindowAccessorX::setFullscreenEnabled(bool isEnabled) {
+void WindowManagerX::setFullscreenEnabled(bool isEnabled) {
     XEvent event;
     std::memset(&event, 0, sizeof(event));
     event.type = ClientMessage;
@@ -121,19 +129,26 @@ void WindowAccessorX::setFullscreenEnabled(bool isEnabled) {
                SubstructureRedirectMask | SubstructureNotifyMask, &event);
 }
 
-bool WindowAccessorX::isVisible() const {
+void WindowManagerX::destroyWindow() {
+    XDestroyWindow(display, window);
+
+    delete display;
+    delete xVisualInfo;
+}
+
+bool WindowManagerX::isVisible() const {
     //@todo implement
 }
 
-bool WindowAccessorX::isDecorated() const {
+bool WindowManagerX::isDecorated() const {
     //@todo implement
 }
 
-bool WindowAccessorX::isCursorVisible() const {
+bool WindowManagerX::isCursorVisible() const {
     //@todo implement
 }
 
-vector<int> WindowAccessorX::getWindowPosition() const {
+vector<int> WindowManagerX::getWindowPosition() const {
     XWindowAttributes xWindowAttributes;
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
@@ -153,7 +168,7 @@ vector<int> WindowAccessorX::getWindowPosition() const {
     return vec;
 }
 
-vector<int> WindowAccessorX::getClientAreaPosition() const {
+vector<int> WindowManagerX::getClientAreaPosition() const {
     XWindowAttributes xWindowAttributes;
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
@@ -166,7 +181,7 @@ vector<int> WindowAccessorX::getClientAreaPosition() const {
     return vec;
 }
 
-vector<uint> WindowAccessorX::getSize() const {
+vector<uint> WindowManagerX::getSize() const {
     XWindowAttributes xWindowAttributes;
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
@@ -179,11 +194,15 @@ vector<uint> WindowAccessorX::getSize() const {
     return vec;
 }
 
-const std::string& WindowAccessorX::getWindowTitle() const {
+bool WindowManagerX::isHiddenToTray() const {
+    return false;
+}
+
+const std::string& WindowManagerX::getWindowTitle() const {
     return title;
 }
 
-vector<uint> WindowAccessorX::getMinimumSize() const {
+vector<uint> WindowManagerX::getMinimumSize() const {
     XSizeHints xSizeHints = {};
 
     XGetNormalHints(display, window, &xSizeHints);
@@ -196,7 +215,7 @@ vector<uint> WindowAccessorX::getMinimumSize() const {
     return vec;
 }
 
-vector<uint> WindowAccessorX::getMaximumSize() const {
+vector<uint> WindowManagerX::getMaximumSize() const {
     XSizeHints xSizeHints = {};
 
     XGetNormalHints(display, window, &xSizeHints);
@@ -209,22 +228,7 @@ vector<uint> WindowAccessorX::getMaximumSize() const {
     return vec;
 }
 
-void WindowAccessorX::setMinimumAndMaximumSize(uint maximumWidth, uint maximumHeight,
-                                               uint minimumWidth, uint minimumHeight) {
-        XSizeHints xSizeHints = {};
-
-        xSizeHints.flags = PMaxSize | PMinSize;
-
-        xSizeHints.max_width = maximumWidth;
-        xSizeHints.max_height = maximumHeight;
-
-        xSizeHints.min_width = minimumWidth;
-        xSizeHints.min_height = minimumHeight;
-
-        XSetWMNormalHints(display, window, &xSizeHints);
-}
-
-bool WindowAccessorX::isFullscreenEnabled() const {
+bool WindowManagerX::isFullscreenEnabled() const {
     PropertyData data = getProperty("_NET_WM_STATE", 0, LONG_MAX, window);
 
     for(int i = 0; i < data.numberOfItems; i++) {
@@ -238,7 +242,7 @@ bool WindowAccessorX::isFullscreenEnabled() const {
 
 //@todo logging
 //@todo tests
-shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
+/*shared_ptr<const EventsData> WindowManagerX::checkEvents() {
     //@todo do events' masks is configured out of engine
     shared_ptr<EventsData> eventsData(new EventsData());
 
@@ -333,20 +337,41 @@ shared_ptr<const EventsData> WindowAccessorX::checkEvents() {
     }
 
     return eventsData;
+}*/
+
+std::shared_ptr<dengine::events::MouseState> WindowManagerX::getMouseState() const {
+    return shared_ptr<MouseState>();
 }
 
-WindowAccessorX::~WindowAccessorX() {
-    destroy();
+std::shared_ptr<dengine::events::KeyboardState> WindowManagerX::getKeyboardState() const {
+    return shared_ptr<KeyboardState>();
 }
 
-void WindowAccessorX::destroy() {
-    XDestroyWindow(display, window);
-
-    delete display;
-    delete xVisualInfo;
+std::shared_ptr<dengine::events::WindowState> WindowManagerX::getWindowState() const {
+    return shared_ptr<WindowState>();
 }
 
-PropertyData WindowAccessorX::getProperty(const char* propertyName, long offset,
+
+WindowManagerX::~WindowManagerX() {
+    destroyWindow();
+}
+
+void WindowManagerX::setMinimumAndMaximumSize(uint maximumWidth, uint maximumHeight,
+                                              uint minimumWidth, uint minimumHeight) {
+    XSizeHints xSizeHints = {};
+
+    xSizeHints.flags = PMaxSize | PMinSize;
+
+    xSizeHints.max_width = maximumWidth;
+    xSizeHints.max_height = maximumHeight;
+
+    xSizeHints.min_width = minimumWidth;
+    xSizeHints.min_height = minimumHeight;
+
+    XSetWMNormalHints(display, window, &xSizeHints);
+}
+
+PropertyData WindowManagerX::getProperty(const char* propertyName, long offset,
                                              long size, Window window) const {
     Atom property, returnedProperty;
 

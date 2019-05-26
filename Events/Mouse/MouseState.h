@@ -7,7 +7,7 @@
 #ifndef DENGINE_MOUSESTATE_H
 #define DENGINE_MOUSESTATE_H
 
-#include "../DObject.h"
+#include "../../DObject.h"
 
 namespace dengine::events {
     class MouseState : public DObject {

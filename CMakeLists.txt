@@ -6,10 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(App App/main.cpp)
 
 add_library(Dengine
-        Window/WindowAccessorX.cpp
-        Window/WindowAccessorX.h
-        Window/WindowAccessor.h
-        Window/WindowManager.cpp
+        Window/WindowManagerX.cpp
+        Window/WindowManagerX.h
         Window/WindowManager.h
 
         Dengine.cpp
@@ -30,18 +28,18 @@ add_library(Dengine
         Components/DefaultComponent.cpp
         Components/DefaultComponent.h
 
-        Events/KeyboardState.h
-        Events/MouseState.h
-        Events/Keyboard.h
-        Events/Keyboard.cpp
-        Events/Mouse.h
-        Events/WindowState.h
-        Events/DefaultMouseState.cpp
-        Events/DefaultMouseState.h
-        Events/DefaultWindowState.cpp
-        Events/DefaultWindowState.h
-        Events/DefaultKeyboardState.cpp
-        Events/DefaultKeyboardState.h
+        Events/Keyboard/KeyboardState.h
+        Events/Mouse/MouseState.h
+        Events/Keyboard/Keyboard.h
+        Events/Keyboard/Keyboard.cpp
+        Events/Mouse/Mouse.h
+        Events/Window/WindowState.h
+        Events/Mouse/DefaultMouseState.cpp
+        Events/Mouse/DefaultMouseState.h
+        Events/Window/DefaultWindowState.cpp
+        Events/Window/DefaultWindowState.h
+        Events/Keyboard/DefaultKeyboardState.cpp
+        Events/Keyboard/DefaultKeyboardState.h
 
         Exceptions/DengineException.h
         Exceptions/NoCurrentSceneException.cpp

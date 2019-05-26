@@ -2,7 +2,7 @@
 // Created by wcobalt on 23.05.19.
 //
 
-#include <vector>
+#include <unordered_set>
 
 #ifndef DENGINE_DEFAULTKEYBOARDSTATE_H
 #define DENGINE_DEFAULTKEYBOARDSTATE_H
@@ -12,10 +12,11 @@
 namespace dengine::events {
     class DefaultKeyboardState : public KeyboardState {
     private:
-        std::vector<int> pressedKeys;
-        std::vector<int> releasedKeys;
+        std::unordered_set<int> pressedKeys;
+        std::unordered_set<int> releasedKeys;
     public:
-        DefaultKeyboardState(const std::vector<int>& pressedKeys, const std::vector<int>& releasedKeys);
+        DefaultKeyboardState(const std::unordered_set<int>& pressedKeys,
+                             const std::unordered_set<int>& releasedKeys);
 
         bool isKeyPressed(int key) const;
 
