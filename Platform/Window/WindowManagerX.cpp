@@ -1,6 +1,7 @@
 //For this libraries you should install libgl1-mesa-dev
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <X11/keysymdef.h>
 #include <GL/glx.h>
 #include <GL/gl.h>
 
@@ -12,12 +13,12 @@
 #include <vector>
 
 #include "WindowManagerX.h"
-#include "../Graphics/PNGImage.h"
+#include "../../Graphics/PNGImage.h"
 
 using std::shared_ptr;
 using std::vector;
 
-using namespace dengine::window;
+using namespace dengine::platform::window;
 using namespace dengine::events;
 using namespace dengine::graphics;
 
@@ -40,6 +41,8 @@ WindowManagerX::WindowManagerX(int x, int y, uint width,
 
     xSetWindowAttributes.colormap = colorMap;
     xSetWindowAttributes.event_mask = eventsMask;
+
+
 
     window = XCreateWindow(display, rootWindow, x, y, width, height, 0, xVisualInfo->depth,
                 InputOutput, xVisualInfo->visual, CWColormap | CWEventMask, &xSetWindowAttributes);
@@ -240,6 +243,10 @@ bool WindowManagerX::isFullscreenEnabled() const {
     return false;
 }
 
+bool WindowManagerX::isXKBInstalled() const {
+
+}
+
 //@todo logging
 //@todo tests
 /*shared_ptr<const EventsData> WindowManagerX::checkEvents() {
@@ -345,6 +352,10 @@ std::shared_ptr<dengine::events::MouseState> WindowManagerX::getMouseState() con
 
 std::shared_ptr<dengine::events::KeyboardState> WindowManagerX::getKeyboardState() const {
     return shared_ptr<KeyboardState>();
+}
+
+std::shared_ptr<dengine::events::KeyboardState> WindowManagerX::getXKBKeyboardState() const {
+
 }
 
 std::shared_ptr<dengine::events::WindowState> WindowManagerX::getWindowState() const {

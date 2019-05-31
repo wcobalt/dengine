@@ -15,7 +15,7 @@
 
 using std::shared_ptr;
 using namespace dengine;
-using namespace dengine::window;
+using namespace dengine::platform::window;
 using namespace dengine::exceptions;
 
 Dengine::Dengine(shared_ptr<WindowManager> windowManager):mIsPaused(0), isGameStopped(0) {

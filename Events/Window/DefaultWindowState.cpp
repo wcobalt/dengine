@@ -4,7 +4,7 @@
 
 #include "DefaultWindowState.h"
 
-using namespace dengine::events;
+using namespace dengine::events::window;
 
 DefaultWindowState::DefaultWindowState():mIsWindowMaximized(0), mIsWindowMinimized(0),
                                          mIsWindowWindowed(0), mIsWindowResized(0),

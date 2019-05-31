@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../Window/WindowManagerX.h"
+//#include "../Window/WindowManagerX.h"
 #include <string>
 #include "../Dengine.h"
 #include <memory>
@@ -9,10 +9,10 @@
 //@TODO windows forms(later) support
 
 using namespace dengine;
-using namespace dengine::window;
+//using namespace dengine::platform::window;
 
 int main() {//memory safe
-    std::shared_ptr<WindowManager> manager(new WindowManagerX(0, 0, 400, 200, "Test window"));
+    //std::shared_ptr<WindowManager> manager(new WindowManagerX(0, 0, 400, 200, "Test window"));
 
     //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 

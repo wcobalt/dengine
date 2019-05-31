@@ -6,9 +6,16 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(App App/main.cpp)
 
 add_library(Dengine
-        Window/WindowManagerX.cpp
-        Window/WindowManagerX.h
-        Window/WindowManager.h
+        Platform/Window/WindowManagerX.cpp
+        Platform/Window/WindowManagerX.h
+        Platform/Window/WindowManager.h
+        Platform/Network/NetworkManager.cpp
+        Platform/Network/NetworkManager.h
+        Platform/Audio/AudioManager.cpp
+        Platform/Audio/AudioManager.h
+        Platform/PlatformSet.h
+        Platform/Input/GamepadManager.cpp
+        Platform/Input/GamepadManager.h
 
         Dengine.cpp
         Dengine.h
@@ -30,8 +37,7 @@ add_library(Dengine
 
         Events/Keyboard/KeyboardState.h
         Events/Mouse/MouseState.h
-        Events/Keyboard/Keyboard.h
-        Events/Keyboard/Keyboard.cpp
+        Events/Keyboard/KeyCode.cpp
         Events/Mouse/Mouse.h
         Events/Window/WindowState.h
         Events/Mouse/DefaultMouseState.cpp
@@ -71,7 +77,12 @@ add_library(Dengine
         Geometry/Geometry.h
         Geometry/Vector.h
 
-        Coreutils/ID.h)
+        Graphics/GraphicsManager.cpp
+        Graphics/GraphicsManager.h
+        Graphics/PNGImage.cpp
+        Graphics/PNGImage.h
+
+        Coreutils/ID.h Events/Keyboard/KeyCode.h Events/Keyboard/Key.h Events/Keyboard/DKey.cpp Events/Keyboard/DKey.h Events/Keyboard/KeyByDKeyCodeComparator.cpp Events/Keyboard/KeyByDKeyCodeComparator.h Events/Keyboard/KeyBySymbolComparator.cpp Events/Keyboard/KeyBySymbolComparator.h)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})

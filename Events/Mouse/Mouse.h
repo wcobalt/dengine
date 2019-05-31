@@ -5,7 +5,7 @@
 #ifndef DENGINE_MOUSE_H
 #define DENGINE_MOUSE_H
 
-namespace dengine::events {
+namespace dengine::events::mouse {
     class Mouse {
     public:
         static const int

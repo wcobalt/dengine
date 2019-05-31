@@ -9,7 +9,7 @@
 
 #include "MouseState.h"
 
-namespace dengine::events {
+namespace dengine::events::mouse {
     class DefaultMouseState : public MouseState {
     private:
         std::unordered_set<int> pressedButtons;

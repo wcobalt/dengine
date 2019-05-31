@@ -24,6 +24,8 @@ namespace dengine {
  * implement windowaccessor
  * keyboard, mouse and window state (with builders)
  * windoaccessor checkevents split
+ * review run/pause/stop API
+ * review Dengine->ScenesManager->Scene->GameObject->Component API (Core API)
  */
 
 namespace dengine {
@@ -45,7 +47,6 @@ namespace dengine {
         void update();
         void run();
 
-        //@todo NetworkManager, AudioManager, GraphicsManager, WindowAcessor -> WindowManager(+split checkEvents on different functions), GamepadManager
         Dengine(std::shared_ptr<window::WindowManager> windowManager);
     public:
         //SOLID

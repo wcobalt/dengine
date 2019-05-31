@@ -7,14 +7,23 @@
 #ifndef DENGINE_KEYBOARDSTATE_H
 #define DENGINE_KEYBOARDSTATE_H
 
+#include "KeyCode.h"
 #include "../../DObject.h"
 
-namespace dengine::events {
+namespace dengine::events::keyboard {
     class KeyboardState : public DObject {
     public:
-        virtual bool isKeyPressed(int key) const = 0;
+        virtual bool isKeyPressed(DKeyCode key) const = 0;
 
-        virtual bool isKeyReleased(int key) const = 0;
+        virtual bool isKeyReleased(DKeyCode key) const = 0;
+
+        virtual bool isSymbolPressed(const std::string& symbol) const = 0;
+
+        virtual bool isSymbolReleased(const std::string& symbol) const = 0;
+
+        virtual std::string getCurrentKeyboardLayoutCode() const = 0;
+
+        virtual std::string getCurrentKeyboardLayoutName() const = 0;
     };
 }
 

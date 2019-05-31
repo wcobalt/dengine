@@ -24,7 +24,7 @@ namespace dengine {
 
 #include "WindowManager.h"
 
-namespace dengine::window {
+namespace dengine::platform::window {
     struct PropertyData {
         unsigned char *data;
         ulong numberOfItems;
@@ -109,11 +109,15 @@ namespace dengine::window {
 
         bool isFullscreenEnabled() const;
 
+        bool isXKBInstalled() const;
+
         //@todo GLXContext
 
         std::shared_ptr<dengine::events::MouseState> getMouseState() const;
 
         std::shared_ptr<dengine::events::KeyboardState> getKeyboardState() const;
+
+        std::shared_ptr<dengine::events::KeyboardState> getXKBKeyboardState() const;
 
         std::shared_ptr<dengine::events::WindowState> getWindowState() const;
 

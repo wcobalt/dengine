@@ -26,9 +26,9 @@ namespace dengine {
     }
 }
 
-#include "../DObject.h"
+#include "../../DObject.h"
 
-namespace dengine::window {
+namespace dengine::platform::window {
     class WindowManager : public DObject {
     public:
         virtual void setVisible(bool isVisible) = 0;

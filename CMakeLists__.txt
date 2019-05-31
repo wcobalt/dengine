@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.12)
+project(Dengine)
+
+set(CMAKE_CXX_STANDARD 17)
+
+add_executable(App App/main.cpp)
+
+add_library(Dengine
+        Window/WindowManagerX.cpp
+        Window/WindowManagerX.h
+        Window/WindowManager.h
+
+        Graphics/PNGImage.h
+        Graphics/PNGImage.cpp
+        Window/WindowManager.cpp)
+
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIR})
+
+find_package(X11 REQUIRED)
+include_directories(${X11_INCLUDE_DIR})
+
+find_package (Threads)
+
+target_link_libraries(App Dengine ${X11_LIBRARIES} ${OPENGL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})

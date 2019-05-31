@@ -6,7 +6,7 @@
 
 #include "DefaultMouseState.h"
 
-using namespace dengine::events;
+using namespace dengine::events::mouse;
 
 DefaultMouseState::DefaultMouseState(const std::unordered_set<int>& pressedButtons,
                                      const std::unordered_set<int>& releasedButtons,
