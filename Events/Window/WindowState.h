@@ -18,7 +18,9 @@ namespace dengine::events::window {
 
         virtual bool isWindowResized() const = 0;
 
-        virtual bool isWindowFocused() const = 0;
+        virtual bool gotFocus() const = 0;
+
+        virtual bool lostFocus() const = 0;
 
         virtual bool isWindowClosing() const = 0;
     };

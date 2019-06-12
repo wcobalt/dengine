@@ -12,12 +12,13 @@ namespace dengine::events::window {
     private:
         bool mIsWindowMaximized, mIsWindowMinimized,
                 mIsWindowWindowed, mIsWindowResized,
-                mIsWindowFocused, mIsWindowClosing;
+                mGotFocus, mLostFocus,
+                mIsWindowClosing;
     public:
         DefaultWindowState();
 
         DefaultWindowState(bool isWindowMaximized, bool isWindowMinimized, bool isWindowWindowed,
-                           bool isWindowResized, bool isWindowFocused, bool isWindowClosing);
+                           bool isWindowResized, bool gotFocus, bool lostFocus, bool isWindowClosing);
 
         bool isWindowMaximized() const;
 
@@ -27,7 +28,9 @@ namespace dengine::events::window {
 
         bool isWindowResized() const;
 
-        bool isWindowFocused() const;
+        bool gotFocus() const;
+
+        bool lostFocus() const;
 
         bool isWindowClosing() const;
     };

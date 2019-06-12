@@ -16,34 +16,44 @@ namespace dengine {
         class KeyboardState;
         class WindowState;
     }
-
-    namespace window {
-        class WindowAccessor;
-    }
-
-    namespace graphics {
-        class PNGImage;
-    }
 }
 
 #include "../../DObject.h"
 
 namespace dengine::platform::window {
+    enum WindowGeometryState {
+        NORMAL,
+        MAXIMIZED_HORIZONTAL,
+        MAXIMIZED_VERTICAL,
+        MAXIMIZED_BOTH,
+        MINIMIZED,
+        FULLSCREEN,
+        HIDDEN_TO_TRAY,
+        HIDDEN
+    };
+
     class WindowManager : public DObject {
     public:
-        virtual void setVisible(bool isVisible) = 0;
-
         virtual void setDecorated(bool isDecorated) = 0;
 
         virtual void setCursorVisible(bool isVisible) = 0;
 
         virtual void setWindowPosition(int x, int y) = 0;
 
-        virtual void setSize(uint width, uint height) = 0;
+        virtual void setWindowSize(uint width, uint height) = 0;
 
-        virtual void setIcon(const dengine::graphics::PNGImage& image) = 0;
+        virtual void setIcon(const long* buffer, int length) = 0;
 
-        virtual void setHiddenToTray(bool isHidden) = 0;
+        virtual void setRatio(uint width, uint height) = 0;
+
+        //@todo implement
+        virtual void setTrayIcon(const long* buffer, int length) = 0;
+
+        //@todo implement
+        virtual void setTrayName(const std::string& name) = 0;
+
+        //@todo implement
+        virtual void sendNotification(const std::string& message) = 0;
 
         virtual void setWindowTitle(const std::string &title) = 0;
 
@@ -51,11 +61,13 @@ namespace dengine::platform::window {
 
         virtual void setMinimumSize(uint minimumWidth, uint minimumHeight) = 0;
 
-        virtual void setFullscreenEnabled(bool isEnabled) = 0;
+        virtual void setWindowGeometryState(WindowGeometryState windowGeometryState) = 0;
+
+        virtual void centerWindow() = 0;
 
         virtual void destroyWindow() = 0;
 
-        virtual bool isVisible() const = 0;
+        virtual std::vector<uint> getScreenResolution() = 0;
 
         virtual bool isDecorated() const = 0;
 
@@ -65,9 +77,9 @@ namespace dengine::platform::window {
 
         virtual std::vector<int> getClientAreaPosition() const = 0;
 
-        virtual std::vector<uint> getSize() const = 0;
+        virtual std::vector<uint> getWindowSize() const = 0;
 
-        virtual bool isHiddenToTray() const = 0;
+        virtual std::vector<uint> getRatio() const = 0;
 
         virtual const std::string &getWindowTitle() const = 0;
 
@@ -75,7 +87,7 @@ namespace dengine::platform::window {
 
         virtual std::vector<uint> getMinimumSize() const = 0;
 
-        virtual bool isFullscreenEnabled() const = 0;
+        virtual WindowGeometryState getWindowGeometryState() const = 0;
 
         virtual std::shared_ptr<dengine::events::MouseState> getMouseState() const = 0;
 
@@ -83,7 +95,7 @@ namespace dengine::platform::window {
 
         virtual std::shared_ptr<dengine::events::WindowState> getWindowState() const = 0;
 
-        virtual ~WindowManager() = 0;
+        virtual ~WindowManager();
     };
 }
 
