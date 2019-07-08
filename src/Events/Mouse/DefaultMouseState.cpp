@@ -2,35 +2,35 @@
 // Created by wcobalt on 23.05.19.
 //
 
-#include <unordered_set>
+#include <set>
 
 #include "DefaultMouseState.h"
 
 using namespace dengine::events::mouse;
 
-DefaultMouseState::DefaultMouseState(const std::unordered_set<int>& pressedButtons,
-                                     const std::unordered_set<int>& releasedButtons,
-                                     int mouseWheelDirection, int windowX, int windowY):
+DefaultMouseState::DefaultMouseState(const std::set<DMouseButton>& pressedButtons,
+                                     const std::set<DMouseButton>& releasedButtons,
+                                     int wheelDirection, int x, int y):
                                      pressedButtons(pressedButtons), releasedButtons(releasedButtons),
-                                     mouseWheelDirection(mouseWheelDirection),
-                                     windowX(windowX), windowY(windowY) {}
+                                     mWheelDirection(wheelDirection),
+                                     x(x), y(y) {}
 
-bool DefaultMouseState::isButtonPressed(int button) const {
+bool DefaultMouseState::isButtonPressed(DMouseButton button) const {
     auto it = pressedButtons.find(button);
 
     return it != pressedButtons.end();
 }
 
-bool DefaultMouseState::isButtonReleased(int button) const {
+bool DefaultMouseState::isButtonReleased(DMouseButton button) const {
     auto it = releasedButtons.find(button);
 
     return it != releasedButtons.end();
 }
 
-std::vector<int> DefaultMouseState::getPosition() const {
-    return {windowX, windowY};
+DWheelDirection DefaultMouseState::getWheelDirection() const {
+    return mWheelDirection;
 }
 
-int DefaultMouseState::getWheelDirection() const {
-    return mouseWheelDirection;
+std::vector<int> DefaultMouseState::getPosition() const {
+    return {x, y};
 }

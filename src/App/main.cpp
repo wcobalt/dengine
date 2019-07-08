@@ -1,5 +1,6 @@
 #include <iostream>
 #include "../Platform/Window/X/WindowManagerX.h"
+#include "../Events/Mouse/MouseState.h"
 #include <string>
 #include <memory>
 #include <chrono>
@@ -10,6 +11,7 @@
 
 using std::shared_ptr;
 using namespace dengine;
+using namespace dengine::events::mouse;
 using namespace dengine::platform::window;
 using namespace dengine::platform::window::x;
 
@@ -35,7 +37,9 @@ int main() {//memory safe
      while(1) {
          std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-         std::cout << manager->getMaximizationState() << "\n";
+         std::shared_ptr<MouseState> ms = manager->getMouseState();
+
+         std::cout << ms->getPosition()[0] << " | " << ms->getPosition()[1] << "\n";
          fflush(stdout);
      }
 /*    manager->setGeometryState(WindowManager::ICONIFIED);

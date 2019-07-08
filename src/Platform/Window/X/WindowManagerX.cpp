@@ -24,6 +24,8 @@
 #include "Exceptions/UnableToCreateGLXContextException.h"
 #include "Exceptions/UnableToAttachGLXContextToWindow.h"
 #include "Exceptions/TraySpecificationIsNotSupportedException.h"
+#include "../../../Events/Mouse/DefaultMouseStateBuilder.h"
+#include "../../../Events/Mouse/Mouse.h"
 
 using std::shared_ptr;
 using std::vector;
@@ -364,12 +366,7 @@ void WindowManagerX::destroy() {
 }
 
 std::vector<uint> WindowManagerX::getScreenResolution() {
-    vector<uint> result;
-
-    result.emplace_back(XDisplayWidth(display, DEFAULT_SCREEN));
-    result.emplace_back(XDisplayHeight(display, DEFAULT_SCREEN));
-
-    return result;
+    return {(uint)XDisplayWidth(display, DEFAULT_SCREEN), (uint)XDisplayHeight(display, DEFAULT_SCREEN)};
 }
 
 bool WindowManagerX::isVisible() const {
@@ -393,9 +390,7 @@ vector<int> WindowManagerX::getPosition() const {
 
     XTranslateCoordinates(display, window, rootWindow, pos[0], pos[1], &x, &y, &win);
 
-    vector<int> vec{x - pos[0], y - pos[1]};
-
-    return vec;
+    return {x - pos[0], y - pos[1]};
 }
 
 vector<int> WindowManagerX::getClientAreaPosition() const {
@@ -403,9 +398,7 @@ vector<int> WindowManagerX::getClientAreaPosition() const {
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
 
-    vector<int> vec{xWindowAttributes.x, xWindowAttributes.y};
-
-    return vec;
+    return {xWindowAttributes.x, xWindowAttributes.y};
 }
 
 vector<uint> WindowManagerX::getSize() const {
@@ -413,9 +406,7 @@ vector<uint> WindowManagerX::getSize() const {
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
 
-    vector<uint> vec{(uint)xWindowAttributes.width, (uint)xWindowAttributes.height};
-
-    return vec;
+    return {(uint)xWindowAttributes.width, (uint)xWindowAttributes.height};
 }
 
 std::vector<uint> WindowManagerX::getRatio() const {
@@ -423,9 +414,7 @@ std::vector<uint> WindowManagerX::getRatio() const {
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    vector<uint> vec{(uint)xSizeHints.min_aspect.x, (uint)xSizeHints.min_aspect.y};
-
-    return vec;
+    return {(uint)xSizeHints.min_aspect.x, (uint)xSizeHints.min_aspect.y};
 }
 
 const std::string& WindowManagerX::getTitle() const {
@@ -437,9 +426,7 @@ vector<uint> WindowManagerX::getMinimumSize() const {
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    vector<uint> vec{(uint)xSizeHints.min_width, (uint)xSizeHints.min_height};
-
-    return vec;
+    return {(uint)xSizeHints.min_width, (uint)xSizeHints.min_height};
 }
 
 vector<uint> WindowManagerX::getMaximumSize() const {
@@ -447,9 +434,7 @@ vector<uint> WindowManagerX::getMaximumSize() const {
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    vector<uint> vec{(uint)xSizeHints.max_width, (uint)xSizeHints.max_height};
-
-    return vec;
+    return {(uint)xSizeHints.max_width, (uint)xSizeHints.max_height};
 }
 
 int WindowManagerX::getGeometryState() const {
@@ -589,7 +574,44 @@ int WindowManagerX::getMaximizationState() const {
 }*/
 
 std::shared_ptr<MouseState> WindowManagerX::getMouseState() const {
-    return nullptr;
+    std::shared_ptr<MouseStateBuilder> builder(new DefaultMouseStateBuilder());
+
+    Window win;
+
+    int x, y, stub;
+    unsigned mask;
+
+    XQueryPointer(display, window, &win, &win, &stub, &stub, &x, &y, &mask);
+
+    builder->setPosition(x, y);
+
+    XEvent xEvent;
+
+    while (XCheckMaskEvent(display, ButtonPressMask | ButtonReleaseMask, &xEvent)) {
+        switch(xEvent.type) {
+            case ButtonPress:
+                switch (xEvent.xbutton.button) {
+                    case DEFAULT_WHEEL_POSITIVE_BUTTON:
+                        builder->setWheelDirection(1);
+
+                        break;
+                    case DEFAULT_WHEEL_NEGATIVE_BUTTON:
+                        builder->setWheelDirection(-1);
+
+                        break;
+                    default:
+                        builder->addPressedButton(toDMouseButton(xEvent.xbutton.button));
+                }
+
+                break;
+            case ButtonRelease:
+                builder->addReleasedButton(toDMouseButton(xEvent.xbutton.button));
+
+                break;
+        }
+    }
+
+    return builder->build();
 }
 
 std::shared_ptr<KeyboardState> WindowManagerX::getKeyboardState() const {
@@ -702,4 +724,17 @@ bool WindowManagerX::find(long needle, const PropertyData &haystack) const {
     }
 
     return false;
+}
+
+DMouseButton WindowManagerX::toDMouseButton(int xButton) const {
+    switch (xButton) {
+        case DEFAULT_LEFT_BUTTON:
+            return Mouse::LEFT;
+        case DEFAULT_MIDDLE_BUTTON:
+            return Mouse::MIDDLE;
+        case DEFAULT_RIGHT_BUTTON:
+            return Mouse::RIGHT;
+        default:
+            return xButton;
+    }
 }
