@@ -1,7 +1,6 @@
 #include <iostream>
 #include "../Platform/Window/X/WindowManagerX.h"
 #include <string>
-//#include "../Dengine.h"
 #include <memory>
 #include <chrono>
 #include <thread>
@@ -18,9 +17,9 @@ int main() {//memory safe
     std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
 
     /*std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    manager->setWindowSize(500, 500);
+    manager->setSize(500, 500);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    manager->setWindowPosition(0, 0);
+    manager->setPosition(0, 0);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     manager->setCursorVisible(false);
     std::this_thread::sleep_for(std::chrono::milliseconds(5000));*/
@@ -33,20 +32,21 @@ int main() {//memory safe
 
     manager->setIcon(buffer, 4 + 16 * 16 + 32*32);*/
 
+     while(1) {
+         std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+         std::cout << manager->getMaximizationState() << "\n";
+         fflush(stdout);
+     }
+/*    manager->setGeometryState(WindowManager::ICONIFIED);
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     manager->setVisible(false);
-    std::cout << manager->isVisible();
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-    manager->setWindowGeometryState(MINIMIZED);
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-    manager->setWindowGeometryState(MAXIMIZED_HORIZONTAL);
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-    manager->setWindowGeometryState(FULLSCREEN);
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-    manager->setWindowGeometryState(NORMAL);
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-    manager->setWindowGeometryState(NORMAL);
+    manager->setVisible(true);
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));*/
+    return 0;
     //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     //std::shared_ptr<WindowManager> manager(new WindowManagerX(0, 0, 400, 200, "Test window"));
 
     //std::this_thread::sleep_for(std::chrono::milliseconds(2000));

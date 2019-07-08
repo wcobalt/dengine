@@ -14,7 +14,17 @@
 
 namespace dengine {
     namespace events {
-        class EventsData;
+        namespace mouse {
+            class MouseState;
+        }
+
+        namespace keyboard {
+            class KeyboardState;
+        }
+
+        namespace window {
+            class WindowState;
+        }
     }
 }
 
@@ -42,6 +52,7 @@ namespace dengine::platform::window::x {
 
         bool mIsCursorVisible;
         bool mIsDecorated;
+        bool mIsVisible;
 
         struct PropertyData {
             unsigned char *data;
@@ -67,23 +78,24 @@ namespace dengine::platform::window::x {
         void setWindowBounds(int x, int y, uint width, uint height);
         void sendEvent(int type, const char* messageTypeAtomName, int format, long* data, long eventMask,
                 Window from, Window to);
-        void setFullscreenEnabled(bool isEnabled);
-        void setMaximized(bool isMaximized);
-        void setNormalStateEnabled(bool isEnabled);
+        void setMaximized(bool mode, Atom atom);
+        bool find(long needle, const PropertyData& haystack) const;
     public:
-        WindowManagerX(int x, int y, uint width, uint height, const std::string& title);//
+        WindowManagerX(int x, int y, uint width, uint height, const std::string& title);
 
-        void setDecorated(bool isDecorated);//
+        void setVisible(bool isVisible);
 
-        void setCursorVisible(bool isVisible);//
+        void setDecorated(bool isDecorated);
 
-        void setWindowPosition(int x, int y);//
+        void setCursorVisible(bool isVisible);
 
-        void setWindowSize(uint width, uint height);//
+        void setPosition(int x, int y);
 
-        void setIcon(const long* buffer, int length);//
+        void setSize(uint width, uint height);
 
-        void setRatio(uint ratioX, uint ratioY);//
+        void setIcon(const long* buffer, int length);
+
+        void setRatio(uint ratioX, uint ratioY);
 
         void setTrayIcon(const long* buffer, int length);
 
@@ -91,17 +103,23 @@ namespace dengine::platform::window::x {
 
         void sendNotification(const std::string& message);
 
-        void setWindowTitle(const std::string &title);//
+        void setTitle(const std::string &title);
 
-        void setMaximumSize(uint maximumWidth, uint maximumHeight);//
+        void setMaximumSize(uint maximumWidth, uint maximumHeight);
 
-        void setMinimumSize(uint minimumWidth, uint minimumHeight);//
+        void setMinimumSize(uint minimumWidth, uint minimumHeight);
 
-        void setWindowGeometryState(dengine::platform::window::WindowGeometryState windowGeometryState);
+        void setGeometryState(int windowGeometryState);
 
-        void centerWindow();//
+        void setFullscreenEnabled(bool isFullscreenEnabled);
 
-        void destroyWindow();//
+        void setMaximizationState(int maximization);
+
+        void center();
+
+        void destroy();
+
+        bool isVisible() const;//cache v
 
         std::vector<uint> getScreenResolution();//non-cache v
 
@@ -109,29 +127,33 @@ namespace dengine::platform::window::x {
 
         bool isCursorVisible() const; //cache v
 
-        std::vector<int> getWindowPosition() const; //non-cache
+        std::vector<int> getPosition() const; //non-cache v
 
-        std::vector<int> getClientAreaPosition() const;
+        std::vector<int> getClientAreaPosition() const; //non-cache v
 
-        std::vector<uint> getWindowSize() const; //non-cache
+        std::vector<uint> getSize() const; //non-cache v
 
         std::vector<uint> getRatio() const; //non-cache v
 
-        const std::string &getWindowTitle() const;//non-cache
+        const std::string &getTitle() const;//cache v
 
         std::vector<uint> getMaximumSize() const;//non-cache v
 
         std::vector<uint> getMinimumSize() const;//non-cache v
 
-        dengine::platform::window::WindowGeometryState getWindowGeometryState() const;
+        int getGeometryState() const; //non-cache v
+
+        bool isFullscreenEnabled() const; //non-cache v
+
+        int getMaximizationState() const;
 
         //@todo GLXContext
 
-        std::shared_ptr<dengine::events::MouseState> getMouseState() const;
+        std::shared_ptr<dengine::events::mouse::MouseState> getMouseState() const;
 
-        std::shared_ptr<dengine::events::KeyboardState> getKeyboardState() const;
+        std::shared_ptr<dengine::events::keyboard::KeyboardState> getKeyboardState() const;
 
-        std::shared_ptr<dengine::events::WindowState> getWindowState() const;
+        std::shared_ptr<dengine::events::window::WindowState> getWindowState() const;
 
         ~WindowManagerX();//
     };

@@ -3,6 +3,7 @@
 //
 
 #include <set>
+#include <memory>
 
 #include "DefaultKeyboardState.h"
 #include "KeyCode.h"
@@ -12,7 +13,8 @@
 
 using namespace dengine::events::keyboard;
 
-DefaultKeyboardState::DefaultKeyboardState(const std::set<Key>& pressedKeys, const std::set<Key>& releasedKeys,
+DefaultKeyboardState::DefaultKeyboardState(const std::set<std::shared_ptr<Key>>& pressedKeys,
+                                           const std::set<std::shared_ptr<Key>>& releasedKeys,
                                            const std::string& keyboardLayoutCode, const std::string& keyboardLayoutName):
                                             keyboardLayoutCode(keyboardLayoutCode), keyboardLayoutName(keyboardLayoutName) {
 
@@ -24,19 +26,19 @@ DefaultKeyboardState::DefaultKeyboardState(const std::set<Key>& pressedKeys, con
 }
 
 bool DefaultKeyboardState::isKeyPressed(DKeyCode key) const {
-    return pressedKeysIndexDKeyCode.find(DKey(key, "")) != pressedKeysIndexDKeyCode.end();
+    return pressedKeysIndexDKeyCode.find(std::make_shared<DKey>(key, "")) != pressedKeysIndexDKeyCode.end();
 }
 
 bool DefaultKeyboardState::isKeyReleased(DKeyCode key) const {
-    return releasedKeysIndexDKeyCode.find(DKey(key, "")) != releasedKeysIndexDKeyCode.end();
+    return releasedKeysIndexDKeyCode.find(std::make_shared<DKey>(key, "")) != releasedKeysIndexDKeyCode.end();
 }
 
 bool DefaultKeyboardState::isSymbolPressed(const std::string &symbol) const {
-    return pressedKeysIndexSymbol.find(DKey(0, symbol)) != pressedKeysIndexSymbol.end();
+    return pressedKeysIndexSymbol.find(std::make_shared<DKey>(0, symbol)) != pressedKeysIndexSymbol.end();
 }
 
 bool DefaultKeyboardState::isSymbolReleased(const std::string &symbol) const {
-    return releasedKeysIndexSymbol.find(DKey(0, symbol)) != releasedKeysIndexSymbol.end();
+    return releasedKeysIndexSymbol.find(std::make_shared<DKey>(0, symbol)) != releasedKeysIndexSymbol.end();
 }
 
 std::string DefaultKeyboardState::getCurrentKeyboardLayoutCode() const {

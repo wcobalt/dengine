@@ -3,25 +3,38 @@ project(Dengine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(App App/main.cpp)
+add_executable(App src/App/main.cpp)
 
 add_library(Dengine
-        Platform/Window/X/Exceptions/CouldNotOpenXDisplayException.cpp
-        Platform/Window/X/Exceptions/CouldNotOpenXDisplayException.h
-        Platform/Window/X/Exceptions/NoSuitableXVisualInfoException.cpp
-        Platform/Window/X/Exceptions/NoSuitableXVisualInfoException.h
-        Platform/Window/X/WindowManagerX.cpp
-        Platform/Window/X/WindowManagerX.h
-        Platform/Window/WindowManager.h
+        src/Platform/Window/X/Exceptions/CouldNotOpenXDisplayException.cpp
+        src/Platform/Window/X/Exceptions/CouldNotOpenXDisplayException.h
+        src/Platform/Window/X/Exceptions/NoSuitableXVisualInfoException.cpp
+        src/Platform/Window/X/Exceptions/NoSuitableXVisualInfoException.h
+        src/Platform/Window/X/WindowManagerX.cpp
+        src/Platform/Window/X/WindowManagerX.h
+        src/Platform/Window/WindowManager.h
 
-        Events/Keyboard/KeyboardState.h
-        Events/Mouse/MouseState.h
-        Events/Keyboard/KeyCode.cpp
-        Events/Mouse/Mouse.h
-        Events/Window/WindowState.h
+        src/Events/Keyboard/KeyboardState.h
+        src/Events/Mouse/MouseState.h
+        src/Events/Keyboard/KeyCode.cpp
+        src/Events/Mouse/Mouse.h
+        src/Events/Window/WindowState.h
+        src/Events/Mouse/DefaultMouseState.cpp
+        src/Events/Mouse/DefaultMouseState.h
+        src/Events/Window/DefaultWindowState.cpp
+        src/Events/Window/DefaultWindowState.h
+        src/Events/Keyboard/DefaultKeyboardState.cpp
+        src/Events/Keyboard/DefaultKeyboardState.h
+        src/Events/Keyboard/KeyCode.h
+        src/Events/Keyboard/Key.h
+        src/Events/Keyboard/DKey.cpp
+        src/Events/Keyboard/DKey.h
+        src/Events/Keyboard/KeyByDKeyCodeComparator.cpp
+        src/Events/Keyboard/KeyByDKeyCodeComparator.h
+        src/Events/Keyboard/KeyBySymbolComparator.cpp
+        src/Events/Keyboard/KeyBySymbolComparator.h
 
-
-        Platform/Window/WindowManager.cpp Platform/Window/X/Exceptions/UnableToCreateGLXContextException.cpp Platform/Window/X/Exceptions/UnableToCreateGLXContextException.h Platform/Window/X/Exceptions/UnableToAttachGLXContextToWindow.cpp Platform/Window/X/Exceptions/UnableToAttachGLXContextToWindow.h Platform/Window/X/Exceptions/TraySpecificationIsNotSupportedException.cpp Platform/Window/X/Exceptions/TraySpecificationIsNotSupportedException.h)
+        src/Platform/Window/WindowManager.cpp src/Platform/Window/X/Exceptions/UnableToCreateGLXContextException.cpp src/Platform/Window/X/Exceptions/UnableToCreateGLXContextException.h src/Platform/Window/X/Exceptions/UnableToAttachGLXContextToWindow.cpp src/Platform/Window/X/Exceptions/UnableToAttachGLXContextToWindow.h src/Platform/Window/X/Exceptions/TraySpecificationIsNotSupportedException.cpp src/Platform/Window/X/Exceptions/TraySpecificationIsNotSupportedException.h src/Events/Keyboard/KeyComparator.h)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})

@@ -17,22 +17,19 @@ namespace dengine::events::mouse {
 
         int mouseWheelDirection;
 
-        int rootX, rootY,
-            windowX, windowY;
+        int windowX, windowY;
     public:
         DefaultMouseState(const std::unordered_set<int>& pressedButtons,
                           const std::unordered_set<int>& releasedButtons,
-                          int mouseWheelDirection, int rootX, int rootY, int windowX, int windowY);
+                          int mouseWheelDirection, int windowX, int windowY);
 
         bool isButtonPressed(int button) const;
 
         bool isButtonReleased(int button) const;
 
-        int getMouseWheelDirection() const;
+        int getWheelDirection() const;
 
-        std::vector<int> getRootMousePosition() const;
-
-        std::vector<int> getWindowMousePosition() const;
+        std::vector<int> getPosition() const;
     };
 }
 

@@ -10,9 +10,9 @@ using namespace dengine::events::mouse;
 
 DefaultMouseState::DefaultMouseState(const std::unordered_set<int>& pressedButtons,
                                      const std::unordered_set<int>& releasedButtons,
-                                     int mouseWheelDirection, int rootX, int rootY, int windowX, int windowY):
+                                     int mouseWheelDirection, int windowX, int windowY):
                                      pressedButtons(pressedButtons), releasedButtons(releasedButtons),
-                                     mouseWheelDirection(mouseWheelDirection), rootX(rootX), rootY(rootY),
+                                     mouseWheelDirection(mouseWheelDirection),
                                      windowX(windowX), windowY(windowY) {}
 
 bool DefaultMouseState::isButtonPressed(int button) const {
@@ -27,14 +27,10 @@ bool DefaultMouseState::isButtonReleased(int button) const {
     return it != releasedButtons.end();
 }
 
-std::vector<int> DefaultMouseState::getRootMousePosition() const {
-    return {rootX, rootY};
-}
-
-std::vector<int> DefaultMouseState::getWindowMousePosition() const {
+std::vector<int> DefaultMouseState::getPosition() const {
     return {windowX, windowY};
 }
 
-int DefaultMouseState::getMouseWheelDirection() const {
+int DefaultMouseState::getWheelDirection() const {
     return mouseWheelDirection;
 }

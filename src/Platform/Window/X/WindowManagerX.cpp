@@ -16,6 +16,9 @@
 
 #include "WindowManagerX.h"
 #include "../WindowManager.h"
+#include "../../../Events/Mouse/MouseState.h"
+#include "../../../Events/Keyboard/KeyboardState.h"
+#include "../../../Events/Window/WindowState.h"
 #include "Exceptions/CouldNotOpenXDisplayException.h"
 #include "Exceptions/NoSuitableXVisualInfoException.h"
 #include "Exceptions/UnableToCreateGLXContextException.h"
@@ -27,9 +30,12 @@ using std::vector;
 using std::string;
 
 using namespace dengine::events;
-using namespace dengine::platform::window;
 using namespace dengine::platform::window::x;
 using namespace dengine::platform::window::x::exceptions;
+using namespace dengine::events::mouse;
+using namespace dengine::events::keyboard;
+using namespace dengine::events::window;
+using namespace dengine::platform::window;
 
 WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std::string& title):title(title) {
     display = XOpenDisplay(nullptr);
@@ -59,11 +65,13 @@ WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std:
 
             xSizeHints = XAllocSizeHints();
 
-            setWindowPosition(x, y);
+            setVisible(true);
 
-            setWindowTitle(title);
+            setPosition(x, y);
 
-            setWindowSize(width, height);
+            setTitle(title);
+
+            setSize(width, height);
 
             setCursorVisible(true);
 
@@ -87,18 +95,22 @@ WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std:
     } else
         throw CouldNotOpenXDisplayException();
 }
+
 //@todo blinking problem
+//@todo problem with reset of state (fullscreen, iconic) after it's call
 void WindowManagerX::setVisible(bool isVisible) {
     if (isVisible)
         XMapWindow(display, window);
     else
         XUnmapWindow(display, window);
 
+    mIsVisible = isVisible;
+
     XFlush(display);
 }
 
 void WindowManagerX::setDecorated(bool isDecorated) {
-    vector<int> position = getWindowPosition();
+    vector<int> position = getPosition();
 
     Atom type = XInternAtom(display,"_NET_WM_WINDOW_TYPE", False);
     Atom value = isDecorated?XInternAtom(display,"_NET_WM_WINDOW_TYPE_NORMAL", False):
@@ -106,7 +118,7 @@ void WindowManagerX::setDecorated(bool isDecorated) {
 
     XChangeProperty(display, window, type, XA_ATOM, 32, PropModeReplace, (unsigned char*)&value, 1);
 
-    setWindowPosition(position[0], position[1]);
+    setPosition(position[0], position[1]);
 
     mIsDecorated = isDecorated;
 }
@@ -136,8 +148,8 @@ void WindowManagerX::setCursorVisible(bool isVisible) {
     XFlush(display);
 }
 
-void WindowManagerX::setWindowPosition(int x, int y) {
-    vector<uint> size = getWindowSize();
+void WindowManagerX::setPosition(int x, int y) {
+    vector<uint> size = getSize();
 
     setWindowBounds(x, y, size[0], size[1]);
 
@@ -147,8 +159,8 @@ void WindowManagerX::setWindowPosition(int x, int y) {
     XFlush(display);
 }
 
-void WindowManagerX::setWindowSize(uint width, uint height) {
-    vector<int> position = getWindowPosition();
+void WindowManagerX::setSize(uint width, uint height) {
+    vector<int> position = getPosition();
 
     setWindowBounds(position[0], position[1], width, height);
 
@@ -186,7 +198,7 @@ void WindowManagerX::sendNotification(const string &message) {
 
 }
 
-void WindowManagerX::setWindowTitle(const string& title) {
+void WindowManagerX::setTitle(const string &title) {
     Atom wmName = XInternAtom(display, "_NET_WM_NAME", False);
     Atom utf8String = XInternAtom(display, "UTF8_STRING", False);
 
@@ -207,113 +219,38 @@ void WindowManagerX::setMaximumSize(uint maximumWidth, uint maximumHeight) {
     setSizeHints(maximumWidth, maximumHeight, min[0], min[1], ratio[0], ratio[1]);
 }
 
-void WindowManagerX::setWindowGeometryState(WindowGeometryState windowGeometryState) {
+void WindowManagerX::setGeometryState(int windowGeometryState) {
     long data[5];
 
     data[0] = data[1] = data[2] = data[3] = data[4] = 0;
 
     switch (windowGeometryState) {
         case NORMAL: {
-            //state (! - may exist simultaneously with this property, so it needs to clear these properties):
-            //maximized_h: false ! clearing by setMaximized*
-            //maximized_v: false ! *
-            //minimized: false
-            //fullscreen: false ! by setFullscreen
-
-            setFullscreenEnabled(false); //netwmfullscreen state and wmnormalstate may be simultaniiously so here
-                                         //i remove fullscreen state
-            setMaximized(false); //wmnormalstate and netwmmaximized_verthorz may be simultaneously so here
-                                 //i remove both maximized
-
-            setNormalStateEnabled(true);
-
-            break;
-        }
-
-        case MAXIMIZED_HORIZONTAL: {
-            //state (! - may exist simultaneously with this property, so it needs to clear these properties):
-            //maximized_h: true
-            //maximized_v: false ! by setWinGeo(NORMAL)*
-            //minimized: false ! by *
-            //fullscreen: false ! by setFull(false)
-
-            setFullscreenEnabled(false);//netwmfullscreen state and wmnormalstate may exist simultaneously so here
-                                        //i remove fullscreen state
-            setWindowGeometryState(NORMAL);//wmiconicstate and netwmmaximized_verthorz may exist simultaneously so here
-                                           //i remove iconic state if it is
-
-            data[0] = 1; //add
-            data[1] = XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
-
-            sendEvent(ClientMessage, "_NET_WM_STATE", 32, data,  SubstructureRedirectMask | SubstructureNotifyMask,
-                      window,
-                      rootWindow);
-
-            break;
-        }
-
-        case MAXIMIZED_VERTICAL: {
-            //state (! - may exist simultaneously with this property, so it needs to clear these properties):
-            //maximized_h: false ! by setGeo(NORMAL)*
-            //maximized_v: true
-            //minimized: false ! by *
-            //fullscreen: false ! by setFull(false)
-
-            setFullscreenEnabled(false);
-            setWindowGeometryState(NORMAL);
-
-            data[0] = 1; //add
-            data[1] = XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
-
-            sendEvent(ClientMessage, "_NET_WM_STATE", 32, data,  SubstructureRedirectMask | SubstructureNotifyMask,
-                      window,
-                      rootWindow);
-
-            break;
-        }
-
-        case MAXIMIZED_BOTH: {
-            //state (! - may exist simultaneously with this property, so it needs to clear these properties):
-            //maximized_h: true
-            //maximized_v: true
-            //minimized: false ! by setGeo(NORMAL)
-            //fullscreen: false ! by setFull(false)
-
-            setFullscreenEnabled(false);
-            setWindowGeometryState(NORMAL);
-
-            setMaximized(true);
-
-            break;
-        }
-
-        case MINIMIZED: {
-            //state (! - may exist simultaneously with this property, so it needs to clear these properties):
-            //maximized_h: as is - so NO RESETTING
-            //maximized_v: as is - so NO RESETTING
-            //minimized: true
-            //fullscreen: false ! by setFull(false)
-
-            setFullscreenEnabled(false);
-
-            data[0] = IconicState;
+            data[0] = NormalState;
 
             sendEvent(ClientMessage, "WM_CHANGE_STATE", 32, data, SubstructureRedirectMask | SubstructureNotifyMask,
                       window,
                       rootWindow);
 
+            //hack for GNOME
+            //https://stackoverflow.com/questions/30192347/how-to-restore-a-window-with-xlib
+
+            data[0] = 1;
+            data[1] = CurrentTime;
+
+            sendEvent(ClientMessage, "_NET_ACTIVE_WINDOW", 32, data,  SubstructureRedirectMask | SubstructureNotifyMask,
+                      window,
+                      rootWindow);
+
             break;
         }
 
-        case FULLSCREEN: {
-            //state (! - may exist simultaneously with this property, so it needs to clear these properties):
-            //maximized_h: as is - so NO RESETTING
-            //maximized_v: as is - so NO RESETTING
-            //minimized: false ! by setNormalState(true) (no setGeo(NORMAL) because it resets max_vh)
-            //fullscreen: true
+        case ICONIFIED: {
+            data[0] = IconicState;
 
-            setNormalStateEnabled(true);
-            setFullscreenEnabled(true);
+            sendEvent(ClientMessage, "WM_CHANGE_STATE", 32, data, SubstructureRedirectMask | SubstructureNotifyMask,
+                      window,
+                      rootWindow);
 
             break;
         }
@@ -345,7 +282,7 @@ void WindowManagerX::setWindowGeometryState(WindowGeometryState windowGeometrySt
             Window tray = XGetSelectionOwner(display, traySelectionAtom);
 
             if (tray)
-                sendEvent(ClientMessage, "_NET_SYSTEM_TRAY_OPCODE", 32, data, NoEventMask, 0x1d6, 0x1d6);
+                sendEvent(ClientMessage, "_NET_SYSTEM_TRAY_OPCODE", 32, data, NoEventMask, window, tray);
             else
                 throw TraySpecificationIsNotSupportedException();
 
@@ -356,20 +293,68 @@ void WindowManagerX::setWindowGeometryState(WindowGeometryState windowGeometrySt
     XFlush(display);
 }
 
-void WindowManagerX::centerWindow() {
+void WindowManagerX::setFullscreenEnabled(bool isFullscreenEnabled) {
+    long data[5];
+
+    data[0] = isFullscreenEnabled; //add - 1, remove - 0
+    data[1] = XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", False);
+    data[2] = 0;
+    data[3] = 0;
+    data[4] = 0;
+
+    sendEvent(ClientMessage, "_NET_WM_STATE", 32, data, SubstructureRedirectMask | SubstructureNotifyMask,
+              window,
+              rootWindow);
+
+    XFlush(display);
+}
+
+void WindowManagerX::setMaximizationState(int maximization) {
+    switch (maximization) {
+        case NORMAL: {
+            setMaximized(false, XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", False));
+            setMaximized(false, XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", False));
+            setMaximized(false, XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_BOTH", False));
+
+            break;
+        }
+
+        case MAXIMIZED_HORIZONTAL: {
+            setMaximized(true, XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", False));
+
+            break;
+        }
+
+        case MAXIMIZED_VERTICAL: {
+            setMaximized(true, XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", False));
+
+            break;
+        }
+
+        case MAXIMIZED_BOTH: {
+            setMaximized(true, XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_BOTH", False));
+
+            break;
+        }
+    }
+
+    XFlush(display);
+}
+
+void WindowManagerX::center() {
     vector<uint> resolution = getScreenResolution();
-    vector<uint> size = getWindowSize();
+    vector<uint> size = getSize();
 
     int x = lastX, y = lastY;
 
-    setWindowPosition((resolution[0] - size[0]) / 2, (resolution[1] - size[1]) / 2);
+    setPosition((resolution[0] - size[0]) / 2, (resolution[1] - size[1]) / 2);
 
     //centering should not change last coordinates
     lastX = x;
     lastY = y;
 }
 
-void WindowManagerX::destroyWindow() {
+void WindowManagerX::destroy() {
     XDestroyWindow(display, window);
 
     XFree(visualInfo);
@@ -387,17 +372,9 @@ std::vector<uint> WindowManagerX::getScreenResolution() {
     return result;
 }
 
-/*bool WindowManagerX::isVisible() const {
-    PropertyData propertyData = getProperty("_NET_WM_STATE", window);
-
-    Atom hidden = XInternAtom(display, "_NET_WM_STATE_HIDDEN", False);
-
-    for (int i = 0; i < propertyData.numberOfItems; i++) {
-        if (((long*)(propertyData.data))[i] == hidden) return false;
-    }
-
-    return true;
-}*/
+bool WindowManagerX::isVisible() const {
+    return mIsVisible;
+}
 
 bool WindowManagerX::isDecorated() const {
     return mIsDecorated;
@@ -407,22 +384,16 @@ bool WindowManagerX::isCursorVisible() const {
     return mIsCursorVisible;
 }
 
-vector<int> WindowManagerX::getWindowPosition() const {
-    XWindowAttributes xWindowAttributes;
-
-    XGetWindowAttributes(display, window, &xWindowAttributes);
+vector<int> WindowManagerX::getPosition() const {
+    vector<int> pos = getClientAreaPosition();
 
     int x, y;
 
-    Window w;
+    Window win;
 
-    XTranslateCoordinates(display, window, rootWindow,
-            xWindowAttributes.x, xWindowAttributes.y, &x, &y, &w);
+    XTranslateCoordinates(display, window, rootWindow, pos[0], pos[1], &x, &y, &win);
 
-    vector<int> vec;
-
-    vec.emplace_back(x - (uint)xWindowAttributes.x);
-    vec.emplace_back(y - (uint)xWindowAttributes.y);
+    vector<int> vec{x - pos[0], y - pos[1]};
 
     return vec;
 }
@@ -432,77 +403,90 @@ vector<int> WindowManagerX::getClientAreaPosition() const {
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
 
-    vector<int> vec;
-
-    vec.emplace_back((uint)xWindowAttributes.x);
-    vec.emplace_back((uint)xWindowAttributes.y);
+    vector<int> vec{xWindowAttributes.x, xWindowAttributes.y};
 
     return vec;
 }
 
-vector<uint> WindowManagerX::getWindowSize() const {
+vector<uint> WindowManagerX::getSize() const {
     XWindowAttributes xWindowAttributes;
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
 
-    vector<uint> vec;
-
-    vec.emplace_back((uint)xWindowAttributes.width);
-    vec.emplace_back((uint)xWindowAttributes.height);
+    vector<uint> vec{(uint)xWindowAttributes.width, (uint)xWindowAttributes.height};
 
     return vec;
 }
 
 std::vector<uint> WindowManagerX::getRatio() const {
-    XSizeHints xSizeHints = {};
+    XSizeHints xSizeHints;
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    vector<uint> vec;
-
-    vec.emplace_back((uint)xSizeHints.min_aspect.x);
-    vec.emplace_back((uint)xSizeHints.min_aspect.y);
+    vector<uint> vec{(uint)xSizeHints.min_aspect.x, (uint)xSizeHints.min_aspect.y};
 
     return vec;
 }
 
-const std::string& WindowManagerX::getWindowTitle() const {
+const std::string& WindowManagerX::getTitle() const {
     return title;
 }
 
 vector<uint> WindowManagerX::getMinimumSize() const {
-    XSizeHints xSizeHints = {};
+    XSizeHints xSizeHints;
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    vector<uint> vec;
-
-    vec.emplace_back((uint)xSizeHints.min_width);
-    vec.emplace_back((uint)xSizeHints.min_height);
+    vector<uint> vec{(uint)xSizeHints.min_width, (uint)xSizeHints.min_height};
 
     return vec;
 }
 
 vector<uint> WindowManagerX::getMaximumSize() const {
-    XSizeHints xSizeHints = {};
+    XSizeHints xSizeHints;
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    vector<uint> vec;
-
-    vec.emplace_back((uint)xSizeHints.max_width);
-    vec.emplace_back((uint)xSizeHints.max_height);
+    vector<uint> vec{(uint)xSizeHints.max_width, (uint)xSizeHints.max_height};
 
     return vec;
 }
 
-WindowGeometryState WindowManagerX::getWindowGeometryState() const {
-    //first tray then iconify and withdrawn then fullscreen then max_both, max_h, max_v, normal
+int WindowManagerX::getGeometryState() const {
+    //check if the window was trayed
+
     PropertyData result = getProperty("WM_STATE", window);
 
-    for (int i = 0; i < result.numberOfItems; i++) {
-        std::cout << ((long*)(result.data))[i];
-    }
+    if (find(IconicState, result)) return ICONIFIED;
+
+
+    PropertyData result2 = getProperty("_NET_WM_STATE", window); //if old WM_STATE is not supported (but if it's so, user
+                                                                 //wouldn't to programmatically iconify the window)
+
+    Atom hidden = XInternAtom(display, "_NET_WM_STATE_HIDDEN", False);
+
+    if (find(hidden, result2)) return ICONIFIED;
+
+    return NORMAL;
+}
+
+bool WindowManagerX::isFullscreenEnabled() const {
+    PropertyData result2 = getProperty("_NET_WM_STATE", window);
+
+    return find(XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", False), result2);
+}
+
+int WindowManagerX::getMaximizationState() const {
+    PropertyData result = getProperty("_NET_WM_STATE", window);
+
+    bool maximizedHorz = find(XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", False), result);
+    bool maximizedVert = find(XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", False), result);
+    bool maximizedBoth = find(XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_BOTH", False), result);
+
+    if (maximizedBoth || (maximizedHorz && maximizedVert)) return MAXIMIZED_BOTH;
+    else if (maximizedHorz) return MAXIMIZED_HORIZONTAL;
+    else if (maximizedVert) return MAXIMIZED_VERTICAL;
+    else return NORMAL;
 }
 
 //@todo logging
@@ -546,8 +530,8 @@ WindowGeometryState WindowManagerX::getWindowGeometryState() const {
         }
     }
 
-    if(!eventsData->isWindowClosing()) {
-        vector<uint> currentSize = getWindowSize();
+    if(!eventsData->isClosing()) {
+        vector<uint> currentSize = getSize();
 
         if(currentSize[0] != lastWidth || currentSize[1] != lastHeight) {
             eventsData->setWindowResized(true);
@@ -584,7 +568,7 @@ WindowGeometryState WindowManagerX::getWindowGeometryState() const {
 
         if(maximizedHorz && maximizedVert) eventsData->setWindowMaximized(true);
         else if(!maximizedHorz && !maximizedVert &&
-                 !eventsData->isWindowMinimized())
+                 !eventsData->wasWindowed())
             eventsData->setWindowWindowed(true);//!
 
         Window childWindow, rootWindow;
@@ -604,21 +588,21 @@ WindowGeometryState WindowManagerX::getWindowGeometryState() const {
     return eventsData;
 }*/
 
-std::shared_ptr<dengine::events::MouseState> WindowManagerX::getMouseState() const {
+std::shared_ptr<MouseState> WindowManagerX::getMouseState() const {
     return nullptr;
 }
 
-std::shared_ptr<dengine::events::KeyboardState> WindowManagerX::getKeyboardState() const {
+std::shared_ptr<KeyboardState> WindowManagerX::getKeyboardState() const {
     return nullptr;
 }
 
-std::shared_ptr<dengine::events::WindowState> WindowManagerX::getWindowState() const {
+std::shared_ptr<WindowState> WindowManagerX::getWindowState() const {
     return nullptr;
 }
 
 
 WindowManagerX::~WindowManagerX() {
-    destroyWindow();
+    destroy();
 }
 
 WindowManagerX::PropertyData WindowManagerX::getProperty(const char* propertyName, Window window) const {
@@ -697,26 +681,12 @@ void WindowManagerX::setSizeHints(uint maximumWidth, uint maximumHeight, uint mi
     XFlush(display);
 }
 
-void WindowManagerX::setFullscreenEnabled(bool isEnabled) {
+void WindowManagerX::setMaximized(bool mode, Atom atom) {
     long data[5];
 
-    data[0] = isEnabled; //add - 1, remove - 0
-    data[1] = XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", False);
+    data[0] = mode; //add - 1, remove - 0
+    data[1] = atom;
     data[2] = 0;
-    data[3] = 0;
-    data[4] = 0;
-
-    sendEvent(ClientMessage, "_NET_WM_STATE", 32, data, SubstructureRedirectMask | SubstructureNotifyMask,
-              window,
-              rootWindow);
-}
-
-void WindowManagerX::setMaximized(bool isMaximized) {
-    long data[5];
-
-    data[0] = isMaximized; //add
-    data[1] = XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
-    data[2] = XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
     data[3] = 0;
     data[4] = 0;
 
@@ -725,27 +695,11 @@ void WindowManagerX::setMaximized(bool isMaximized) {
               rootWindow);
 }
 
-void WindowManagerX::setNormalStateEnabled(bool isEnabled) {
-    long data[5];
+bool WindowManagerX::find(long needle, const PropertyData &haystack) const {
+    for (int i = 0; i < haystack.numberOfItems; i++) {
+        if (((long*)(haystack.data))[i] == needle)
+            return true;
+    }
 
-    data[1] = 0;
-    data[2] = 0;
-    data[3] = 0;
-    data[4] = 0;
-
-    sendEvent(ClientMessage, "WM_CHANGE_STATE", 32, data, SubstructureRedirectMask | SubstructureNotifyMask,
-              window,
-              rootWindow);
-
-    data[0] = NormalState;
-
-    //hack for GNOME
-    //https://stackoverflow.com/questions/30192347/how-to-restore-a-window-with-xlib
-
-    data[0] = 1;
-    data[1] = CurrentTime;
-
-    sendEvent(ClientMessage, "_NET_ACTIVE_WINDOW", 32, data,  SubstructureRedirectMask | SubstructureNotifyMask,
-              window,
-              rootWindow);
+    return false;
 }

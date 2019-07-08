@@ -16,11 +16,9 @@ namespace dengine::events::mouse {
 
         virtual bool isButtonReleased(int mouseButton) const = 0;
 
-        virtual int getMouseWheelDirection() const = 0;
+        virtual int getWheelDirection() const = 0;
 
-        virtual std::vector<int> getRootMousePosition() const = 0;
-
-        virtual std::vector<int> getWindowMousePosition() const = 0;
+        virtual std::vector<int> getPosition() const = 0;
     };
 }
 

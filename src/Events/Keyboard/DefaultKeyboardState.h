@@ -8,23 +8,27 @@
 #define DENGINE_DEFAULTKEYBOARDSTATE_H
 
 #include "KeyboardState.h"
-#include "Key.h"
 #include "KeyCode.h"
 #include "KeyByDKeyCodeComparator.h"
 #include "KeyBySymbolComparator.h"
 
 namespace dengine::events::keyboard {
+    class Key;
+}
+
+namespace dengine::events::keyboard {
     class DefaultKeyboardState : public KeyboardState {
     private:
-        std::set<Key, KeyByDKeyCodeComparator> pressedKeysIndexDKeyCode;
-        std::set<Key, KeyByDKeyCodeComparator> releasedKeysIndexDKeyCode;
+        std::set<std::shared_ptr<Key>, KeyByDKeyCodeComparator> pressedKeysIndexDKeyCode;
+        std::set<std::shared_ptr<Key>, KeyByDKeyCodeComparator> releasedKeysIndexDKeyCode;
 
-        std::set<Key, KeyBySymbolComparator> pressedKeysIndexSymbol;
-        std::set<Key, KeyBySymbolComparator> releasedKeysIndexSymbol;
+        std::set<std::shared_ptr<Key>, KeyBySymbolComparator> pressedKeysIndexSymbol;
+        std::set<std::shared_ptr<Key>, KeyBySymbolComparator> releasedKeysIndexSymbol;
 
         std::string keyboardLayoutCode, keyboardLayoutName;
     public:
-        DefaultKeyboardState(const std::set<Key>& pressedKeys, const std::set<Key>& releasedKeys,
+        DefaultKeyboardState(const std::set<std::shared_ptr<Key>>& pressedKeys,
+                             const std::set<std::shared_ptr<Key>>& releasedKeys,
                              const std::string& keyboardLayoutCode, const std::string& keyboardLayoutName);
 
         bool isKeyPressed(DKeyCode key) const;
@@ -35,9 +39,9 @@ namespace dengine::events::keyboard {
 
         bool isSymbolReleased(const std::string& symbol) const;
 
-        std::string getCurrentKeyboardLayoutCode() const;
+        std::string getCurrentKeyboardLayoutCode() const; //@todo implement after release
 
-        std::string getCurrentKeyboardLayoutName() const;
+        std::string getCurrentKeyboardLayoutName() const; //@todo implement after release
     };
 }
 
