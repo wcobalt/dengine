@@ -364,12 +364,7 @@ void WindowManagerX::destroy() {
 }
 
 std::vector<uint> WindowManagerX::getScreenResolution() {
-    vector<uint> result;
-
-    result.emplace_back(XDisplayWidth(display, DEFAULT_SCREEN));
-    result.emplace_back(XDisplayHeight(display, DEFAULT_SCREEN));
-
-    return result;
+    return {(uint)XDisplayWidth(display, DEFAULT_SCREEN), (uint)XDisplayHeight(display, DEFAULT_SCREEN)};
 }
 
 bool WindowManagerX::isVisible() const {
@@ -393,9 +388,7 @@ vector<int> WindowManagerX::getPosition() const {
 
     XTranslateCoordinates(display, window, rootWindow, pos[0], pos[1], &x, &y, &win);
 
-    vector<int> vec{x - pos[0], y - pos[1]};
-
-    return vec;
+    return {x - pos[0], y - pos[1]};
 }
 
 vector<int> WindowManagerX::getClientAreaPosition() const {
@@ -403,9 +396,7 @@ vector<int> WindowManagerX::getClientAreaPosition() const {
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
 
-    vector<int> vec{xWindowAttributes.x, xWindowAttributes.y};
-
-    return vec;
+    return {xWindowAttributes.x, xWindowAttributes.y};
 }
 
 vector<uint> WindowManagerX::getSize() const {
@@ -413,9 +404,7 @@ vector<uint> WindowManagerX::getSize() const {
 
     XGetWindowAttributes(display, window, &xWindowAttributes);
 
-    vector<uint> vec{(uint)xWindowAttributes.width, (uint)xWindowAttributes.height};
-
-    return vec;
+    return {(uint)xWindowAttributes.width, (uint)xWindowAttributes.height};
 }
 
 std::vector<uint> WindowManagerX::getRatio() const {
@@ -423,9 +412,7 @@ std::vector<uint> WindowManagerX::getRatio() const {
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    vector<uint> vec{(uint)xSizeHints.min_aspect.x, (uint)xSizeHints.min_aspect.y};
-
-    return vec;
+    return {(uint)xSizeHints.min_aspect.x, (uint)xSizeHints.min_aspect.y};
 }
 
 const std::string& WindowManagerX::getTitle() const {
@@ -437,9 +424,7 @@ vector<uint> WindowManagerX::getMinimumSize() const {
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    vector<uint> vec{(uint)xSizeHints.min_width, (uint)xSizeHints.min_height};
-
-    return vec;
+    return {(uint)xSizeHints.min_width, (uint)xSizeHints.min_height};
 }
 
 vector<uint> WindowManagerX::getMaximumSize() const {
@@ -447,9 +432,7 @@ vector<uint> WindowManagerX::getMaximumSize() const {
 
     XGetNormalHints(display, window, &xSizeHints);
 
-    vector<uint> vec{(uint)xSizeHints.max_width, (uint)xSizeHints.max_height};
-
-    return vec;
+    return {(uint)xSizeHints.max_width, (uint)xSizeHints.max_height};
 }
 
 int WindowManagerX::getGeometryState() const {

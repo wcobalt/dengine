@@ -23,6 +23,8 @@ namespace dengine::events::keyboard {
         virtual std::string getCurrentKeyboardLayoutCode() const = 0;
 
         virtual std::string getCurrentKeyboardLayoutName() const = 0;
+
+        //@todo add method for all the keys gettng (after release)
     };
 }
 
