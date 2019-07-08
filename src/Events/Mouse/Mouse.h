@@ -13,9 +13,7 @@ namespace dengine::events::mouse {
     public:
         static const DMouseButton LEFT = 0,
                                   RIGHT = 1,
-                                  MIDDLE = 2,
-                                  MB_4 = 4,
-                                  MB_5 = 5;
+                                  MIDDLE = 2;
 
         static const DWheelDirection POSITIVE_DIRECTION = 1,
                                      NEGATIVE_DIRECTION = -1;

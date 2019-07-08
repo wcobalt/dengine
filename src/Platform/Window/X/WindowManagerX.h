@@ -12,6 +12,9 @@
 #ifndef DENGINE_WINDOWMANAGERX_H
 #define DENGINE_WINDOWMANAGERX_H
 
+#include "../WindowManager.h"
+#include "../../../Events/Mouse/Mouse.h"
+
 namespace dengine {
     namespace events {
         namespace mouse {
@@ -28,14 +31,19 @@ namespace dengine {
     }
 }
 
-#include "../WindowManager.h"
-
 namespace dengine::platform::window::x {
     class WindowManagerX : public WindowManager {
     private:
-        const uint DEFAULT_SCREEN = 0;
-        const uint DEFAULT_WINDOW_DEPTH = 0;
+        const uint DEFAULT_SCREEN = 0,
+                   DEFAULT_WINDOW_DEPTH = 0;
         const int VISUAL_DEPTH = 24;
+
+        static const int DEFAULT_LEFT_BUTTON = Button1,
+                  DEFAULT_MIDDLE_BUTTON = Button2,
+                  DEFAULT_RIGHT_BUTTON = Button3,
+                  DEFAULT_WHEEL_POSITIVE_BUTTON = Button4, //@todo it is not guaranteed that exactly 5th 6th buttons will emulate the wheel
+                  DEFAULT_WHEEL_NEGATIVE_BUTTON = Button5; //make smth like XConverter which can be inserted in XWM by user if it needed
+                                                           //may be it's better to implement a kind of Converter by XConverter
 
         Display *display;
         Window rootWindow;
@@ -80,6 +88,7 @@ namespace dengine::platform::window::x {
                 Window from, Window to);
         void setMaximized(bool mode, Atom atom);
         bool find(long needle, const PropertyData& haystack) const;
+        dengine::events::mouse::DMouseButton toDMouseButton(int xButton) const;
     public:
         WindowManagerX(int x, int y, uint width, uint height, const std::string& title);
 

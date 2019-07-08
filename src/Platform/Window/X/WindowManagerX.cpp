@@ -24,6 +24,8 @@
 #include "Exceptions/UnableToCreateGLXContextException.h"
 #include "Exceptions/UnableToAttachGLXContextToWindow.h"
 #include "Exceptions/TraySpecificationIsNotSupportedException.h"
+#include "../../../Events/Mouse/DefaultMouseStateBuilder.h"
+#include "../../../Events/Mouse/Mouse.h"
 
 using std::shared_ptr;
 using std::vector;
@@ -572,7 +574,44 @@ int WindowManagerX::getMaximizationState() const {
 }*/
 
 std::shared_ptr<MouseState> WindowManagerX::getMouseState() const {
-    return nullptr;
+    std::shared_ptr<MouseStateBuilder> builder(new DefaultMouseStateBuilder());
+
+    Window win;
+
+    int x, y, stub;
+    unsigned mask;
+
+    XQueryPointer(display, window, &win, &win, &stub, &stub, &x, &y, &mask);
+
+    builder->setPosition(x, y);
+
+    XEvent xEvent;
+
+    while (XCheckMaskEvent(display, ButtonPressMask | ButtonReleaseMask, &xEvent)) {
+        switch(xEvent.type) {
+            case ButtonPress:
+                switch (xEvent.xbutton.button) {
+                    case DEFAULT_WHEEL_POSITIVE_BUTTON:
+                        builder->setWheelDirection(1);
+
+                        break;
+                    case DEFAULT_WHEEL_NEGATIVE_BUTTON:
+                        builder->setWheelDirection(-1);
+
+                        break;
+                    default:
+                        builder->addPressedButton(toDMouseButton(xEvent.xbutton.button));
+                }
+
+                break;
+            case ButtonRelease:
+                builder->addReleasedButton(toDMouseButton(xEvent.xbutton.button));
+
+                break;
+        }
+    }
+
+    return builder->build();
 }
 
 std::shared_ptr<KeyboardState> WindowManagerX::getKeyboardState() const {
@@ -685,4 +724,17 @@ bool WindowManagerX::find(long needle, const PropertyData &haystack) const {
     }
 
     return false;
+}
+
+DMouseButton WindowManagerX::toDMouseButton(int xButton) const {
+    switch (xButton) {
+        case DEFAULT_LEFT_BUTTON:
+            return Mouse::LEFT;
+        case DEFAULT_MIDDLE_BUTTON:
+            return Mouse::MIDDLE;
+        case DEFAULT_RIGHT_BUTTON:
+            return Mouse::RIGHT;
+        default:
+            return xButton;
+    }
 }
