@@ -8,14 +8,14 @@
 #include "WindowState.h"
 
 namespace dengine::events::window {
-    class DefaultWindowState : WindowState {
+    class DefaultWindowState : public WindowState {
     private:
         bool mWasMaximized, mWasIconified,
                 mWasWindowed, mWasResized,
                 mGotFocus, mLostFocus,
                 mIsClosing;
     public:
-        DefaultWindowState(bool wasMaximized, bool wasIconified, bool wasWindowed,
+        DefaultWindowState(bool wasMaximized, bool wasWindowed, bool wasIconified,
                            bool wasResized, bool gotFocus, bool lostFocus, bool isClosing);
 
         bool wasMaximized() const;

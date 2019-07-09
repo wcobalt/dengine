@@ -6,15 +6,10 @@
 
 using namespace dengine::events::window;
 
-DefaultWindowState::DefaultWindowState():mWasMaximized(false), mWasIconified(false),
-                                         mWasWindowed(false), mWasResized(false),
-                                         mGotFocus(false), mLostFocus(false),
-                                         mIsClosing(false) {}
-
-DefaultWindowState::DefaultWindowState(bool wasMaximized, bool wasIconified, bool wasWindowed,
+DefaultWindowState::DefaultWindowState(bool wasMaximized, bool wasWindowed, bool wasIconified,
                                        bool wasResized, bool gotFocus, bool lostFocus, bool isClosing):
-                                         mWasMaximized(wasMaximized), mWasIconified(wasIconified),
-                                         mWasWindowed(wasWindowed), mWasResized(wasResized),
+                                         mWasMaximized(wasMaximized),mWasWindowed(wasWindowed),
+                                         mWasIconified(wasIconified), mWasResized(wasResized),
                                          mGotFocus(gotFocus), mLostFocus(lostFocus),
                                          mIsClosing(isClosing) {}
 

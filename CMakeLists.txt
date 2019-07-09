@@ -33,7 +33,7 @@ add_library(Dengine
         src/Events/Keyboard/KeyBySymbolComparator.cpp
         src/Events/Keyboard/KeyBySymbolComparator.h
 
-        src/Platform/Window/WindowManager.cpp src/Platform/Window/X/Exceptions/UnableToCreateGLXContextException.cpp src/Platform/Window/X/Exceptions/UnableToCreateGLXContextException.h src/Platform/Window/X/Exceptions/UnableToAttachGLXContextToWindow.cpp src/Platform/Window/X/Exceptions/UnableToAttachGLXContextToWindow.h src/Platform/Window/X/Exceptions/TraySpecificationIsNotSupportedException.cpp src/Platform/Window/X/Exceptions/TraySpecificationIsNotSupportedException.h src/Events/Keyboard/KeyComparator.h src/Events/Mouse/MouseStateBuilder.h src/Events/Mouse/Mouse.h src/Events/Mouse/DefaultMouseStateBuilder.cpp src/Events/Mouse/DefaultMouseStateBuilder.h)
+        src/Platform/Window/WindowManager.cpp src/Platform/Window/X/Exceptions/UnableToCreateGLXContextException.cpp src/Platform/Window/X/Exceptions/UnableToCreateGLXContextException.h src/Platform/Window/X/Exceptions/UnableToAttachGLXContextToWindow.cpp src/Platform/Window/X/Exceptions/UnableToAttachGLXContextToWindow.h src/Platform/Window/X/Exceptions/TraySpecificationIsNotSupportedException.cpp src/Platform/Window/X/Exceptions/TraySpecificationIsNotSupportedException.h src/Events/Keyboard/KeyComparator.h src/Events/Mouse/MouseStateBuilder.h src/Events/Mouse/Mouse.h src/Events/Mouse/DefaultMouseStateBuilder.cpp src/Events/Mouse/DefaultMouseStateBuilder.h src/Events/Window/WindowStateBuilder.h src/Events/Window/DefaultWindowStateBuilder.cpp src/Events/Window/DefaultWindowStateBuilder.h)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
