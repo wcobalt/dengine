@@ -15,8 +15,6 @@ namespace dengine::events::window {
                 mGotFocus, mLostFocus,
                 mIsClosing;
     public:
-        DefaultWindowState();
-
         DefaultWindowState(bool wasMaximized, bool wasIconified, bool wasWindowed,
                            bool wasResized, bool gotFocus, bool lostFocus, bool isClosing);
 
