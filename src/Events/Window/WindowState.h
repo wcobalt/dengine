@@ -12,9 +12,9 @@ namespace dengine::events::window {
     public:
         virtual bool wasMaximized() const = 0;
 
-        virtual bool wasIconified() const = 0;
+        virtual bool wasWindowed() const = 0;
 
-        virtual bool isWindowWindowed() const = 0;
+        virtual bool wasIconified() const = 0;
 
         virtual bool wasResized() const = 0;
 

@@ -25,6 +25,9 @@
 #include "Exceptions/UnableToAttachGLXContextToWindow.h"
 #include "Exceptions/TraySpecificationIsNotSupportedException.h"
 #include "../../../Events/Mouse/DefaultMouseStateBuilder.h"
+#include "../../../Events/Mouse/MouseStateBuilder.h"
+#include "../../../Events/Window/DefaultWindowStateBuilder.h"
+#include "../../../Events/Window/WindowStateBuilder.h"
 #include "../../../Events/Mouse/Mouse.h"
 
 using std::shared_ptr;
@@ -619,7 +622,9 @@ std::shared_ptr<KeyboardState> WindowManagerX::getKeyboardState() const {
 }
 
 std::shared_ptr<WindowState> WindowManagerX::getWindowState() const {
-    return nullptr;
+    std::shared_ptr<WindowStateBuilder> builder(new DefaultWindowStateBuilder());
+
+    return builder->build();
 }
 
 
