@@ -28,6 +28,11 @@
 #include "../../../Events/Mouse/MouseStateBuilder.h"
 #include "../../../Events/Window/DefaultWindowStateBuilder.h"
 #include "../../../Events/Window/WindowStateBuilder.h"
+#include "../../../Events/Keyboard/KeyboardStateBuilder.h"
+#include "../../../Events/Keyboard/DefaultKeyboardStateBuilder.h"
+#include "../../../Events/Keyboard/KeyboardState.h"
+#include "../../../Events/Keyboard/Key.h"
+#include "../../../Events/Keyboard/KeyCode.h"
 #include "../../../Events/Mouse/Mouse.h"
 
 using std::shared_ptr;
@@ -618,7 +623,26 @@ std::shared_ptr<MouseState> WindowManagerX::getMouseState() const {
 }
 
 std::shared_ptr<KeyboardState> WindowManagerX::getKeyboardState() const {
-    return nullptr;
+    std::shared_ptr<KeyboardStateBuilder> builder(new DefaultKeyboardStateBuilder());
+
+    XEvent xEvent;
+
+    while (XCheckMaskEvent(display, KeyPressMask | KeyReleaseMask, &xEvent)) {
+        switch(xEvent.type) {
+            case ButtonPress:
+                builder->addPressedKey(toDKey(xEvent.xkey.keycode));
+
+                break;
+            case ButtonRelease:
+                builder->addReleasedKey(toDKey(xEvent.xkey.keycode));
+
+                break;
+        }
+    }
+
+    //setLayoutName setLayoutCode are not supported by this fking WindowManagerX
+
+    return builder->build();
 }
 
 std::shared_ptr<WindowState> WindowManagerX::getWindowState() const {
@@ -743,3 +767,11 @@ DMouseButton WindowManagerX::toDMouseButton(int xButton) const {
             return xButton;
     }
 }
+
+dengine::events::keyboard::Key WindowManagerX::toDKey(int xKeyCode) const {
+    DKeyCode dKeyCode;
+    std::string keySymbol;
+
+
+}
+

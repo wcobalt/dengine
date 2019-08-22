@@ -12,7 +12,6 @@ namespace dengine::events::keyboard {
     private:
         static const int BASE = 255;
     public:
-        //NONSYMBOLS ARE THERE
         static const DKeyCode TAB = 0,
         ESC = 1,
         CAPSLOCK = 2,
@@ -52,10 +51,10 @@ namespace dengine::events::keyboard {
         BREAK = 35,
         SYS_REQ = 36,
         SCROLL_LOCK = 37,
-        TOP_ARROW = 38,
-        DOWN_ARROW = 39,
-        LEFT_ARROW = 40,
-        RIGHT_ARROW = 41,
+        UP = 38,
+        DOWN = 39,
+        LEFT = 40,
+        RIGHT = 41,
         NUM_DIVIDE = 42,
         NUM_MULTIPLY = 43,
         NUM_MINUS = 44,
@@ -84,8 +83,8 @@ namespace dengine::events::keyboard {
         UNDERSCORE = BASE + '_',
         PLUS = BASE + '+',
         EQUALS = BASE + '=',
-        LEFT_CURLY = BASE + '{',
-        RIGHT_CURLY = BASE + '}',
+        LEFT_BRACE = BASE + '{',
+        RIGHT_BRACE = BASE + '}',
         LEFT_SQUARE = BASE + '[',
         RIGHT_SQUARE = BASE + ']',
         COLON = BASE + ':',

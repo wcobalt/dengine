@@ -23,6 +23,7 @@ namespace dengine {
 
         namespace keyboard {
             class KeyboardState;
+            class Key;
         }
 
         namespace window {
@@ -89,6 +90,7 @@ namespace dengine::platform::window::x {
         void setMaximized(bool mode, Atom atom);
         bool find(long needle, const PropertyData& haystack) const;
         dengine::events::mouse::DMouseButton toDMouseButton(int xButton) const;
+        dengine::events::keyboard::Key toDKey(int xKeyCode) const;
     public:
         WindowManagerX(int x, int y, uint width, uint height, const std::string& title);
 
