@@ -1,0 +1,16 @@
+//
+// Created by wcobalt on 24.08.19.
+//
+
+#ifndef DENGINE_XDEFAULTKEYBOARDCONVERTER_H
+#define DENGINE_XDEFAULTKEYBOARDCONVERTER_H
+
+
+
+class XDefaultKeyboardConverter {
+
+};
+
+
+
+#endif //DENGINE_XDEFAULTKEYBOARDCONVERTER_H

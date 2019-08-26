@@ -8,8 +8,8 @@
 
 #include "../../../../Events/Keyboard/KeyCode.h";
 
-namespace dengine::platform::window::x::drivers {
-    class XKeyboardDriver {
+namespace dengine::platform::window::x::util {
+    class XKeyboardConverter {
     public:
         virtual void initialize() = 0;
 
