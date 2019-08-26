@@ -19,11 +19,7 @@
 #include "../../../Events/Mouse/MouseState.h"
 #include "../../../Events/Keyboard/KeyboardState.h"
 #include "../../../Events/Window/WindowState.h"
-#include "Exceptions/CouldNotOpenXDisplayException.h"
-#include "Exceptions/NoSuitableXVisualInfoException.h"
-#include "Exceptions/UnableToCreateGLXContextException.h"
-#include "Exceptions/UnableToAttachGLXContextToWindow.h"
-#include "Exceptions/TraySpecificationIsNotSupportedException.h"
+#include "Exceptions/XException.h"
 #include "../../../Events/Mouse/DefaultMouseStateBuilder.h"
 #include "../../../Events/Mouse/MouseStateBuilder.h"
 #include "../../../Events/Window/DefaultWindowStateBuilder.h"
@@ -97,13 +93,13 @@ WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std:
 
                     XSetWMProtocols(display, window, &wmDeleteWindow, 1);
                 } else
-                    throw UnableToAttachGLXContextToWindow();
+                    throw XException("Unable to attach GLX context to window");
             } else
-                throw UnableToCreateGLXContextException();
+                throw XException("Unable to create GLX context");
         } else
-            throw NoSuitableXVisualInfoException();
+            throw XException("No suitable XVisualInfo");
     } else
-        throw CouldNotOpenXDisplayException();
+        throw XException("Could not open X display connection");
 }
 
 //@todo blinking problem
@@ -294,7 +290,7 @@ void WindowManagerX::setGeometryState(int windowGeometryState) {
             if (tray)
                 sendEvent(ClientMessage, "_NET_SYSTEM_TRAY_OPCODE", 32, data, NoEventMask, window, tray);
             else
-                throw TraySpecificationIsNotSupportedException();
+                throw XException("Tray specification is not supported");
 
             break;
         }
@@ -768,7 +764,7 @@ DMouseButton WindowManagerX::toDMouseButton(int xButton) const {
     }
 }
 
-dengine::events::keyboard::Key WindowManagerX::toDKey(int xKeyCode) const {
+shared_ptr<Key> WindowManagerX::toDKey(int xKeyCode) const {
     DKeyCode dKeyCode;
     std::string keySymbol;
 

@@ -18,12 +18,12 @@ namespace dengine {
 #include "Coreutils/ID.h"
 #include "DObject.h"
 
-/*
+/* Core release features for implementation:
+ * only one dengine namespace
  * optimize by assignments, init list and other
- * windowaccessor -> manager
+ * Image class
  * implement windowaccessor
- * keyboard, mouse and window state (with builders)
- * windoaccessor checkevents split
+ * keyboard, window state (with builders)
  * review run/pause/stop API
  * review Dengine->ScenesManager->Scene->GameObject->Component API (Core API)
  */

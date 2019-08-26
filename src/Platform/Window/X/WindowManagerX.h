@@ -32,6 +32,10 @@ namespace dengine {
     }
 }
 
+namespace dengine::platform::window::x::util {
+    class XKeyboardConverter;
+}
+
 namespace dengine::platform::window::x {
     class WindowManagerX : public WindowManager {
     private:
@@ -78,6 +82,8 @@ namespace dengine::platform::window::x {
             }
         };
 
+        std::shared_ptr<dengine::platform::window::x::util::XKeyboardConverter> xKeyboardDriver;
+
         PropertyData getProperty(const char *propertyName, Window window) const;
 
         void setSizeHints(uint maximumWidth, uint maximumHeight,
@@ -90,7 +96,7 @@ namespace dengine::platform::window::x {
         void setMaximized(bool mode, Atom atom);
         bool find(long needle, const PropertyData& haystack) const;
         dengine::events::mouse::DMouseButton toDMouseButton(int xButton) const;
-        dengine::events::keyboard::Key toDKey(int xKeyCode) const;
+        std::shared_ptr<events::keyboard::Key> toDKey(int xKeyCode) const;
     public:
         WindowManagerX(int x, int y, uint width, uint height, const std::string& title);
 

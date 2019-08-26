@@ -1,0 +1,4 @@
+/home/wcobalt/Files/Dengine/src/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/wcobalt/Files/Dengine/src/cmake-build-debug/CMakeFiles/Dengine.dir
+/home/wcobalt/Files/Dengine/src/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/wcobalt/Files/Dengine/src/cmake-build-debug/CMakeFiles/App.dir
