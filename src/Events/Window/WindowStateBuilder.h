@@ -27,6 +27,8 @@ namespace dengine {
 
         virtual void setClosing(bool isClosing) = 0;
 
+        virtual void setMoved(bool wasMoved) = 0;
+
         virtual std::shared_ptr<WindowState> build() const = 0;
     };
 }

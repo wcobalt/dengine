@@ -9,36 +9,40 @@
 using namespace dengine;
 
 void DefaultWindowStateBuilder::setMaximized(bool wasMaximized) {
-    mWasMaximized = wasMaximized;
+    this->wasMaximized = wasMaximized;
 }
 
 void DefaultWindowStateBuilder::setWindowed(bool wasWindowed) {
-    mWasWindowed = wasWindowed;
+    this->wasWindowed = wasWindowed;
 }
 
 void DefaultWindowStateBuilder::setIconified(bool wasIconified) {
-    mWasIconified = wasIconified;
+    this->wasIconified = wasIconified;
 }
 
 void DefaultWindowStateBuilder::setResized(bool wasResized) {
-    mWasResized = wasResized;
+    this->wasResized = wasResized;
 }
 
 void DefaultWindowStateBuilder::setGotFocus(bool gotFocus) {
-    mGotFocus = gotFocus;
+    this->gotFocus = gotFocus;
 }
 
 void DefaultWindowStateBuilder::setLostFocus(bool lostFocus) {
-    mLostFocus = lostFocus;
+    this->lostFocus = lostFocus;
 }
 
 void DefaultWindowStateBuilder::setClosing(bool isClosing) {
-    mIsClosing = isClosing;
+    this->isClosing = isClosing;
 }
 
 std::shared_ptr<WindowState> DefaultWindowStateBuilder::build() const {
-    std::shared_ptr<WindowState> result(new DefaultWindowState(mWasMaximized, mWasWindowed, mWasIconified,
-                                            mWasResized, mGotFocus, mLostFocus, mIsClosing));
+    std::shared_ptr<WindowState> result(new DefaultWindowState(wasMaximized, wasWindowed, wasIconified,
+                                            wasResized, gotFocus, lostFocus, isClosing, wasMoved));
 
     return result;
+}
+
+void DefaultWindowStateBuilder::setMoved(bool wasMoved) {
+    this->wasMoved = wasMoved;
 }
