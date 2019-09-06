@@ -10,7 +10,7 @@
 
 #include "../DObject.h"
 
-namespace dengine::exceptions {
+namespace dengine {
     class DengineException : public std::exception, DObject {
     private:
         std::string message;

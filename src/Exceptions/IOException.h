@@ -9,7 +9,7 @@
 
 #include "DengineException.h"
 
-namespace dengine::exceptions {
+namespace dengine {
     class IOException : public DengineException {
     public:
         IOException(const std::string& message);

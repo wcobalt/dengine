@@ -4,6 +4,6 @@
 
 #include "WindowManager.h"
 
-using namespace dengine::platform::window;
+using namespace dengine;
 
 WindowManager::~WindowManager() = default;

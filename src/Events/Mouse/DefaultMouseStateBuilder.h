@@ -10,7 +10,7 @@
 #include "Mouse.h"
 #include "MouseStateBuilder.h"
 
-namespace dengine::events::mouse {
+namespace dengine {
     class DefaultMouseStateBuilder : public MouseStateBuilder {
     private:
         std::set<DMouseButton> pressedButtons;

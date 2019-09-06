@@ -4,6 +4,6 @@
 
 #include "IOException.h"
 
-using namespace dengine::exceptions;
+using namespace dengine;
 
 IOException::IOException(const std::string &message):DengineException(message) {}

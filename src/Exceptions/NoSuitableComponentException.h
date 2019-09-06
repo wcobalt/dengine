@@ -7,7 +7,7 @@
 
 #include "DengineException.h"
 
-namespace dengine::exceptions {
+namespace dengine {
     class NoSuitableComponentException {
         const char* what() const noexcept;
     };

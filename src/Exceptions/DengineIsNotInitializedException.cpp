@@ -4,7 +4,7 @@
 
 #include "DengineIsNotInitializedException.h"
 
-using namespace dengine::exceptions;
+using namespace dengine;
 
 const char* DengineIsNotInitializedException::what() const noexcept {
     return "The engine was not initialized yet. Call Dengine::init() before calling Dengine::get().";

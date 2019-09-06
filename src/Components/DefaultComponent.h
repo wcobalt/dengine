@@ -14,7 +14,7 @@ namespace dengine {
 
 #include "Component.h"
 
-namespace dengine::components {
+namespace dengine {
     class DefaultComponent : public Component {
     private:
         bool mIsEnabled;

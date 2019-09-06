@@ -7,7 +7,7 @@
 #include "DefaultMouseStateBuilder.h"
 #include "DefaultMouseState.h"
 
-using namespace dengine::events::mouse;
+using namespace dengine;
 
 void DefaultMouseStateBuilder::addPressedButton(DMouseButton mouseButton) {
     pressedButtons.insert(mouseButton);

@@ -10,24 +10,14 @@
 #define DENGINE_WINDOWMANAGER_H
 
 namespace dengine {
-    namespace events {
-        namespace mouse {
-            class MouseState;
-        }
-
-        namespace keyboard {
-            class KeyboardState;
-        }
-
-        namespace window {
-            class WindowState;
-        }
-    }
+    class MouseState;
+    class KeyboardState;
+    class WindowState;
 }
 
 #include "../../DObject.h"
 
-namespace dengine::platform::window {
+namespace dengine {
     class WindowManager : public DObject {
     public:
         static const int NORMAL = 0,
@@ -104,11 +94,11 @@ namespace dengine::platform::window {
 
         virtual int getMaximizationState() const = 0;
 
-        virtual std::shared_ptr<dengine::events::mouse::MouseState> getMouseState() const = 0;
+        virtual std::shared_ptr<dengine::MouseState> getMouseState() const = 0;
 
-        virtual std::shared_ptr<dengine::events::keyboard::KeyboardState> getKeyboardState() const = 0;
+        virtual std::shared_ptr<dengine::KeyboardState> getKeyboardState() const = 0;
 
-        virtual std::shared_ptr<dengine::events::window::WindowState> getWindowState() const = 0;
+        virtual std::shared_ptr<dengine::WindowState> getWindowState() const = 0;
 
         virtual ~WindowManager();
     };

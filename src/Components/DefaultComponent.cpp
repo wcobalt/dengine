@@ -9,8 +9,6 @@
 #include "../Exceptions/ComponentIsNotBoundException.h"
 
 using namespace dengine;
-using namespace dengine::components;
-using namespace dengine::exceptions;
 
 using std::shared_ptr;
 

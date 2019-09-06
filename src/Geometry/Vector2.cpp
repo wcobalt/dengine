@@ -11,8 +11,7 @@
 
 using std::vector;
 
-using namespace dengine::geometry;
-using namespace dengine::exceptions;
+using namespace dengine;
 
 //there are partly duplicated constructors. dupl-n is made for optimization
 template <class T>

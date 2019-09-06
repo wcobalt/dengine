@@ -12,10 +12,10 @@
 #include "../../../../Events/Keyboard/Keyboard.h"
 #include "XKeyboardConverter.h"
 
-namespace dengine::platform::window::x::util {
+namespace dengine {
     class XDefaultKeyboardConverter : public XKeyboardConverter {
     private:
-        std::map<KeyCode, events::keyboard::DKeyCode> xKeyCodeToDKeyCodeMap;
+        std::map<KeyCode, dengine::DKeyCode> xKeyCodeToDKeyCodeMap;
         std::map<KeySym, std::string> xKeySymToUtf8SymbolMap;
 
         Display* display;
@@ -23,7 +23,7 @@ namespace dengine::platform::window::x::util {
 
         void loadXKeyCodeToDKeyCodeMap();
         void loadXKeySymToUtf8SymbolMap();
-        void addKeyCodeBinding(int keyCode, dengine::events::keyboard::DKeyCode dKeyCode);
+        void addKeyCodeBinding(int keyCode, dengine::DKeyCode dKeyCode);
 
         const unsigned BYTE_SIZE = 8;
     public:
@@ -31,7 +31,7 @@ namespace dengine::platform::window::x::util {
 
         void initialize(Display *display);
 
-        events::keyboard::DKeyCode convertXKeyCodeToDKeyCode(XEvent *xEvent);
+        dengine::DKeyCode convertXKeyCodeToDKeyCode(XEvent *xEvent);
 
         std::string convertXKeyCodeToSymbol(XEvent *xEvent);
 

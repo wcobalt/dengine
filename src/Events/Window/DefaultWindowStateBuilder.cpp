@@ -6,7 +6,7 @@
 #include "DefaultWindowStateBuilder.h"
 #include "DefaultWindowState.h"
 
-using namespace dengine::events::window;
+using namespace dengine;
 
 void DefaultWindowStateBuilder::setMaximized(bool wasMaximized) {
     mWasMaximized = wasMaximized;

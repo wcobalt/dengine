@@ -14,7 +14,7 @@ namespace dengine {
     class DengineAccessor;
 }
 
-namespace dengine::components {
+namespace dengine {
     class Component : public DObject {
     public:
         virtual void componentLoad(const dengine::DengineAccessor& dengineAccessor, std::shared_ptr<dengine::GameObject> instance) = 0;

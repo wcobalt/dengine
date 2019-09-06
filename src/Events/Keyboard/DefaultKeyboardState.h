@@ -12,11 +12,11 @@
 #include "KeyByDKeyCodeComparator.h"
 #include "KeyBySymbolComparator.h"
 
-namespace dengine::events::keyboard {
+namespace dengine {
     class Key;
 }
 
-namespace dengine::events::keyboard {
+namespace dengine {
     class DefaultKeyboardState : public KeyboardState {
     private:
         std::set<std::shared_ptr<Key>> pressedKeys;

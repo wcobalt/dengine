@@ -9,7 +9,7 @@
 
 #include "../DObject.h"
 
-namespace dengine::geometry {
+namespace dengine {
     template <class T>
     class Vector : public DObject {
     public:

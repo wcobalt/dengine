@@ -6,11 +6,11 @@
 #ifndef DENGINE_WINDOWSTATEBUILDER_H
 #define DENGINE_WINDOWSTATEBUILDER_H
 
-namespace dengine::events::window {
+namespace dengine {
     class WindowState;
 }
 
-namespace dengine::events::window {
+namespace dengine {
     class WindowStateBuilder {
     public:
         virtual void setMaximized(bool wasMaximized) = 0;

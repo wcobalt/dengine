@@ -13,7 +13,6 @@
 #include "Components/TransformComponent.h"
 
 using namespace dengine;
-using namespace dengine::components;
 
 using std::queue;
 using std::vector;

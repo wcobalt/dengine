@@ -4,7 +4,7 @@
 
 #include "Keyboard.h"
 
-using namespace dengine::events::keyboard;
+using namespace dengine;
 
 int Keyboard::ord(char ch) {
     return BASE + ch;//non-safe, for non defined in key symbols

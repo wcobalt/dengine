@@ -7,7 +7,7 @@
 #ifndef DENGINE_PLATFORMSET_H
 #define DENGINE_PLATFORMSET_H
 
-namespace dengine::platform {
+namespace dengine {
     namespace window {
         class WindowManager;
     }
@@ -25,16 +25,16 @@ namespace dengine::platform {
     }
 }
 
-namespace dengine::platform {
+namespace dengine {
     class PlatformSet {
     public:
-        virtual std::shared_ptr<dengine::platform::window::WindowManager> getWindowManager() const = 0;
+        virtual std::shared_ptr<dengine::WindowManager> getWindowManager() const = 0;
 
-        virtual std::shared_ptr<dengine::platform::network::NetworkManager> getNetworkManager() const = 0;
+        virtual std::shared_ptr<dengine::NetworkManager> getNetworkManager() const = 0;
 
-        virtual std::shared_ptr<dengine::platform::audio::AudioManager> getAudioManager() const = 0;
+        virtual std::shared_ptr<dengine::AudioManager> getAudioManager() const = 0;
 
-        virtual std::shared_ptr<dengine::platform::gamepad::GamepadManager> getGamepadManager() const = 0;
+        virtual std::shared_ptr<dengine::GamepadManager> getGamepadManager() const = 0;
     };
 }
 

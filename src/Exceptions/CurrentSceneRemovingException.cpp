@@ -4,7 +4,7 @@
 
 #include "CurrentSceneRemovingException.h"
 
-using namespace dengine::exceptions;
+using namespace dengine;
 
 const char* CurrentSceneRemovingException::what() const noexcept {
     return "You cannot remove current scene";

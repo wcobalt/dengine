@@ -4,7 +4,7 @@
 
 #include "DengineException.h"
 
-using namespace dengine::exceptions;
+using namespace dengine;
 
 DengineException::DengineException(const std::string &message):message(message) {}
 

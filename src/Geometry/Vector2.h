@@ -7,13 +7,13 @@
 #ifndef DENGINE_VECTOR2_H
 #define DENGINE_VECTOR2_H
 
-namespace dengine::geometry {
+namespace dengine {
     template <class T> class Vector3;
 }
 
 #include "Vector.h"
 
-namespace dengine::geometry {
+namespace dengine {
     template <class T>
     class Vector2 : public Vector<T> {
     public:

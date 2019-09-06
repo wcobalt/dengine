@@ -10,7 +10,7 @@
 #include "Keyboard.h"
 #include "../../DObject.h"
 
-namespace dengine::events::keyboard {
+namespace dengine {
     class Key : public DObject {
     public:
         virtual DKeyCode getKeycode() const = 0;

@@ -32,7 +32,7 @@ namespace dengine {
     //singleton
     class Dengine : public DObject {
     public:
-        static const dengine::coreutils::ID MINIMAL_SAFE_ID = 3;
+        static const dengine::ID MINIMAL_SAFE_ID = 3;
     private:
         float fps;
 

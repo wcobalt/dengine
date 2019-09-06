@@ -5,7 +5,7 @@
 #ifndef DENGINE_PNGIMAGE_H
 #define DENGINE_PNGIMAGE_H
 
-namespace dengine::graphics {
+namespace dengine {
     class PNGImage {
 
     };

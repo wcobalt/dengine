@@ -4,7 +4,7 @@
 
 #include "NoSuitableSceneException.h"
 
-using namespace dengine::exceptions;
+using namespace dengine;
 
 const char* NoSuitableSceneException::what() const noexcept {
     return "There is no scene with that id";

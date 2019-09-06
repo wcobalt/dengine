@@ -9,11 +9,11 @@
 #include "Keyboard.h"
 #include "../../DObject.h"
 
-namespace dengine::events::keyboard {
+namespace dengine {
     class Key;
 }
 
-namespace dengine::events::keyboard {
+namespace dengine {
     class KeyboardState : public DObject {
     public:
         virtual bool isKeyPressed(DKeyCode key) const = 0;

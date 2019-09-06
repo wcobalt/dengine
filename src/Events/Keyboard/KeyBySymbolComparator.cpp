@@ -9,7 +9,7 @@
 
 using std::string;
 
-using namespace dengine::events::keyboard;
+using namespace dengine;
 
 bool KeyBySymbolComparator::operator()(const std::shared_ptr<Key> &a,
                                        const std::shared_ptr<Key> &b) const {

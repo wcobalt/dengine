@@ -7,7 +7,7 @@
 
 #include "vectors.h"
 
-namespace dengine::geometry {
+namespace dengine {
     class Geometry {
     public:
         static double getDistance(const vec3f& from, const vec3f& to);

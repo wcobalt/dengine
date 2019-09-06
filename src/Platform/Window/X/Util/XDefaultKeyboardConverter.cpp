@@ -11,9 +11,7 @@
 #include "../../../../Events/Keyboard/Keyboard.h"
 #include "../../../../Exceptions/IOException.h"
 
-using namespace dengine::platform::window::x::util;
-using namespace dengine::events::keyboard;
-using namespace dengine::exceptions;
+using namespace dengine;
 
 void XDefaultKeyboardConverter::initialize(Display *display) {
     this->display = display;

@@ -8,11 +8,11 @@
 
 #include "WindowStateBuilder.h"
 
-namespace dengine::events::window {
+namespace dengine {
     class WindowState;
 }
 
-namespace dengine::events::window {
+namespace dengine {
     class DefaultWindowStateBuilder : public WindowStateBuilder {
     private:
         bool mWasMaximized, mWasIconified,
