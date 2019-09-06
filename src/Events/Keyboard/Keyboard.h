@@ -5,7 +5,7 @@
 #ifndef DENGINE_KEYCODE_H
 #define DENGINE_KEYCODE_H
 
-namespace dengine::events::keyboard {
+namespace dengine {
     typedef int DKeyCode;
     
     class Keyboard {//@todo may be refactor to classes

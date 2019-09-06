@@ -15,8 +15,6 @@
 #include "../ScenesManager.h"
 
 using namespace dengine;
-using namespace dengine::components;
-using namespace dengine::geometry;
 
 using std::queue;
 using std::vector;

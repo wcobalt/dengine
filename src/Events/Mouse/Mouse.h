@@ -5,7 +5,7 @@
 #ifndef DENGINE_MOUSEBUTTON_H
 #define DENGINE_MOUSEBUTTON_H
 
-namespace dengine::events::mouse {
+namespace dengine {
     typedef int DMouseButton;
     typedef int DWheelDirection;
 

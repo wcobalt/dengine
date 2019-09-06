@@ -11,7 +11,7 @@
 #include "KeyBySymbolComparator.h"
 #include "DKey.h"
 
-using namespace dengine::events::keyboard;
+using namespace dengine;
 
 DefaultKeyboardState::DefaultKeyboardState(const std::set<std::shared_ptr<Key>>& pressedKeys,
                                            const std::set<std::shared_ptr<Key>>& releasedKeys,

@@ -7,7 +7,7 @@
 
 #include "DengineException.h"
 
-namespace dengine::exceptions {
+namespace dengine {
     class NoCastToComponentException : public DengineException {
         const char* what() const noexcept;
     };

@@ -4,6 +4,6 @@
 
 #include "XException.h"
 
-using namespace dengine::platform::window::x::exceptions;
+using namespace dengine;
 
 XException::XException(const std::string &message):DengineException(message) {}

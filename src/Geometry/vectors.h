@@ -8,7 +8,7 @@
 #include "Vector2.h"
 #include "Vector3.h"
 
-namespace dengine::geometry {
+namespace dengine {
     typedef Vector3<float> vec3f;
     typedef Vector3<int> vec3i;
     typedef Vector2<float> vec2f;

@@ -5,7 +5,7 @@
 #ifndef DENGINE_ID_H
 #define DENGINE_ID_H
 
-namespace dengine::coreutils {
+namespace dengine {
     typedef unsigned long ID;
 }
 

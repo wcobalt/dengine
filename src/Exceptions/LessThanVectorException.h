@@ -7,7 +7,7 @@
 
 #include "DengineException.h"
 
-namespace dengine::exceptions {
+namespace dengine {
     class LessThanVectorException : public DengineException {
     private:
         unsigned short n;

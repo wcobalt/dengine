@@ -9,7 +9,7 @@
 
 using std::string;
 
-using namespace dengine::events::keyboard;
+using namespace dengine;
 
 DKey::DKey(DKeyCode keycode, const string &symbol) {
     this->keycode = keycode;

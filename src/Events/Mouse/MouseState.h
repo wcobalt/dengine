@@ -10,7 +10,7 @@
 #include "../../DObject.h"
 #include "Mouse.h"
 
-namespace dengine::events::mouse {
+namespace dengine {
     class MouseState : public DObject {
     public:
         virtual bool isButtonPressed(DMouseButton mouseButton) const = 0;

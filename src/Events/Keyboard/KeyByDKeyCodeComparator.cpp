@@ -7,7 +7,7 @@
 #include "Keyboard.h"
 #include "Key.h"
 
-using namespace dengine::events::keyboard;
+using namespace dengine;
 
 bool KeyByDKeyCodeComparator::operator()(const std::shared_ptr<Key> &a,
                                          const std::shared_ptr<Key> &b) const {

@@ -4,7 +4,7 @@
 
 #include "NoSuitableComponentException.h"
 
-using namespace dengine::exceptions;
+using namespace dengine;
 
 const char* NoSuitableComponentException::what() const noexcept {
     return "Required Component not found. Have you add this to GameObject?";

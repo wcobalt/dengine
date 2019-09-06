@@ -8,11 +8,11 @@
 
 #include "Mouse.h"
 
-namespace dengine::events::mouse {
+namespace dengine {
     class MouseState;
 }
 
-namespace dengine::events::mouse {
+namespace dengine {
     class MouseStateBuilder {
     public:
         virtual void addPressedButton(DMouseButton mouseButton) = 0;

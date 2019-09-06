@@ -19,8 +19,6 @@ using std::shared_ptr;
 using std::string;
 
 using namespace dengine;
-using namespace dengine::coreutils;
-using namespace dengine::exceptions;
 
 ScenesManager::ScenesManager():currentScene(NOT_EXIST_SCENE, nullptr), nextSceneId(Dengine::MINIMAL_SAFE_ID) {}
 

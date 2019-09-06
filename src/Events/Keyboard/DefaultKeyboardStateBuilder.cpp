@@ -6,7 +6,7 @@
 #include "Key.h"
 #include "DefaultKeyboardState.h"
 
-using namespace dengine::events::keyboard;
+using namespace dengine;
 
 DefaultKeyboardStateBuilder::DefaultKeyboardStateBuilder() {
 

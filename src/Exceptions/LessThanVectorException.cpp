@@ -6,7 +6,7 @@
 
 #include "LessThanVectorException.h"
 
-using namespace dengine::exceptions;
+using namespace dengine;
 
 LessThanVectorException::LessThanVectorException(unsigned short n):n(n) {}
 

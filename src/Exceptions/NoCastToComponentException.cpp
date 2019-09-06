@@ -4,7 +4,7 @@
 
 #include "NoCastToComponentException.h"
 
-using namespace dengine::exceptions;
+using namespace dengine;
 
 const char* NoCastToComponentException::what() const noexcept {
     return "No viable cast from your type to Component.";

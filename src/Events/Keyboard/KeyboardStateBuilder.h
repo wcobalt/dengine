@@ -7,12 +7,12 @@
 #ifndef DENGINE_KEYBOARDSTATEBUILDER_H
 #define DENGINE_KEYBOARDSTATEBUILDER_H
 
-namespace dengine::events::keyboard {
+namespace dengine {
     class Key;
     class KeyboardState;
 }
 
-namespace dengine::events::keyboard {
+namespace dengine {
     class KeyboardStateBuilder {
     public:
         virtual void addPressedKey(std::shared_ptr<Key> key) = 0;

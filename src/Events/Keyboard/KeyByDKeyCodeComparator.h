@@ -8,11 +8,11 @@
 
 #include "KeyComparator.h"
 
-namespace dengine::events::keyboard {
+namespace dengine {
     class Key;
 }
 
-namespace dengine::events::keyboard {
+namespace dengine {
     class KeyByDKeyCodeComparator {
     public:
         bool operator()(const std::shared_ptr<Key>& a, const std::shared_ptr<Key>& b) const;

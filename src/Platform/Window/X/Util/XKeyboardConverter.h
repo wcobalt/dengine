@@ -8,12 +8,12 @@
 
 #include "../../../../Events/Keyboard/Keyboard.h"
 
-namespace dengine::platform::window::x::util {
+namespace dengine {
     class XKeyboardConverter {
     public:
         virtual void initialize(Display *display) = 0;
 
-        virtual events::keyboard::DKeyCode convertXKeyCodeToDKeyCode(XEvent *xEvent) = 0;
+        virtual dengine::DKeyCode convertXKeyCodeToDKeyCode(XEvent *xEvent) = 0;
 
         virtual std::string convertXKeyCodeToSymbol(XEvent *xEvent) = 0;
 

@@ -4,7 +4,7 @@
 
 #include "NoCurrentSceneException.h"
 
-using namespace dengine::exceptions;
+using namespace dengine;
 
 const char* NoCurrentSceneException::what() const noexcept {
     return "Current scene is not defined";

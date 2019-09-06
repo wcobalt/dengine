@@ -9,8 +9,8 @@
 
 #include "../../../../Exceptions/DengineException.h"
 
-namespace dengine::platform::window::x::exceptions {
-class XException : public dengine::exceptions::DengineException {
+namespace dengine {
+class XException : public dengine::DengineException {
     public:
         XException(const std::string& description);
     };

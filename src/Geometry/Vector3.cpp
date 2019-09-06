@@ -11,8 +11,7 @@
 
 using std::vector;
 
-using namespace dengine::exceptions;
-using namespace dengine::geometry;
+using namespace dengine;
 
 template <class T>
 Vector3<T>::Vector3():x((T)0), y((T)0), z((T)0) {}

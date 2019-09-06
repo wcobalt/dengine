@@ -4,7 +4,7 @@
 
 #include "ComponentAlreadyAddedException.h"
 
-using namespace dengine::exceptions;
+using namespace dengine;
 
 const char* ComponentAlreadyAddedException::what() const noexcept {
     return "Component what you try to add already added to the GameObject.";

@@ -7,7 +7,7 @@
 
 #include "WindowState.h"
 
-namespace dengine::events::window {
+namespace dengine {
     class DefaultWindowState : public WindowState {
     private:
         bool mWasMaximized, mWasIconified,

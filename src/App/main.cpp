@@ -12,9 +12,6 @@
 
 using std::shared_ptr;
 using namespace dengine;
-using namespace dengine::events::keyboard;
-using namespace dengine::platform::window;
-using namespace dengine::platform::window::x;
 
 int main() {//memory safe
     //std::cout << (char)0xd0 << (char)0xb6;

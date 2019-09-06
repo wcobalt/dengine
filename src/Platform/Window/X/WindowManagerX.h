@@ -16,40 +16,27 @@
 #include "../../../Events/Mouse/Mouse.h"
 
 namespace dengine {
-    namespace events {
-        namespace mouse {
-            class MouseState;
-        }
-
-        namespace keyboard {
-            class KeyboardState;
-            class Key;
-            class KeyboardStateBuilder;
-        }
-
-        namespace window {
-            class WindowState;
-        }
-    }
-}
-
-namespace dengine::platform::window::x::util {
+    class MouseState;
+    class KeyboardState;
+    class Key;
+    class KeyboardStateBuilder;
+    class WindowState;
     class XKeyboardConverter;
 }
 
-namespace dengine::platform::window::x {
+namespace dengine {
     class WindowManagerX : public WindowManager {
     private:
         const uint DEFAULT_SCREEN = 0,
-                   DEFAULT_WINDOW_DEPTH = 0;
+                DEFAULT_WINDOW_DEPTH = 0;
         const int VISUAL_DEPTH = 24;
 
         static const int DEFAULT_LEFT_BUTTON = Button1,
-                  DEFAULT_MIDDLE_BUTTON = Button2,
-                  DEFAULT_RIGHT_BUTTON = Button3,
-                  DEFAULT_WHEEL_POSITIVE_BUTTON = Button4, //@todo it is not guaranteed that exactly 5th 6th buttons will emulate the wheel
-                  DEFAULT_WHEEL_NEGATIVE_BUTTON = Button5; //make smth like XConverter which can be inserted in XWM by user if it needed
-                                                           //may be it's better to implement a kind of Converter by XConverter
+                DEFAULT_MIDDLE_BUTTON = Button2,
+                DEFAULT_RIGHT_BUTTON = Button3,
+                DEFAULT_WHEEL_POSITIVE_BUTTON = Button4, //@todo it is not guaranteed that exactly 5th 6th buttons will emulate the wheel
+                DEFAULT_WHEEL_NEGATIVE_BUTTON = Button5; //make smth like XConverter which can be inserted in XWM by user if it needed
+        //may be it's better to implement a kind of Converter by XConverter
 
         Display *display;
         Window rootWindow;
@@ -84,7 +71,7 @@ namespace dengine::platform::window::x {
             }
         };
 
-        std::shared_ptr<dengine::platform::window::x::util::XKeyboardConverter> xKeyboardConverter;
+        std::shared_ptr<dengine::XKeyboardConverter> xKeyboardConverter;
 
         PropertyData getProperty(const char *propertyName, Window window) const;
 
@@ -94,11 +81,11 @@ namespace dengine::platform::window::x {
 
         void setWindowBounds(int x, int y, uint width, uint height);
         void sendEvent(int type, const char* messageTypeAtomName, int format, long* data, long eventMask,
-                Window from, Window to);
+                       Window from, Window to);
         void setMaximized(bool mode, Atom atom);
         bool find(long needle, const PropertyData& haystack) const;
-        dengine::events::mouse::DMouseButton toDMouseButton(int xButton) const;
-        std::shared_ptr<events::keyboard::Key> toDKey(XEvent *xEvent) const;
+        dengine::DMouseButton toDMouseButton(int xButton) const;
+        std::shared_ptr<dengine::Key> toDKey(XEvent *xEvent) const;
 
         static Bool selectKeyboardEventsPredicate(Display *display, XEvent *xEvent, XPointer arg);
     public:
@@ -170,11 +157,11 @@ namespace dengine::platform::window::x {
 
         //@todo GLXContext
 
-        std::shared_ptr<dengine::events::mouse::MouseState> getMouseState() const;
+        std::shared_ptr<dengine::MouseState> getMouseState() const;
 
-        std::shared_ptr<dengine::events::keyboard::KeyboardState> getKeyboardState() const;
+        std::shared_ptr<dengine::KeyboardState> getKeyboardState() const;
 
-        std::shared_ptr<dengine::events::window::WindowState> getWindowState() const;
+        std::shared_ptr<dengine::WindowState> getWindowState() const;
 
         ~WindowManagerX();//
     };

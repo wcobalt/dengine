@@ -10,7 +10,7 @@
 #include "Keyboard.h"
 #include "Key.h"
 
-namespace dengine::events::keyboard {
+namespace dengine {
     class DKey : public Key {
     private:
         std::string symbol;

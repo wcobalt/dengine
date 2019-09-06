@@ -7,7 +7,7 @@
 
 #include "../../DObject.h"
 
-namespace dengine::events::window {
+namespace dengine {
     class WindowState : DObject {
     public:
         virtual bool wasMaximized() const = 0;

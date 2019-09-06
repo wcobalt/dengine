@@ -39,14 +39,7 @@ using std::shared_ptr;
 using std::vector;
 using std::string;
 
-using namespace dengine::events;
-using namespace dengine::platform::window::x;
-using namespace dengine::platform::window::x::util;
-using namespace dengine::platform::window::x::exceptions;
-using namespace dengine::events::mouse;
-using namespace dengine::events::keyboard;
-using namespace dengine::events::window;
-using namespace dengine::platform::window;
+using namespace dengine;
 
 int WindowManagerX::xkbEventType = 0;
 
@@ -96,9 +89,10 @@ WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std:
 
                     XSetWMProtocols(display, window, &wmDeleteWindow, 1);
 
-                    XkbQueryExtension(display, 0, &xkbEventType, 0, 0, 0);
+                    XkbQueryExtension(display, nullptr, &xkbEventType, nullptr, nullptr, nullptr);
                     XkbSelectEvents(display, XkbUseCoreKbd, XkbAllEventsMask, XkbAllEventsMask);
-                    XkbSetDetectableAutoRepeat(display, True, 0);
+                    XkbSetDetectableAutoRepeat(display, True, nullptr);
+
                     xKeyboardConverter = std::make_shared<XDefaultKeyboardConverter>();
                     xKeyboardConverter->initialize(display);
                 } else

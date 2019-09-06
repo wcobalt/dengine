@@ -5,7 +5,7 @@
 #ifndef DENGINE_GAMEPADMANAGER_H
 #define DENGINE_GAMEPADMANAGER_H
 
-namespace dengine::platform::gamepad {
+namespace dengine {
     class GamepadManager {
 
     };

@@ -4,7 +4,7 @@
 
 #include "DefaultWindowState.h"
 
-using namespace dengine::events::window;
+using namespace dengine;
 
 DefaultWindowState::DefaultWindowState(bool wasMaximized, bool wasWindowed, bool wasIconified,
                                        bool wasResized, bool gotFocus, bool lostFocus, bool isClosing):

@@ -10,11 +10,11 @@
 
 #include "KeyboardStateBuilder.h"
 
-namespace dengine::events::keyboard {
+namespace dengine {
     class Key;
 }
 
-namespace dengine::events::keyboard {
+namespace dengine {
     class DefaultKeyboardStateBuilder : public KeyboardStateBuilder {
     private:
         std::set<std::shared_ptr<Key>> pressedKeys;
