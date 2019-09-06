@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/App.dir/App/main.cpp.o  -o App libDengine.a /usr/lib/x86_64-linux-gnu/libX11.so /usr/lib/x86_64-linux-gnu/libXext.so /usr/lib/x86_64-linux-gnu/libOpenGL.so /usr/lib/x86_64-linux-gnu/libGLX.so -lpthread 
