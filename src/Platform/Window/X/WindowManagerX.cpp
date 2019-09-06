@@ -1,6 +1,7 @@
 //For this libraries you should install libgl1-mesa-dev
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <X11/XKBlib.h>
 #include <X11/keysymdef.h>
 #include <X11/cursorfont.h>
 #include <GL/glx.h>
@@ -28,8 +29,11 @@
 #include "../../../Events/Keyboard/DefaultKeyboardStateBuilder.h"
 #include "../../../Events/Keyboard/KeyboardState.h"
 #include "../../../Events/Keyboard/Key.h"
-#include "../../../Events/Keyboard/KeyCode.h"
+#include "../../../Events/Keyboard/DKey.h"
+#include "../../../Events/Keyboard/Keyboard.h"
 #include "../../../Events/Mouse/Mouse.h"
+#include "Util/XDefaultKeyboardConverter.h"
+#include "Util/XKeyboardConverter.h"
 
 using std::shared_ptr;
 using std::vector;
@@ -37,11 +41,14 @@ using std::string;
 
 using namespace dengine::events;
 using namespace dengine::platform::window::x;
+using namespace dengine::platform::window::x::util;
 using namespace dengine::platform::window::x::exceptions;
 using namespace dengine::events::mouse;
 using namespace dengine::events::keyboard;
 using namespace dengine::events::window;
 using namespace dengine::platform::window;
+
+int WindowManagerX::xkbEventType = 0;
 
 WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std::string& title):title(title) {
     display = XOpenDisplay(nullptr);
@@ -74,13 +81,9 @@ WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std:
             setVisible(true);
 
             setPosition(x, y);
-
             setTitle(title);
-
             setSize(width, height);
-
             setCursorVisible(true);
-
             setDecorated(true);
 
             glXContext = glXCreateContext(display, visualInfo, nullptr, GL_TRUE);
@@ -92,6 +95,12 @@ WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std:
                     Atom wmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
 
                     XSetWMProtocols(display, window, &wmDeleteWindow, 1);
+
+                    XkbQueryExtension(display, 0, &xkbEventType, 0, 0, 0);
+                    XkbSelectEvents(display, XkbUseCoreKbd, XkbAllEventsMask, XkbAllEventsMask);
+                    XkbSetDetectableAutoRepeat(display, True, 0);
+                    xKeyboardConverter = std::make_shared<XDefaultKeyboardConverter>();
+                    xKeyboardConverter->initialize(display);
                 } else
                     throw XException("Unable to attach GLX context to window");
             } else
@@ -120,7 +129,7 @@ void WindowManagerX::setDecorated(bool isDecorated) {
 
     Atom type = XInternAtom(display,"_NET_WM_WINDOW_TYPE", False);
     Atom value = isDecorated?XInternAtom(display,"_NET_WM_WINDOW_TYPE_NORMAL", False):
-                             XInternAtom(display,"_NET_WM_WINDOW_TYPE_SPLASH", False);
+                 XInternAtom(display,"_NET_WM_WINDOW_TYPE_SPLASH", False);
 
     XChangeProperty(display, window, type, XA_ATOM, 32, PropModeReplace, (unsigned char*)&value, 1);
 
@@ -138,7 +147,7 @@ void WindowManagerX::setCursorVisible(bool isVisible) {
         GC gc = XCreateGC(display, transparentCursor, 0, {});
 
         XSetForeground(display, gc, 0); //zero for mask (0 - invisible, 1 - visible)
-                                        // zero for pixmap (0 - background, 1 - foreground)
+        // zero for pixmap (0 - background, 1 - foreground)
 
         XDrawPoint(display, transparentCursor, gc, 0, 0);//x,y
 
@@ -450,7 +459,7 @@ int WindowManagerX::getGeometryState() const {
 
 
     PropertyData result2 = getProperty("_NET_WM_STATE", window); //if old WM_STATE is not supported (but if it's so, user
-                                                                 //wouldn't to programmatically iconify the window)
+    //wouldn't to programmatically iconify the window)
 
     Atom hidden = XInternAtom(display, "_NET_WM_STATE_HIDDEN", False);
 
@@ -623,14 +632,27 @@ std::shared_ptr<KeyboardState> WindowManagerX::getKeyboardState() const {
 
     XEvent xEvent;
 
-    while (XCheckMaskEvent(display, KeyPressMask | KeyReleaseMask, &xEvent)) {
-        switch(xEvent.type) {
-            case ButtonPress:
-                builder->addPressedKey(toDKey(xEvent.xkey.keycode));
+    while(XCheckIfEvent(display, &xEvent, &WindowManagerX::selectKeyboardEventsPredicate, 0)) {
+        switch (xEvent.type) {
+            case KeyPress:
+                builder->addPressedKey(toDKey(&xEvent));
 
                 break;
-            case ButtonRelease:
-                builder->addReleasedKey(toDKey(xEvent.xkey.keycode));
+            case KeyRelease:
+                builder->addReleasedKey(toDKey(&xEvent));
+
+                break;
+            default:
+                if (xEvent.type == xkbEventType) {
+                    XkbEvent *xkbEvent = (XkbEvent*) &xEvent;
+
+                    switch (xkbEvent->any.xkb_type) {
+                        case XkbStateNotify:
+                            int lang = xkbEvent->state.group;
+
+                            xKeyboardConverter->setGroup(lang);
+                    }
+                }
 
                 break;
         }
@@ -639,6 +661,16 @@ std::shared_ptr<KeyboardState> WindowManagerX::getKeyboardState() const {
     //setLayoutName setLayoutCode are not supported by this fking WindowManagerX
 
     return builder->build();
+}
+
+Bool WindowManagerX::selectKeyboardEventsPredicate(Display *display, XEvent *xEvent, XPointer arg) {
+    int types[] = {KeyPress, KeyRelease, xkbEventType};
+
+    for (int type : types)
+        if (xEvent->type == type)
+            return True;
+
+    return False;
 }
 
 std::shared_ptr<WindowState> WindowManagerX::getWindowState() const {
@@ -665,8 +697,8 @@ WindowManagerX::PropertyData WindowManagerX::getProperty(const char* propertyNam
     property = XInternAtom(display, propertyName, False);
 
     XGetWindowProperty(display, window, property, 0, LONG_MAX, False,
-                         AnyPropertyType, &returnedProperty, &returnedActualFormat,
-                         &returnedNumberOfItems, &returnedBytesToRead, &returnedData);
+                       AnyPropertyType, &returnedProperty, &returnedActualFormat,
+                       &returnedNumberOfItems, &returnedBytesToRead, &returnedData);
 
     return PropertyData(returnedData, returnedNumberOfItems);
 }
@@ -704,7 +736,7 @@ void WindowManagerX::setWindowBounds(int x, int y, uint width, uint height) {
     data[4] = height;
 
     sendEvent(ClientMessage, "_NET_MOVERESIZE_WINDOW", 32, data, SubstructureRedirectMask | SubstructureNotifyMask,
-            window, rootWindow);
+              window, rootWindow);
 }
 
 void WindowManagerX::setSizeHints(uint maximumWidth, uint maximumHeight, uint minimumWidth, uint minimumHeight,
@@ -764,10 +796,10 @@ DMouseButton WindowManagerX::toDMouseButton(int xButton) const {
     }
 }
 
-shared_ptr<Key> WindowManagerX::toDKey(int xKeyCode) const {
-    DKeyCode dKeyCode;
-    std::string keySymbol;
+shared_ptr<Key> WindowManagerX::toDKey(XEvent *xEvent) const {
+    DKeyCode dKeyCode = xKeyboardConverter->convertXKeyCodeToDKeyCode(xEvent);
+    std::string keySymbol = xKeyboardConverter->convertXKeyCodeToSymbol(xEvent);
 
-
+    return std::make_shared<DKey>(dKeyCode, keySymbol);
 }
 

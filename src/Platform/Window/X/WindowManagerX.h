@@ -24,6 +24,7 @@ namespace dengine {
         namespace keyboard {
             class KeyboardState;
             class Key;
+            class KeyboardStateBuilder;
         }
 
         namespace window {
@@ -56,6 +57,7 @@ namespace dengine::platform::window::x {
         Window window;
         GLXContext glXContext;
         XSizeHints* xSizeHints;
+        static int xkbEventType;
 
         uint lastWidth, lastHeight;
 
@@ -82,7 +84,7 @@ namespace dengine::platform::window::x {
             }
         };
 
-        std::shared_ptr<dengine::platform::window::x::util::XKeyboardConverter> xKeyboardDriver;
+        std::shared_ptr<dengine::platform::window::x::util::XKeyboardConverter> xKeyboardConverter;
 
         PropertyData getProperty(const char *propertyName, Window window) const;
 
@@ -96,7 +98,9 @@ namespace dengine::platform::window::x {
         void setMaximized(bool mode, Atom atom);
         bool find(long needle, const PropertyData& haystack) const;
         dengine::events::mouse::DMouseButton toDMouseButton(int xButton) const;
-        std::shared_ptr<events::keyboard::Key> toDKey(int xKeyCode) const;
+        std::shared_ptr<events::keyboard::Key> toDKey(XEvent *xEvent) const;
+
+        static Bool selectKeyboardEventsPredicate(Display *display, XEvent *xEvent, XPointer arg);
     public:
         WindowManagerX(int x, int y, uint width, uint height, const std::string& title);
 

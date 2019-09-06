@@ -12,7 +12,7 @@ add_library(Dengine
 
         Events/Keyboard/KeyboardState.h
         Events/Mouse/MouseState.h
-        Events/Keyboard/KeyCode.cpp
+        Events/Keyboard/Keyboard.cpp
         Events/Window/WindowState.h
         Events/Mouse/DefaultMouseState.cpp
         Events/Mouse/DefaultMouseState.h
@@ -20,7 +20,7 @@ add_library(Dengine
         Events/Window/DefaultWindowState.h
         Events/Keyboard/DefaultKeyboardState.cpp
         Events/Keyboard/DefaultKeyboardState.h
-        Events/Keyboard/KeyCode.h
+        Events/Keyboard/Keyboard.h
         Events/Keyboard/Key.h
         Events/Keyboard/DKey.cpp
         Events/Keyboard/DKey.h
@@ -40,7 +40,8 @@ add_library(Dengine
         Platform/Window/X/Util/XDefaultKeyboardConverter.h
         Platform/Window/X/Util/XDefaultKeyboardConverter.cpp
         Exceptions/DengineException.h
-        )
+        Exceptions/DengineException.cpp
+        Exceptions/IOException.cpp Exceptions/IOException.h)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})

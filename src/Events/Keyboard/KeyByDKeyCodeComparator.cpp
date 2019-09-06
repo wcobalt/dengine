@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "KeyByDKeyCodeComparator.h"
-#include "KeyCode.h"
+#include "Keyboard.h"
 #include "Key.h"
 
 using namespace dengine::events::keyboard;
