@@ -6,8 +6,12 @@
 #ifndef DENGINE_KEYBOARDSTATE_H
 #define DENGINE_KEYBOARDSTATE_H
 
-#include "KeyCode.h"
+#include "Keyboard.h"
 #include "../../DObject.h"
+
+namespace dengine::events::keyboard {
+    class Key;
+}
 
 namespace dengine::events::keyboard {
     class KeyboardState : public DObject {
@@ -24,7 +28,9 @@ namespace dengine::events::keyboard {
 
         virtual std::string getCurrentKeyboardLayoutName() const = 0;
 
-        //@todo add method for all the keys gettng (after release)
+        virtual std::set<std::shared_ptr<Key>> getAllPressedKeys() const = 0;
+
+        virtual std::set<std::shared_ptr<Key>> getAllReleasedKeys() const = 0;
     };
 }
 

@@ -7,7 +7,7 @@
 #ifndef DENGINE_KEY_H
 #define DENGINE_KEY_H
 
-#include "KeyCode.h"
+#include "Keyboard.h"
 #include "../../DObject.h"
 
 namespace dengine::events::keyboard {

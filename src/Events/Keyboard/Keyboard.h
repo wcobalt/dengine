@@ -8,13 +8,13 @@
 namespace dengine::events::keyboard {
     typedef int DKeyCode;
     
-    class KeyCode {
+    class Keyboard {//@todo may be refactor to classes
     private:
         static const int BASE = 255;
     public:
-        static const DKeyCode TAB = 0,
+        static const DKeyCode NONE = 0,
         ESC = 1,
-        CAPSLOCK = 2,
+        CAPS_LOCK = 2,
         LEFT_SHIFT = 3,
         RIGHT_SHIFT = 4,
         LEFT_CONTROL = 5,
@@ -57,10 +57,10 @@ namespace dengine::events::keyboard {
         RIGHT = 41,
         NUM_DIVIDE = 42,
         NUM_MULTIPLY = 43,
-        NUM_MINUS = 44,
-        NUM_PLUS = 45,
+        NUM_SUBTRACT = 44,
+        NUM_ADD = 45,
         NUM_ENTER = 46,
-        NUM_PERIOD = 47,
+        NUM_INSERT = 47,
         NUM_0 = 48,
         NUM_1 = 49,
         NUM_2 = 50,
@@ -71,14 +71,20 @@ namespace dengine::events::keyboard {
         NUM_7 = 55,
         NUM_8 = 56,
         NUM_9 = 57,
+        NUM_DELETE = 58,
+        NUM_HOME = 60,
+        NUM_END = 61,
+        NUM_PAGE_UP = 62,
+        NUM_PAGE_DOWN = 63,
+        TAB = 64,
         //SYMBOLS ARE THERE
         SPACE = BASE + ' ',
         Q = BASE + 'Q', W = BASE + 'W', E = BASE + 'E', R = BASE + 'R', T = BASE + 'T', Y = BASE + 'Y', U = BASE + 'U',
         I = BASE + 'I', O = BASE + 'O', P = BASE + 'P', A = BASE + 'A', S = BASE + 'S', D = BASE + 'D', F = BASE + 'F',
         G = BASE + 'G', H = BASE + 'H', J = BASE + 'J', K = BASE + 'K', L = BASE + 'L', Z = BASE + 'Z', X = BASE + 'X',
         C = BASE + 'C', V = BASE + 'V', B = BASE + 'B', N = BASE + 'N', M = BASE + 'M',
-        A0 = BASE + '0', A1 = BASE + '1', A2 = BASE + '2', A3 = BASE + '3', A4 = BASE + '4',
-        A5 = BASE + '5', A6 = BASE + '6', A7 = BASE + '7', A8 = BASE + '8', A9 = BASE + '9',
+        A_0 = BASE + '0', A_1 = BASE + '1', A_2 = BASE + '2', A_3 = BASE + '3', A_4 = BASE + '4',
+        A_5 = BASE + '5', A_6 = BASE + '6', A_7 = BASE + '7', A_8 = BASE + '8', A_9 = BASE + '9',
         MINUS = BASE + '-',
         UNDERSCORE = BASE + '_',
         PLUS = BASE + '+',
@@ -89,19 +95,19 @@ namespace dengine::events::keyboard {
         RIGHT_SQUARE = BASE + ']',
         COLON = BASE + ':',
         SEMICOLON = BASE + ';',
-        QUOTE = BASE + '\'',
+        APOSTROPHE = BASE + '\'',
         DOUBLE_QUOTE = BASE + '"',
         PIPE = BASE + '|',
         SLASH = BASE + '/',
         BACKSLASH = BASE + '\\',
-        LEFT_ANGLE = BASE + '<',
-        RIGHT_ANGLE = BASE + '>',
+        LESS = BASE + '<',
+        GREATER = BASE + '>',
         COMMA = BASE + ',',
         PERIOD = BASE + '.',
         QUESTION = BASE + '?',
         EXCLAMATION = BASE + '!',
         TILDE = BASE + '~',
-        BACK_QUOTE = BASE + '`',
+        GRAVE = BASE + '`',
         AT = BASE + '@',
         SHARP = BASE + '#',
         DOLLAR = BASE + '$',
@@ -109,8 +115,8 @@ namespace dengine::events::keyboard {
         CIRCUMFLEX = BASE + '^',
         AMPERSAND = BASE + '&',
         ASTERISK = BASE + '*',
-        LEFT_PAREN = BASE + '(',
-        RIGHT_PAREN = BASE + ')';
+        LEFT_PARENTHESIS = BASE + '(',
+        RIGHT_PARENTHESIS = BASE + ')';
 
         static int ord(char ch);
     };

@@ -5,7 +5,7 @@
 #include <string>
 
 #include "DKey.h"
-#include "KeyCode.h"
+#include "Keyboard.h"
 
 using std::string;
 

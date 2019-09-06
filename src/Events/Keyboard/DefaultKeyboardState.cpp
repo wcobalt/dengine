@@ -6,7 +6,7 @@
 #include <memory>
 
 #include "DefaultKeyboardState.h"
-#include "KeyCode.h"
+#include "Keyboard.h"
 #include "KeyByDKeyCodeComparator.h"
 #include "KeyBySymbolComparator.h"
 #include "DKey.h"
@@ -20,9 +20,11 @@ DefaultKeyboardState::DefaultKeyboardState(const std::set<std::shared_ptr<Key>>&
 
     pressedKeysIndexDKeyCode.insert(pressedKeys.begin(), pressedKeys.end());
     pressedKeysIndexSymbol.insert(pressedKeys.begin(), pressedKeys.end());
+    this->pressedKeys.insert(pressedKeys.begin(), pressedKeys.end());
 
     releasedKeysIndexDKeyCode.insert(releasedKeys.begin(), releasedKeys.end());
     releasedKeysIndexSymbol.insert(releasedKeys.begin(), releasedKeys.end());
+    this->releasedKeys.insert(releasedKeys.begin(), releasedKeys.end());
 }
 
 bool DefaultKeyboardState::isKeyPressed(DKeyCode key) const {
@@ -47,4 +49,12 @@ std::string DefaultKeyboardState::getCurrentKeyboardLayoutCode() const {
 
 std::string DefaultKeyboardState::getCurrentKeyboardLayoutName() const {
     return keyboardLayoutName;
+}
+
+std::set<std::shared_ptr<Key>> DefaultKeyboardState::getAllPressedKeys() const {
+    return pressedKeys;
+}
+
+std::set<std::shared_ptr<Key>> DefaultKeyboardState::getAllReleasedKeys() const {
+    return releasedKeys;
 }

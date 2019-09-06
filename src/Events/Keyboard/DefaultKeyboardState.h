@@ -8,7 +8,7 @@
 #define DENGINE_DEFAULTKEYBOARDSTATE_H
 
 #include "KeyboardState.h"
-#include "KeyCode.h"
+#include "Keyboard.h"
 #include "KeyByDKeyCodeComparator.h"
 #include "KeyBySymbolComparator.h"
 
@@ -19,6 +19,9 @@ namespace dengine::events::keyboard {
 namespace dengine::events::keyboard {
     class DefaultKeyboardState : public KeyboardState {
     private:
+        std::set<std::shared_ptr<Key>> pressedKeys;
+        std::set<std::shared_ptr<Key>> releasedKeys;
+
         std::set<std::shared_ptr<Key>, KeyByDKeyCodeComparator> pressedKeysIndexDKeyCode;
         std::set<std::shared_ptr<Key>, KeyByDKeyCodeComparator> releasedKeysIndexDKeyCode;
 
@@ -42,6 +45,10 @@ namespace dengine::events::keyboard {
         std::string getCurrentKeyboardLayoutCode() const; //@todo implement after release
 
         std::string getCurrentKeyboardLayoutName() const; //@todo implement after release
+
+        std::set<std::shared_ptr<Key>> getAllPressedKeys() const;
+
+        std::set<std::shared_ptr<Key>> getAllReleasedKeys() const;
     };
 }
 
