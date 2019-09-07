@@ -46,15 +46,21 @@ namespace dengine {
         XSizeHints* xSizeHints;
         static int xkbEventType;
 
-        uint lastWidth, lastHeight;
-
-        int lastX, lastY;
-
         std::string title;
 
+        static Atom wmProtocols;
+        Atom wmDeleteWindow;
+
+        //cached values for some getters
         bool mIsCursorVisible;
         bool mIsDecorated;
         bool mIsVisible;
+
+        //last values of some properties of the window, for getWindowState method
+        int lastX, lastY;
+        int lastWidth, lastHeight;
+        int lastState;
+        int lastMaximizationState;
 
         struct PropertyData {
             unsigned char *data;
@@ -75,19 +81,20 @@ namespace dengine {
 
         PropertyData getProperty(const char *propertyName, Window window) const;
 
-        void setSizeHints(uint maximumWidth, uint maximumHeight,
-                          uint minimumWidth, uint minimumHeight,
-                          uint ratioX, uint ratioY);
+        void setSizeHints(uint minimumWidth, uint minimumHeight, uint maximumWidth, uint maximumHeight, uint ratioX,
+                          uint ratioY, bool setMinimumSize, bool setMaximumSize, bool setRatio);
 
-        void setWindowBounds(int x, int y, uint width, uint height);
+        void setWindowBounds(int x, int y, uint width, uint height, bool setCoordinates, bool setSize);
         void sendEvent(int type, const char* messageTypeAtomName, int format, long* data, long eventMask,
                        Window from, Window to);
-        void setMaximized(bool mode, Atom atom);
+        void setMaximized(bool mode, Atom *atoms, int count);
         bool find(long needle, const PropertyData& haystack) const;
         dengine::DMouseButton toDMouseButton(int xButton) const;
         std::shared_ptr<dengine::Key> toDKey(XEvent *xEvent) const;
 
         static Bool selectKeyboardEventsPredicate(Display *display, XEvent *xEvent, XPointer arg);
+        static Bool selectWindowEventsPredicate(Display *display, XEvent *xEvent, XPointer arg);
+        static int selectEventsPredicate(XEvent *xEvent, int *types, int size);
     public:
         WindowManagerX(int x, int y, uint width, uint height, const std::string& title);
 
@@ -125,6 +132,8 @@ namespace dengine {
 
         void center();
 
+        void focus();
+
         void destroy();
 
         bool isVisible() const;//cache v
@@ -155,13 +164,15 @@ namespace dengine {
 
         int getMaximizationState() const;
 
+        bool isFocused() const;
+
         //@todo GLXContext
 
         std::shared_ptr<dengine::MouseState> getMouseState() const;
 
         std::shared_ptr<dengine::KeyboardState> getKeyboardState() const;
 
-        std::shared_ptr<dengine::WindowState> getWindowState() const;
+        std::shared_ptr<dengine::WindowState> getWindowState();
 
         ~WindowManagerX();//
     };

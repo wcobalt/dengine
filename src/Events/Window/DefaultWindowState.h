@@ -13,10 +13,12 @@ namespace dengine {
         bool mWasMaximized, mWasIconified,
                 mWasWindowed, mWasResized,
                 mGotFocus, mLostFocus,
-                mIsClosing;
+                mIsClosing, mWasMoved,
+                mWasHiddenToTray;
     public:
         DefaultWindowState(bool wasMaximized, bool wasWindowed, bool wasIconified,
-                           bool wasResized, bool gotFocus, bool lostFocus, bool isClosing);
+                           bool wasResized, bool gotFocus, bool lostFocus, bool isClosing,
+                           bool wasMoved, bool wasHiddenToTray);
 
         bool wasMaximized() const;
 
@@ -31,6 +33,10 @@ namespace dengine {
         bool lostFocus() const;
 
         bool isClosing() const;
+
+        bool wasMoved() const;
+
+        bool wasHiddenToTray() const;
     };
 }
 

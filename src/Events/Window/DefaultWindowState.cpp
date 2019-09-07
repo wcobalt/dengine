@@ -6,12 +6,14 @@
 
 using namespace dengine;
 
-DefaultWindowState::DefaultWindowState(bool wasMaximized, bool wasWindowed, bool wasIconified,
-                                       bool wasResized, bool gotFocus, bool lostFocus, bool isClosing):
-                                         mWasMaximized(wasMaximized),mWasWindowed(wasWindowed),
+DefaultWindowState::DefaultWindowState(bool wasMaximized, bool wasWindowed, bool wasIconified, bool wasResized,
+                                       bool gotFocus, bool lostFocus, bool isClosing, bool wasMoved,
+                                       bool wasHiddenToTray):
+                                         mWasMaximized(wasMaximized), mWasWindowed(wasWindowed),
                                          mWasIconified(wasIconified), mWasResized(wasResized),
                                          mGotFocus(gotFocus), mLostFocus(lostFocus),
-                                         mIsClosing(isClosing) {}
+                                         mIsClosing(isClosing), mWasMoved(wasMoved),
+                                         mWasHiddenToTray(wasHiddenToTray) {}
 
 bool DefaultWindowState::wasMaximized() const {
     return mWasMaximized;
@@ -39,4 +41,12 @@ bool DefaultWindowState::lostFocus() const {
 
 bool DefaultWindowState::isClosing() const {
     return mIsClosing;
+}
+
+bool DefaultWindowState::wasMoved() const {
+    return mWasMoved;
+}
+
+bool DefaultWindowState::wasHiddenToTray() const {
+    return mWasHiddenToTray;
 }

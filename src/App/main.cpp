@@ -1,6 +1,7 @@
 #include <iostream>
 #include "../Platform/Window/X/WindowManagerX.h"
 #include "../Events/Keyboard/KeyboardState.h"
+#include "../Events/Window/WindowState.h"
 #include "../Events/Keyboard/Key.h"
 #include <string>
 #include <memory>
@@ -17,12 +18,16 @@ int main() {//memory safe
     //std::cout << (char)0xd0 << (char)0xb6;
     std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
 
-    /*std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+/*    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     manager->setSize(500, 500);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     manager->setPosition(0, 0);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    manager->setCursorVisible(false);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));*/
+/*    manager->setMaximumSize(50, 1000);
+    manager->setMinimumSize(5, 2);
+    manager->setRatio(1, 2);*/
+
+    /*manager->setCursorVisible(false);
     std::this_thread::sleep_for(std::chrono::milliseconds(5000));*/
     /*long buffer[] = {
            16, 16,
@@ -32,7 +37,26 @@ int main() {//memory safe
    };
 
    manager->setIcon(buffer, 4 + 16 * 16 + 32*32);*/
+
+    while (1) {
+        std::shared_ptr<WindowState> windowState = manager->getWindowState();
+
+        std::cout << "Tick:\nClosing: " << windowState->isClosing() << "\n";
+        std::cout << "Got focus: " << windowState->gotFocus() << "\n";
+        std::cout << "Lost focus: " << windowState->lostFocus() << "\n";
+        std::cout << "Was iconified: " << windowState->wasIconified() << "\n";
+        std::cout << "Was maximized: " << windowState->wasMaximized() << "\n";
+        std::cout << "Was windowed: " << windowState->wasWindowed() << "\n";
+        std::cout << "Was moved: " << windowState->wasMoved() << "\n";
+        std::cout << "Was resized: " << windowState->wasResized() << "\n\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(800));
+    }
+/*manager->focus();
+std::cout << manager->isFocused();
+fflush(stdout);
     while(1) {
+        std::cout << manager->isFocused();
+
         std::this_thread::sleep_for(std::chrono::milliseconds(600));
 
         std::shared_ptr<KeyboardState> ks = manager->getKeyboardState();
@@ -51,7 +75,13 @@ int main() {//memory safe
             std::cout << "  " << key->getKeycode() << " " << key->getSymbol() << "\n";
 
         fflush(stdout);
-    }
+    }*/
+
+/*    while (1) {
+        manager->getWindowState();
+    }*/
+
+
 /*    manager->setGeometryState(WindowManager::ICONIFIED);
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     manager->setVisible(false);

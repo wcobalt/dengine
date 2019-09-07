@@ -15,10 +15,11 @@ namespace dengine {
 namespace dengine {
     class DefaultWindowStateBuilder : public WindowStateBuilder {
     private:
-        bool mWasMaximized, mWasIconified,
-                mWasWindowed, mWasResized,
-                mGotFocus, mLostFocus,
-                mIsClosing;
+        bool wasMaximized = false, wasIconified = false,
+                wasWindowed = false, wasResized = false,
+                gotFocus = false, lostFocus = false,
+                isClosing = false, wasMoved = false,
+                wasHiddenToTray = false;
     public:
         void setMaximized(bool wasMaximized);
 
@@ -33,6 +34,10 @@ namespace dengine {
         void setLostFocus(bool lostFocus);
 
         void setClosing(bool isClosing);
+
+        void setMoved(bool wasMoved);
+
+        void setHiddenToTray(bool wasHiddenToTray);
 
         std::shared_ptr<WindowState> build() const;
     };
