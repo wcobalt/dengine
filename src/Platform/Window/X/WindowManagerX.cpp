@@ -158,23 +158,13 @@ void WindowManagerX::setCursorVisible(bool isVisible) {
 }
 
 void WindowManagerX::setPosition(int x, int y) {
-    vector<uint> size = getSize();
-
-    setWindowBounds(x, y, size[0], size[1]);
-
-    lastX = x;
-    lastY = y;
+    setWindowBounds(x, y, 0, 0, true, false);
 
     XFlush(display);
 }
 
 void WindowManagerX::setSize(uint width, uint height) {
-    vector<int> position = getPosition();
-
-    setWindowBounds(position[0], position[1], width, height);
-
-    lastWidth = width;
-    lastHeight = height;
+    setWindowBounds(0, 0, width, height, false, true);
 
     XFlush(display);
 }
@@ -190,9 +180,7 @@ void WindowManagerX::setIcon(const long* buffer, int length) {
 }
 
 void WindowManagerX::setRatio(uint ratioX, uint ratioY) {
-    vector<uint> min = getMinimumSize(), max = getMaximumSize();
-
-    setSizeHints(max[0], max[1], min[0], min[1], ratioX, ratioY);
+    setSizeHints(0, 0, 0, 0, ratioX, ratioY, false, false, true);
 }
 
 void WindowManagerX::setTrayIcon(const long *buffer, int length) {
@@ -217,21 +205,18 @@ void WindowManagerX::setTitle(const string &title) {
 }
 
 void WindowManagerX::setMinimumSize(uint minimumWidth, uint minimumHeight) {
-    vector<uint> ratio = getRatio(), max = getMaximumSize();
-
-    setSizeHints(max[0], max[1], minimumWidth, minimumHeight, ratio[0], ratio[1]);
+    setSizeHints(minimumWidth, minimumHeight, 0, 0, 0, 0, true, false, false);
 }
 
 void WindowManagerX::setMaximumSize(uint maximumWidth, uint maximumHeight) {
-    vector<uint> ratio = getRatio(), min = getMinimumSize();
-
-    setSizeHints(maximumWidth, maximumHeight, min[0], min[1], ratio[0], ratio[1]);
+    setSizeHints(0, 0, maximumWidth, maximumHeight, 0, 0, false, true, false);
 }
 
 void WindowManagerX::setGeometryState(int windowGeometryState) {
     long data[5];
 
-    data[0] = data[1] = data[2] = data[3] = data[4] = 0;
+    std::fill(data, data + 5, 0);
+
 
     switch (windowGeometryState) {
         case NORMAL: {
@@ -321,27 +306,47 @@ void WindowManagerX::setFullscreenEnabled(bool isFullscreenEnabled) {
 void WindowManagerX::setMaximizationState(int maximization) {
     switch (maximization) {
         case NORMAL: {
-            setMaximized(false, XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", False));
-            setMaximized(false, XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", False));
-            setMaximized(false, XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_BOTH", False));
+            Atom atoms[3] = {XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", False),
+                          XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", False),
+                          XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_BOTH", False)};
+
+            setMaximized(false, atoms, 3);
 
             break;
         }
 
         case MAXIMIZED_HORIZONTAL: {
-            setMaximized(true, XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", False));
+            Atom unset[2] = {XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", False),
+                             XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_BOTH", False)};
+
+            Atom set[1] = {XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", False)};
+
+            setMaximized(false, unset, 2);
+            setMaximized(true, set, 1);
 
             break;
         }
 
         case MAXIMIZED_VERTICAL: {
-            setMaximized(true, XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", False));
+            Atom unset[2] = {XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", False),
+                             XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_BOTH", False)};
+
+            Atom set[1] = {XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", False)};
+
+            setMaximized(false, unset, 2);
+            setMaximized(true, set, 1);
 
             break;
         }
 
         case MAXIMIZED_BOTH: {
-            setMaximized(true, XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_BOTH", False));
+            Atom unset[2] = {XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", False),
+                             XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", False)};
+
+            Atom set[1] = {XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_BOTH", False)};
+
+            setMaximized(false, unset, 2);
+            setMaximized(true, set, 1);
 
             break;
         }
@@ -354,13 +359,7 @@ void WindowManagerX::center() {
     vector<uint> resolution = getScreenResolution();
     vector<uint> size = getSize();
 
-    int x = lastX, y = lastY;
-
     setPosition((resolution[0] - size[0]) / 2, (resolution[1] - size[1]) / 2);
-
-    //centering should not change last coordinates
-    lastX = x;
-    lastY = y;
 }
 
 void WindowManagerX::destroy() {
@@ -475,7 +474,7 @@ int WindowManagerX::getMaximizationState() const {
     bool maximizedVert = find(XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", False), result);
     bool maximizedBoth = find(XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_BOTH", False), result);
 
-    if (maximizedBoth || (maximizedHorz && maximizedVert)) return MAXIMIZED_BOTH;
+    if (maximizedBoth) return MAXIMIZED_BOTH;
     else if (maximizedHorz) return MAXIMIZED_HORIZONTAL;
     else if (maximizedVert) return MAXIMIZED_VERTICAL;
     else return NORMAL;
@@ -712,60 +711,126 @@ void WindowManagerX::sendEvent(int type, const char* messageTypeAtomName, int fo
     XSendEvent(display, to, False, eventMask, &event);
 }
 
-void WindowManagerX::setWindowBounds(int x, int y, uint width, uint height) {
-    long data[5];
+void WindowManagerX::setWindowBounds(int x, int y, uint width, uint height, bool setCoordinates, bool setSize) {
+    if (setCoordinates || setSize) {
+        long data[5];
 
-    data[0] = 0;
+        data[0] = 0;
 
-    data[0] |= 1UL << 8; //x
-    data[0] |= 1UL << 9; //y
-    data[0] |= 1UL << 10; //width
-    data[0] |= 1UL << 11; //height
+        if (setCoordinates) {
+            data[0] |= 1UL << 8; //x
+            data[0] |= 1UL << 9; //y
+            data[1] = x;
+            data[2] = y;
+        }
 
-    data[0] |= 1UL << 14; //pager (ahaha)
+        if (setSize) {
+            data[0] |= 1UL << 10; //width
+            data[0] |= 1UL << 11; //height
+            data[3] = width;
+            data[4] = height;
+        }
 
-    data[1] = x;
-    data[2] = y;
-    data[3] = width;
-    data[4] = height;
+        data[0] |= 1UL << 14; //pager (ahaha)
 
-    sendEvent(ClientMessage, "_NET_MOVERESIZE_WINDOW", 32, data, SubstructureRedirectMask | SubstructureNotifyMask,
-              window, rootWindow);
+        sendEvent(ClientMessage, "_NET_MOVERESIZE_WINDOW", 32, data, SubstructureRedirectMask | SubstructureNotifyMask,
+                  window, rootWindow);
+    }
 }
 
-void WindowManagerX::setSizeHints(uint maximumWidth, uint maximumHeight, uint minimumWidth, uint minimumHeight,
-                                  uint ratioX, uint ratioY) {
-    xSizeHints->flags = PAspect | PMaxSize | PMinSize;
+void
+WindowManagerX::setSizeHints(uint minimumWidth, uint minimumHeight, uint maximumWidth, uint maximumHeight, uint ratioX,
+                             uint ratioY, bool setMinimumSize, bool setMaximumSize, bool setRatio) {
+    if (setMinimumSize || setMaximumSize || setRatio) {
+            long hints = 0;
 
-    xSizeHints->min_aspect.x = ratioX;
-    xSizeHints->min_aspect.y = ratioY;
+            XSizeHints* xOldSizeHints = XAllocSizeHints();
 
-    xSizeHints->max_aspect.x = ratioX;
-    xSizeHints->max_aspect.y = ratioY;
+            long stab;
+            XGetWMNormalHints(display, window, xOldSizeHints, &stab);
 
-    xSizeHints->min_width = minimumWidth;
-    xSizeHints->min_height = minimumHeight;
+            /*
+             * The following logic:
+             * if setX then
+                 * check if X != 0 then set
+                 * else reset (do not add flag)
+             * else
+                 * check if oldX != 0 then set
+                 * else reset (do not add flag)*/
 
-    xSizeHints->max_width = maximumWidth;
-    xSizeHints->max_height = maximumHeight;
+            if (setRatio) {
+                if (ratioX) {
+                    xSizeHints->min_aspect.x = ratioX;
+                    xSizeHints->min_aspect.y = ratioY;
 
-    XSetWMNormalHints(display, window, xSizeHints);
+                    xSizeHints->max_aspect.x = ratioX;
+                    xSizeHints->max_aspect.y = ratioY;
 
-    XFlush(display);
+                    hints |= PAspect;
+                }
+            } else {
+                if (xOldSizeHints->min_aspect.x) {
+                    xSizeHints->min_aspect.x = xOldSizeHints->min_aspect.x;
+                    xSizeHints->min_aspect.y = xOldSizeHints->min_aspect.y;
+
+                    xSizeHints->max_aspect.x = xOldSizeHints->max_aspect.x;
+                    xSizeHints->max_aspect.y = xOldSizeHints->max_aspect.y;
+
+                    hints |= PAspect;
+                }
+            }
+
+            if (setMinimumSize) {
+                if (minimumWidth) {
+                    xSizeHints->min_width = minimumWidth;
+                    xSizeHints->min_height = minimumHeight;
+
+                    hints |= PMinSize;
+                }
+            } else {
+                if (xOldSizeHints->min_width) {
+                    xSizeHints->min_width = xOldSizeHints->min_width;
+                    xSizeHints->min_height = xOldSizeHints->min_height;
+
+                    hints |= PMinSize;
+                }
+            }
+
+            if (setMaximumSize) {
+                if (maximumWidth) {
+                    xSizeHints->max_width = maximumWidth;
+                    xSizeHints->max_height = maximumHeight;
+
+                    hints |= PMaxSize;
+                }
+            } else {
+                if (xOldSizeHints->max_width) {
+                    xSizeHints->max_width = xOldSizeHints->max_width;
+                    xSizeHints->max_height = xOldSizeHints->max_height;
+
+                    hints |= PMaxSize;
+                }
+            }
+
+            xSizeHints->flags = hints;
+            XSetWMNormalHints(display, window, xSizeHints);
+            XFree(xOldSizeHints);
+            XFlush(display);
+        }
 }
 
-void WindowManagerX::setMaximized(bool mode, Atom atom) {
+void WindowManagerX::setMaximized(bool mode, Atom *atoms, int count) {
     long data[5];
+
+    std::fill(data, data + 5, 0);
 
     data[0] = mode; //add - 1, remove - 0
-    data[1] = atom;
-    data[2] = 0;
-    data[3] = 0;
-    data[4] = 0;
 
-    sendEvent(ClientMessage, "_NET_WM_STATE", 32, data,  SubstructureRedirectMask | SubstructureNotifyMask,
-              window,
-              rootWindow);
+    for (int i = 0; i < count; i++)
+        data[1 + i] = atoms[i];
+
+    sendEvent(ClientMessage, "_NET_WM_STATE", 32, data,  SubstructureRedirectMask
+                                                         | SubstructureNotifyMask, window, rootWindow);
 }
 
 bool WindowManagerX::find(long needle, const PropertyData &haystack) const {

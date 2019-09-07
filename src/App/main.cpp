@@ -17,12 +17,17 @@ int main() {//memory safe
     //std::cout << (char)0xd0 << (char)0xb6;
     std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
 
-    /*std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+/*    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     manager->setSize(500, 500);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     manager->setPosition(0, 0);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    manager->setCursorVisible(false);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));*/
+    manager->setMaximumSize(50, 1000);
+    manager->setMinimumSize(5, 2);
+    manager->setRatio(1, 2);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100000));
+    /*manager->setCursorVisible(false);
     std::this_thread::sleep_for(std::chrono::milliseconds(5000));*/
     /*long buffer[] = {
            16, 16,
@@ -32,7 +37,7 @@ int main() {//memory safe
    };
 
    manager->setIcon(buffer, 4 + 16 * 16 + 32*32);*/
-    while(1) {
+/*    while(1) {
         std::this_thread::sleep_for(std::chrono::milliseconds(600));
 
         std::shared_ptr<KeyboardState> ks = manager->getKeyboardState();
@@ -51,7 +56,7 @@ int main() {//memory safe
             std::cout << "  " << key->getKeycode() << " " << key->getSymbol() << "\n";
 
         fflush(stdout);
-    }
+    }*/
 /*    manager->setGeometryState(WindowManager::ICONIFIED);
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     manager->setVisible(false);

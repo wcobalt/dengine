@@ -46,10 +46,6 @@ namespace dengine {
         XSizeHints* xSizeHints;
         static int xkbEventType;
 
-        uint lastWidth, lastHeight;
-
-        int lastX, lastY;
-
         std::string title;
 
         bool mIsCursorVisible;
@@ -75,14 +71,13 @@ namespace dengine {
 
         PropertyData getProperty(const char *propertyName, Window window) const;
 
-        void setSizeHints(uint maximumWidth, uint maximumHeight,
-                          uint minimumWidth, uint minimumHeight,
-                          uint ratioX, uint ratioY);
+        void setSizeHints(uint minimumWidth, uint minimumHeight, uint maximumWidth, uint maximumHeight, uint ratioX,
+                          uint ratioY, bool setMinimumSize, bool setMaximumSize, bool setRatio);
 
-        void setWindowBounds(int x, int y, uint width, uint height);
+        void setWindowBounds(int x, int y, uint width, uint height, bool setCoordinates, bool setSize);
         void sendEvent(int type, const char* messageTypeAtomName, int format, long* data, long eventMask,
                        Window from, Window to);
-        void setMaximized(bool mode, Atom atom);
+        void setMaximized(bool mode, Atom *atoms, int count);
         bool find(long needle, const PropertyData& haystack) const;
         dengine::DMouseButton toDMouseButton(int xButton) const;
         std::shared_ptr<dengine::Key> toDKey(XEvent *xEvent) const;
