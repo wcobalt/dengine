@@ -25,6 +25,8 @@ namespace dengine {
         virtual bool isClosing() const = 0;
 
         virtual bool wasMoved() const = 0;
+
+        virtual bool wasHiddenToTray() const = 0;
     };
 }
 

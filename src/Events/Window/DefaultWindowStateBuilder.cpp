@@ -36,13 +36,17 @@ void DefaultWindowStateBuilder::setClosing(bool isClosing) {
     this->isClosing = isClosing;
 }
 
-std::shared_ptr<WindowState> DefaultWindowStateBuilder::build() const {
-    std::shared_ptr<WindowState> result(new DefaultWindowState(wasMaximized, wasWindowed, wasIconified,
-                                            wasResized, gotFocus, lostFocus, isClosing, wasMoved));
-
-    return result;
-}
-
 void DefaultWindowStateBuilder::setMoved(bool wasMoved) {
     this->wasMoved = wasMoved;
+}
+
+void DefaultWindowStateBuilder::setHiddenToTray(bool wasHiddenToTray) {
+    this->wasHiddenToTray = wasHiddenToTray;
+}
+
+std::shared_ptr<WindowState> DefaultWindowStateBuilder::build() const {
+    std::shared_ptr<WindowState> result(new DefaultWindowState(wasMaximized, wasWindowed, wasIconified,
+                                            wasResized, gotFocus, lostFocus, isClosing, wasMoved, wasHiddenToTray));
+
+    return result;
 }
