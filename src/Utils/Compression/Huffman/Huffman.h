@@ -9,7 +9,7 @@
 namespace dengine {
     class Huffman {
     public:
-        virtual void loadCodesByCodesLengths(const std::vector<unsigned>& codesLengths) = 0;
+        virtual void loadCodesByCodesLengths(const std::vector<unsigned char> &codesLengths) = 0;
 
         virtual void navigate(bool value) = 0;
 
@@ -17,7 +17,7 @@ namespace dengine {
 
         virtual bool isResult() const = 0;
 
-        virtual unsigned long getResult() const = 0;
+        virtual unsigned int getResult() const = 0;
     };
 }
 

@@ -1,8 +1,9 @@
 #include <iostream>
-#include "../Platform/Window/X/WindowManagerX.h"
-#include "../Events/Keyboard/KeyboardState.h"
-#include "../Events/Window/WindowState.h"
-#include "../Events/Keyboard/Key.h"
+//#include "../Platform/Window/X/WindowManagerX.h"
+//#include "../Events/Keyboard/KeyboardState.h"
+//#include "../Events/Window/WindowState.h"
+//#include "../Events/Keyboard/Key.h"
+#include "../Utils/Compression/Huffman/DefaultHuffman.h"
 #include <string>
 #include <memory>
 #include <chrono>
@@ -15,8 +16,21 @@ using std::shared_ptr;
 using namespace dengine;
 
 int main() {//memory safe
+    DefaultHuffman defaultHuffman;
+
+    std::vector<unsigned char> lengths = {3, 3, 3, 3, 3, 2, 4, 4};
+
+    defaultHuffman.loadCodesByCodesLengths(lengths);
+
+    defaultHuffman.navigate(true);
+    defaultHuffman.navigate(true);
+    defaultHuffman.navigate(true);
+    defaultHuffman.navigate(false);
+
+    std::cout << std::endl << defaultHuffman.isResult() << " " << defaultHuffman.getResult();
+
     //std::cout << (char)0xd0 << (char)0xb6;
-    std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
+//    std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
 
 /*    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     manager->setSize(500, 500);
@@ -38,7 +52,7 @@ int main() {//memory safe
 
    manager->setIcon(buffer, 4 + 16 * 16 + 32*32);*/
 
-    while (1) {
+/*    while (1) {
         std::shared_ptr<WindowState> windowState = manager->getWindowState();
 
         std::cout << "Tick:\nClosing: " << windowState->isClosing() << "\n";
@@ -50,7 +64,7 @@ int main() {//memory safe
         std::cout << "Was moved: " << windowState->wasMoved() << "\n";
         std::cout << "Was resized: " << windowState->wasResized() << "\n\n";
         std::this_thread::sleep_for(std::chrono::milliseconds(800));
-    }
+    }*/
 /*manager->focus();
 std::cout << manager->isFocused();
 fflush(stdout);
