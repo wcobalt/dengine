@@ -3,7 +3,7 @@ project(Dengine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(App App/main.cpp)
+add_executable(App App/main.cpp Utils/Compression/Huffman/Huffman.h)
 
 #[[add_library(Dengine
         Platform/Window/X/WindowManagerX.cpp
