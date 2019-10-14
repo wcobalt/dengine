@@ -19,11 +19,9 @@ namespace dengine {
 #include "DObject.h"
 
 /* Core release features for implementation:
- * only one dengine namespace
  * optimize by assignments, init list and other
  * Image class
- * implement windowaccessor
- * keyboard, window state (with builders)
+ * virtual inheritance of interfaces
  * review run/pause/stop API
  * review Dengine->ScenesManager->Scene->GameObject->Component API (Core API)
  */
