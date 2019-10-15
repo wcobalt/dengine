@@ -3,7 +3,7 @@
 //#include "../Events/Keyboard/KeyboardState.h"
 //#include "../Events/Window/WindowState.h"
 //#include "../Events/Keyboard/Key.h"
-#include "../Utils/Compression/Huffman/DefaultHuffman.h"
+#include "../Utils/Compression/Huffman/DefaultHuffmanDecoder.h"
 #include <string>
 #include <memory>
 #include <chrono>
@@ -16,7 +16,7 @@ using std::shared_ptr;
 using namespace dengine;
 
 int main() {//memory safe
-    DefaultHuffman defaultHuffman;
+    DefaultHuffmanDecoder defaultHuffman;
 
     std::vector<unsigned char> lengths = {3, 3, 3, 3, 3, 2, 4, 4};
 

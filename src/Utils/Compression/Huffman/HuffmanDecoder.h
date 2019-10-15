@@ -7,7 +7,7 @@
 #define DENGINE_HUFFMAN_H
 
 namespace dengine {
-    class Huffman {
+    class HuffmanDecoder {
     public:
         virtual void loadCodesByCodesLengths(const std::vector<unsigned char> &codesLengths) = 0;
 

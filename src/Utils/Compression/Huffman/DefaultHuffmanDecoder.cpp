@@ -4,14 +4,14 @@
 #include <vector>
 #include <iostream>
 
-#include "DefaultHuffman.h"
+#include "DefaultHuffmanDecoder.h"
 
 using std::vector;
 using namespace dengine;
 
-DefaultHuffman::DefaultHuffman():layer(0), offset(0), size(0), tree(nullptr) {}
+DefaultHuffmanDecoder::DefaultHuffmanDecoder():layer(0), offset(0), size(0), tree(nullptr) {}
 
-void DefaultHuffman::loadCodesByCodesLengths(const vector<unsigned char> &codesLengths) {
+void DefaultHuffmanDecoder::loadCodesByCodesLengths(const vector<unsigned char> &codesLengths) {
     if (!tree) delete[] tree;
 
     unsigned maxCodeLength = 0;
@@ -55,25 +55,29 @@ void DefaultHuffman::loadCodesByCodesLengths(const vector<unsigned char> &codesL
     reset();
 }
 
-void DefaultHuffman::navigate(bool value) {
+void DefaultHuffmanDecoder::navigate(bool value) {
     offset = offset * 2u + (unsigned)value;
     layer++;
 }
 
-void DefaultHuffman::reset() {
+void DefaultHuffmanDecoder::reset() {
     offset = 0;
     layer = 0;
 }
 
-bool DefaultHuffman::isResult() const {
+bool DefaultHuffmanDecoder::isResult() const {
     if (tree) return tree[getCurrentIndex()] != NO_VALUE;
     else return false;
 }
 
-unsigned int DefaultHuffman::getResult() const {
+unsigned int DefaultHuffmanDecoder::getResult() const {
     return tree[getCurrentIndex()];
 }
 
-unsigned DefaultHuffman::getCurrentIndex() const {
+unsigned DefaultHuffmanDecoder::getCurrentIndex() const {
     return (1u << layer) - 1 + offset;
+}
+
+DefaultHuffmanDecoder::~DefaultHuffmanDecoder() {
+    delete[] tree;
 }

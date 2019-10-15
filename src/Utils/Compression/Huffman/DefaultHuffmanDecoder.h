@@ -5,10 +5,10 @@
 #ifndef DENGINE_DEFAULTHUFFMAN_H
 #define DENGINE_DEFAULTHUFFMAN_H
 
-#include "Huffman.h"
+#include "HuffmanDecoder.h"
 
 namespace dengine {
-    class DefaultHuffman : public Huffman {
+    class DefaultHuffmanDecoder : public HuffmanDecoder {
     private:
         unsigned layer, offset;
         unsigned* tree;
@@ -18,7 +18,7 @@ namespace dengine {
 
         unsigned getCurrentIndex() const;
     public:
-        DefaultHuffman();
+        DefaultHuffmanDecoder();
 
         void loadCodesByCodesLengths(const std::vector<unsigned char> &codesLengths);
 
@@ -29,6 +29,8 @@ namespace dengine {
         bool isResult() const;
 
         unsigned int getResult() const;
+
+        ~DefaultHuffmanDecoder();
     };
 }
 
