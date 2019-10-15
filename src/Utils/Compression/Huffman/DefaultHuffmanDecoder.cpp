@@ -5,14 +5,16 @@
 #include <iostream>
 
 #include "DefaultHuffmanDecoder.h"
+#include "../../../Exceptions/InvalidArgumentException.h"
+#include "../../../Exceptions/InvalidStateException.h"
 
 using std::vector;
 using namespace dengine;
 
-DefaultHuffmanDecoder::DefaultHuffmanDecoder():layer(0), offset(0), size(0), tree(nullptr) {}
+DefaultHuffmanDecoder::DefaultHuffmanDecoder():layer(0), offset(0), size(0), tree(nullptr), height(0) {}
 
-void DefaultHuffmanDecoder::loadCodesByCodesLengths(const vector<unsigned char> &codesLengths) {
-    if (!tree) delete[] tree;
+void DefaultHuffmanDecoder::loadCodesByCodesLengths(const vector<char> &codesLengths) {
+    delete[] tree;
 
     unsigned maxCodeLength = 0;
     unsigned valuesCount = (unsigned)codesLengths.size(); //max is 2^16 - 1
@@ -27,7 +29,8 @@ void DefaultHuffmanDecoder::loadCodesByCodesLengths(const vector<unsigned char> 
     for (unsigned char length : codesLengths) codesCount[length]++;
 
     //root is not a layer, so we need to increase layers count by one
-    size = (1u << (maxCodeLength + 1)) - 1;
+    height = maxCodeLength;
+    size = (1u << (height + 1)) - 1;
 
     //make empty tree
     tree = new unsigned[size];
@@ -56,6 +59,8 @@ void DefaultHuffmanDecoder::loadCodesByCodesLengths(const vector<unsigned char> 
 }
 
 void DefaultHuffmanDecoder::navigate(bool value) {
+    if (layer + 1 > height) throw InvalidArgumentException("Max layer is reached");
+
     offset = offset * 2u + (unsigned)value;
     layer++;
 }
@@ -71,6 +76,8 @@ bool DefaultHuffmanDecoder::isResult() const {
 }
 
 unsigned int DefaultHuffmanDecoder::getResult() const {
+    if (!isResult()) throw InvalidStateException("There is no result on current tree position");
+
     return tree[getCurrentIndex()];
 }
 

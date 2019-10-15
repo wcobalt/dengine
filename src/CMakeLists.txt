@@ -3,7 +3,7 @@ project(Dengine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(App App/main.cpp Utils/Compression/Huffman/HuffmanDecoder.h Utils/Compression/Huffman/DefaultHuffmanDecoder.cpp Utils/Compression/Huffman/DefaultHuffmanDecoder.h)
+add_executable(App App/main.cpp Utils/Compression/Huffman/HuffmanDecoder.h Utils/Compression/Huffman/DefaultHuffmanDecoder.cpp Utils/Compression/Huffman/DefaultHuffmanDecoder.h Utils/Compression/Deflate/DeflateDecoder.h Utils/Compression/Deflate/DefaultDeflateDecoder.cpp Utils/Compression/Deflate/DefaultDeflateDecoder.h Exceptions/InvalidArgumentException.cpp Exceptions/InvalidArgumentException.h Exceptions/InvalidStateException.cpp Exceptions/InvalidStateException.h)
 
 #[[add_library(Dengine
         Platform/Window/X/WindowManagerX.cpp

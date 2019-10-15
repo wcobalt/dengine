@@ -12,7 +12,7 @@ namespace dengine {
     private:
         unsigned layer, offset;
         unsigned* tree;
-        unsigned size;
+        unsigned size, height;
 
         const unsigned NO_VALUE = ~0u;
 
@@ -20,7 +20,7 @@ namespace dengine {
     public:
         DefaultHuffmanDecoder();
 
-        void loadCodesByCodesLengths(const std::vector<unsigned char> &codesLengths);
+        void loadCodesByCodesLengths(const std::vector<char> &codesLengths);
 
         void navigate(bool value);
 
@@ -30,7 +30,7 @@ namespace dengine {
 
         unsigned int getResult() const;
 
-        ~DefaultHuffmanDecoder();
+        virtual ~DefaultHuffmanDecoder();
     };
 }
 
