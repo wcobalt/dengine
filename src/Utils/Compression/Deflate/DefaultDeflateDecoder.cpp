@@ -38,9 +38,13 @@ DefaultDeflateDecoder::~DefaultDeflateDecoder() {
     delete[] decodedData;
 }
 
-//it's supposed that char has only 8 bits
+//it assumes that char has only 8 bits
 bool DefaultDeflateDecoder::getBitFromStream(const char *stream, size_t index) {
-    return false;
+    const unsigned BITS_IN_CHAR_COUNT = 8;
+
+    size_t bitNumber = index % BITS_IN_CHAR_COUNT, byteNumber = index / BITS_IN_CHAR_COUNT;
+
+    return stream[byteNumber] << bitNumber;
 }
 
 size_t DefaultDeflateDecoder::decodeStored(const char *deflateStream, size_t index, char *destination,
