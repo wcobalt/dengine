@@ -14,7 +14,7 @@ namespace dengine {
         unsigned* tree;
         unsigned size, height;
 
-        const unsigned NO_VALUE = ~0u;
+        static const unsigned NO_VALUE = ~0u;
 
         unsigned getCurrentIndex() const;
     public:

@@ -3,12 +3,15 @@
 //#include "../Events/Keyboard/KeyboardState.h"
 //#include "../Events/Window/WindowState.h"
 //#include "../Events/Keyboard/Key.h"
-#include "../Utils/Compression/Huffman/DefaultHuffmanDecoder.h"
 #include <string>
 #include <memory>
 #include <chrono>
 #include <thread>
 #include <vector>
+
+#define private public
+
+#include "../Utils/Compression/Deflate/DefaultDeflateDecoder.h"
 
 //@TODO windows forms(later) support
 
@@ -16,18 +19,9 @@ using std::shared_ptr;
 using namespace dengine;
 
 int main() {//memory safe
-    DefaultHuffmanDecoder defaultHuffman;
+    DefaultDeflateDecoder decoder;
 
-    std::vector<unsigned char> lengths = {3, 3, 3, 3, 3, 2, 4, 4};
-
-    defaultHuffman.loadCodesByCodesLengths(lengths);
-
-    defaultHuffman.navigate(true);
-    defaultHuffman.navigate(true);
-    defaultHuffman.navigate(true);
-    defaultHuffman.navigate(false);
-
-    std::cout << std::endl << defaultHuffman.isResult() << " " << defaultHuffman.getResult();
+    std::cout << decoder.reverse(0b0010110);
 
     //std::cout << (char)0xd0 << (char)0xb6;
 //    std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));

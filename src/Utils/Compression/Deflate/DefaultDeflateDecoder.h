@@ -10,16 +10,25 @@
 namespace dengine {
     class DefaultDeflateDecoder : public DeflateDecoder {
     private:
+        static const unsigned BTYPE_SIZE = 2;
+        static const unsigned BTYPE_NO_COMPRESSION = 0b00;
+        static const unsigned BTYPE_FIXED_HUFFMAN = 0b01;
+        static const unsigned BTYPE_DYNAMIC_HUFFMAN = 0b10;
+        static const unsigned BTYPE_ERROR = 0b11;
+        static const unsigned BITS_IN_CHAR = 8;
+
         char* decodedData;
         size_t size;
 
-        bool getBitFromStream(const char* stream, size_t index);
+        bool getBitFromStream(const char* stream, size_t index) const;
 
-        size_t decodeStored(const char* deflateStream, size_t index, char* destination, size_t offset);
+        size_t decodeNoCompression(const char *deflateStream, size_t index, char *destination, size_t offset);
 
-        size_t decodeStatic(const char* deflateStream, size_t index, char* destination, size_t offset);
+        size_t decodeFixed(const char *deflateStream, size_t index, char *destination, size_t offset);
 
         size_t decodeDynamic(const char* deflateStream, size_t index, char* destination, size_t offset);
+
+        unsigned long reverse(unsigned long number) const;
     public:
         DefaultDeflateDecoder();
 

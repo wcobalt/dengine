@@ -11,6 +11,8 @@
 using std::vector;
 using namespace dengine;
 
+const unsigned DefaultHuffmanDecoder::NO_VALUE;
+
 DefaultHuffmanDecoder::DefaultHuffmanDecoder():layer(0), offset(0), size(0), tree(nullptr), height(0) {}
 
 void DefaultHuffmanDecoder::loadCodesByCodesLengths(const vector<char> &codesLengths) {
@@ -20,13 +22,13 @@ void DefaultHuffmanDecoder::loadCodesByCodesLengths(const vector<char> &codesLen
     unsigned valuesCount = (unsigned)codesLengths.size(); //max is 2^16 - 1
 
     //find max code length
-    for (unsigned char length : codesLengths)
+    for (char length : codesLengths)
         if (length > maxCodeLength) maxCodeLength = length;
 
     vector<unsigned> codesCount(maxCodeLength + 1, 0); //plus zero length
 
     //count count of code lengths
-    for (unsigned char length : codesLengths) codesCount[length]++;
+    for (char length : codesLengths) codesCount[length]++;
 
     //root is not a layer, so we need to increase layers count by one
     height = maxCodeLength;

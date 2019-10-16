@@ -44,7 +44,8 @@ add_executable(App App/main.cpp Utils/Compression/Huffman/HuffmanDecoder.h Utils
         Exceptions/IOException.cpp Exceptions/IOException.h)]]
 
 add_library(PNG Graphics/PNG/PNG.h
-            Graphics/Image.h Graphics/Pixel.h Graphics/DefaultPixel.cpp Graphics/DefaultPixel.h Graphics/DefaultImage.cpp Graphics/DefaultImage.h)
+            Graphics/Image.h Graphics/Pixel.h Graphics/DefaultPixel.cpp        Exceptions/DengineException.h
+        Exceptions/DengineException.cpp Graphics/DefaultPixel.h Graphics/DefaultImage.cpp Graphics/DefaultImage.h)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
@@ -54,4 +55,4 @@ include_directories(${X11_INCLUDE_DIR})
 
 find_package (Threads)
 
-target_link_libraries(App PNG ${X11_LIBRARIES} ${OPENGL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(App PNG #[[${X11_LIBRARIES} ${OPENGL_LIBRARIES}]] ${CMAKE_THREAD_LIBS_INIT})
