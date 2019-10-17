@@ -21,7 +21,16 @@ using namespace dengine;
 int main() {//memory safe
     DefaultDeflateDecoder decoder;
 
-    std::cout << decoder.reverse(0b0010110);
+    char* stream = new char[5]{0, 0b100, 2, 3, 4};
+
+    size_t index = 8;
+    std::cout << decoder.getNumberFromBitStream(stream, index, 3, true);
+
+    /*for (int i = 0; i < 8 * 5; i++) {
+        std::cout << decoder.getBitFromBitStream(stream, i);
+
+        if ((i + 1) % 4 == 0) std::cout << ".";
+    }*/
 
     //std::cout << (char)0xd0 << (char)0xb6;
 //    std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));

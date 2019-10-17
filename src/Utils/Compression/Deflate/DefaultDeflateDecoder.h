@@ -20,13 +20,16 @@ namespace dengine {
         char* decodedData;
         size_t size;
 
-        bool getBitFromStream(const char* stream, size_t index) const;
+        bool getBitFromBitStream(const char *stream, size_t index) const;
 
         size_t decodeNoCompression(const char *deflateStream, size_t index, char *destination, size_t offset);
 
         size_t decodeFixed(const char *deflateStream, size_t index, char *destination, size_t offset);
 
         size_t decodeDynamic(const char* deflateStream, size_t index, char* destination, size_t offset);
+
+        unsigned long
+        getNumberFromBitStream(const char *stream, size_t &index, unsigned size, bool isReverseOrder) const;
 
         unsigned long reverse(unsigned long number) const;
     public:
