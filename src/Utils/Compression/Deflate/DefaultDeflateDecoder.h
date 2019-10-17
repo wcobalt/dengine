@@ -15,18 +15,19 @@ namespace dengine {
         static const unsigned BTYPE_FIXED_HUFFMAN = 0b01;
         static const unsigned BTYPE_DYNAMIC_HUFFMAN = 0b10;
         static const unsigned BTYPE_ERROR = 0b11;
+        static const unsigned LEN_BYTES = 2;
+        static const unsigned NLEN_BYTES = 2;
         static const unsigned BITS_IN_CHAR = 8;
 
-        char* decodedData;
-        size_t size;
+        std::vector<char> decodedData;
 
         bool getBitFromBitStream(const char *stream, size_t index) const;
 
-        size_t decodeNoCompression(const char *deflateStream, size_t index, char *destination, size_t offset);
+        void decodeNoCompression(const char *deflateStream, size_t &index);
 
-        size_t decodeFixed(const char *deflateStream, size_t index, char *destination, size_t offset);
+        void decodeFixed(const char *deflateStream, size_t &index);
 
-        size_t decodeDynamic(const char* deflateStream, size_t index, char* destination, size_t offset);
+        void decodeDynamic(const char *deflateStream, size_t &index);
 
         unsigned long
         getNumberFromBitStream(const char *stream, size_t &index, unsigned size, bool isReverseOrder) const;
@@ -45,7 +46,6 @@ namespace dengine {
 
         void clear();
 
-        virtual ~DefaultDeflateDecoder();
     };
 }
 

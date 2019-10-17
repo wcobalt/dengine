@@ -21,11 +21,12 @@ using namespace dengine;
 int main() {//memory safe
     DefaultDeflateDecoder decoder;
 
-    char* stream = new char[5]{0, 0b100, 2, 3, 4};
+        char* stream = new char[9]{0b01001'001, 0b11, 0b00, 0b11, 0b00, 'a', 'b', 'c', 4};
 
-    size_t index = 8;
-    std::cout << decoder.getNumberFromBitStream(stream, index, 3, true);
+    decoder.decode(stream);
 
+
+    for (int i = 0; i < decoder.getSize(); i++) std::cout << decoder[i];
     /*for (int i = 0; i < 8 * 5; i++) {
         std::cout << decoder.getBitFromBitStream(stream, i);
 
