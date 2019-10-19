@@ -3,9 +3,11 @@
 //
 
 #include <iostream>
+#include <memory>
 #include "DefaultDeflateDecoder.h"
 #include "../../../Exceptions/InvalidArgumentException.h"
 #include "Exceptions/DeflateException.h"
+#include "../Huffman/DefaultHuffmanDecoder.h"
 
 using namespace dengine;
 
@@ -190,7 +192,108 @@ void DefaultDeflateDecoder::decodeFixed(const char *deflateStream, size_t &index
 }
 
 void DefaultDeflateDecoder::decodeDynamic(const char *deflateStream, size_t &index) {
+    unsigned literalsCount = getNumberFromBitStream(deflateStream, index, DYNAMIC_HUFFMAN_HLIT_SIZE, true) + DYNAMIC_HUFFMAN_HLIT_START;
+    unsigned distancesCount = getNumberFromBitStream(deflateStream, index, DYNAMIC_HUFFMAN_HDIST_SIZE, true) + DYNAMIC_HUFFMAN_HDIST_START;
+    unsigned codeLengthsForCodeLengthsCount = getNumberFromBitStream(deflateStream, index, DYNAMIC_HUFFMAN_HCLEN_SIZE, true)
+                                              + DYNAMIC_HUFFMAN_HCLEN_START;
 
+    //we need to get code lengths for code lengths
+    std::vector<char> codeLengthsForCodeLengths(DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_SIZE, 0);
+
+    for (unsigned i = 0; i < codeLengthsForCodeLengthsCount; i++) {
+        char length = getNumberFromBitStream(deflateStream, index, DYNAMIC_HUFFMAN_CODE_LENGTH_FOR_CODE_LENGTH_SIZE, true);
+
+        codeLengthsForCodeLengths[DYNAMIC_HUFFMAN_CODE_LENGTHS_FOR_CODE_LENGTH_ORDER[i]] = length;
+    }
+
+    std::shared_ptr<HuffmanDecoder> codeLengths(new DefaultHuffmanDecoder());
+    codeLengths->loadCodesByCodesLengths(codeLengthsForCodeLengths);
+
+    //now we're getting literalsCount of literals code lengths
+    std::vector<char> codeLengthsForLiterals(LENGTH_END - LITERALS_START + 1, 0);
+    std::vector<char> codeLengthsForDistances(DISTANCES_COUNT, 0);
+
+    unsigned lastLength = 0;
+    unsigned sumOfLiteralsCountAnDistancesCount = literalsCount + distancesCount;
+
+    //we process literals/lengths and distances in one loop (to avoid code duplication)
+    size_t addedLiterals = 0, addedDistances = 0;
+
+    while (addedLiterals + addedDistances < sumOfLiteralsCountAnDistancesCount) {
+        while (!codeLengths->isResult()) {
+            //get another bit
+            bool bit = getBitFromBitStream(deflateStream, index++);
+
+            //navigate by it in the tree
+            codeLengths->navigate(bit);
+        }
+
+        unsigned value = codeLengths->getResult();
+
+        //process gotten value as it declared by code length value
+        bool isLength;
+
+        if (addedLiterals < literalsCount) {
+            //if now we're processing literals/lengths
+
+            isLength = processValueOfCodeLengthAlphabet(deflateStream, index, codeLengthsForLiterals, value,
+                                                        lastLength, addedLiterals);
+        } else {
+            //if distances
+
+            //if on the previous iteration we were processing literals/lengths, then reset state
+            if (addedLiterals == literalsCount) lastLength = 0;
+
+            isLength = processValueOfCodeLengthAlphabet(deflateStream, index, codeLengthsForDistances, value,
+                                                        lastLength, addedDistances);
+        }
+
+        codeLengths->reset();
+
+        //if gotten value is a real length, not copy code, then write lastLength
+        if (isLength) lastLength = value;
+    }
+
+    //now, we have lengths for literals/lengths and distances, so let's grow some trees
+    std::shared_ptr<HuffmanDecoder> literals(new DefaultHuffmanDecoder());
+    std::shared_ptr<HuffmanDecoder> distances(new DefaultHuffmanDecoder());
+
+    literals->loadCodesByCodesLengths(codeLengthsForLiterals);
+    distances->loadCodesByCodesLengths(codeLengthsForDistances);
+
+    //we have the trees, the next and actually final step is directly decoding
+    unsigned decodedValue = ~0u;
+
+    do {
+        //get bits til we haven't any result
+        while (!literals->isResult()) {
+            bool bit = getBitFromBitStream(deflateStream, index++);
+
+            literals->navigate(bit);
+        }
+
+        //now we have some result
+        decodedValue = literals->getResult();
+
+        //process value, and get real length if value is length marker
+        unsigned length = processValue(deflateStream, index, decodedValue);
+
+        if (length != NO_LENGTH) {
+            //we need to get distance number
+            //let's take a bit per iteration and navigate in the distances tree
+            while (!distances->isResult()) {
+                bool bit = getBitFromBitStream(deflateStream, index++);
+
+                distances->navigate(bit);
+            }
+
+            //now we have distance code
+            exposeToLiterals(deflateStream, index, length, distances->getResult());
+            distances->reset();
+        }
+
+        literals->reset();
+    } while (decodedValue != END_OF_BLOCK);
 }
 
 unsigned long DefaultDeflateDecoder::getNumberFromBitStream(const char *stream, size_t &index, unsigned size, bool isReverseOrder) const {
@@ -208,24 +311,6 @@ unsigned long DefaultDeflateDecoder::getNumberFromBitStream(const char *stream, 
     }
 
     index += size;
-
-    return result;
-}
-
-unsigned long DefaultDeflateDecoder::reverse(unsigned long number) const {
-    unsigned long result = 0;
-    unsigned firstOneIndex = ~0u;
-    unsigned size = sizeof(number) * BITS_IN_CHAR;
-    unsigned currentIndex = size;
-
-    while (currentIndex > 0) {
-        unsigned long originalBit = (number >> (currentIndex - 1)) & 1;
-
-        if (originalBit && firstOneIndex == ~0u) firstOneIndex = currentIndex;
-        if (firstOneIndex != ~0u) result |= (originalBit << (firstOneIndex - currentIndex));
-
-        currentIndex--;
-    }
 
     return result;
 }
@@ -271,10 +356,54 @@ void DefaultDeflateDecoder::exposeToLiterals(const char *deflateStream, size_t &
     //first of all we need to get a real distance from extra bits
     //then we need to add to them distance offset
     unsigned long distance = getNumberFromBitStream(deflateStream, index, DISTANCES_EXTRA_BITS[distanceNumber], true)
-            + distancesOffsets[distanceNumber];
+                             + distancesOffsets[distanceNumber];
 
     size_t currentSize = decodedData.size();
 
     for (unsigned l = 0; l < length; l++)
         decodedData.emplace_back(decodedData[currentSize++ - distance]);
+}
+
+bool DefaultDeflateDecoder::processValueOfCodeLengthAlphabet(const char *deflateStream, size_t &index,
+                                                             std::vector<char> &codeLengths, char value,
+                                                             char lastLength, size_t &addedCount) {
+    if (value >= DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_LITERALS_START && value <= DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_LITERALS_END) {
+        codeLengths[addedCount++] = value;
+
+        //it's a length, so true
+        return true;
+    } else {
+        //it's a copy code
+        unsigned extraBitsToRead = 0, valueForRepeating = 0, offsetForSumWithExtraBits = 0;
+
+        if (value == DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_COPY_PREVIOUS) {
+            //copy previous
+            extraBitsToRead = DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_COPY_PREVIOUS_EXTRA_BITS;
+            valueForRepeating = lastLength;
+            offsetForSumWithExtraBits = DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_COPY_PREVIOUS_OFFSET;
+        } else {
+            //copy zero
+            for (auto copyZeroSet : DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_COPY_ZERO) {
+                if (copyZeroSet[0] == value) {
+                    extraBitsToRead = copyZeroSet[1];
+                    offsetForSumWithExtraBits = copyZeroSet[2];
+                    valueForRepeating = 0;
+
+                    break;
+                }
+            }
+        }
+
+
+        unsigned copiesCount = getNumberFromBitStream(deflateStream, index, extraBitsToRead, true) + offsetForSumWithExtraBits;
+
+        for (unsigned i = 0; i < copiesCount; i++) codeLengths[addedCount++] = valueForRepeating;
+
+        return false;
+    }
+}
+
+DefaultDeflateDecoder::~DefaultDeflateDecoder() {
+    delete[] lengthOffsets;
+    delete[] distancesOffsets;
 }

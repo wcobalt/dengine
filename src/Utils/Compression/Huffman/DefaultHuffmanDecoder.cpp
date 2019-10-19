@@ -28,7 +28,8 @@ void DefaultHuffmanDecoder::loadCodesByCodesLengths(const vector<char> &codesLen
     vector<unsigned> codesCount(maxCodeLength + 1, 0); //plus zero length
 
     //count count of code lengths
-    for (char length : codesLengths) codesCount[length]++;
+    for (char length : codesLengths)
+        if (length != 0) codesCount[length]++;
 
     //root is not a layer, so we need to increase layers count by one
     height = maxCodeLength;
@@ -50,11 +51,14 @@ void DefaultHuffmanDecoder::loadCodesByCodesLengths(const vector<char> &codesLen
         reset();
 
         unsigned length = codesLengths[i];
-        unsigned code = codes[length]++;
 
-        for (unsigned b = length; b > 0; b--) navigate(((code >> (b - 1)) & 1) == 1);
+        if (length != 0) {
+            unsigned code = codes[length]++;
 
-        tree[getCurrentIndex()] = i;
+            for (unsigned b = length; b > 0; b--) navigate(((code >> (b - 1)) & 1) == 1);
+
+            tree[getCurrentIndex()] = i;
+        }
     }
 
     reset();

@@ -43,6 +43,24 @@ namespace dengine {
         static const unsigned FIXED_HUFFMAN_DISTANCE_SIZE = 5;
         static const unsigned NO_LENGTH = 0;
 
+        static const unsigned DYNAMIC_HUFFMAN_HLIT_SIZE = 5;
+        static const unsigned DYNAMIC_HUFFMAN_HLIT_START = 257;
+        static const unsigned DYNAMIC_HUFFMAN_HDIST_SIZE = 5;
+        static const unsigned DYNAMIC_HUFFMAN_HDIST_START = 1;
+        static const unsigned DYNAMIC_HUFFMAN_HCLEN_SIZE = 4;
+        static const unsigned DYNAMIC_HUFFMAN_HCLEN_START = 4;
+        static const unsigned DYNAMIC_HUFFMAN_CODE_LENGTH_FOR_CODE_LENGTH_SIZE = 3;
+        static const unsigned constexpr DYNAMIC_HUFFMAN_CODE_LENGTHS_FOR_CODE_LENGTH_ORDER[] =
+                {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
+        static const unsigned DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_SIZE = 19;
+        static const unsigned DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_LITERALS_START = 0;
+        static const unsigned DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_LITERALS_END = 15;
+        static const unsigned DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_COPY_PREVIOUS = 16;
+        static const unsigned DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_COPY_PREVIOUS_EXTRA_BITS = 2;
+        static const unsigned DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_COPY_PREVIOUS_OFFSET = 3;
+        //0 - code, 1 - extra bits, 2 - offset
+        static const unsigned constexpr DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_COPY_ZERO[][3] = {{17, 3, 3}, {18, 7, 11}};
+
         unsigned long* lengthOffsets;
         unsigned long* distancesOffsets;
 
@@ -60,11 +78,13 @@ namespace dengine {
         unsigned long
         getNumberFromBitStream(const char *stream, size_t &index, unsigned size, bool isReverseOrder) const;
 
-        unsigned long reverse(unsigned long number) const;
-
         unsigned int processValue(const char *deflateStream, size_t &index, unsigned value);
 
         void exposeToLiterals(const char* deflateStream, size_t& index, unsigned length, unsigned distanceNumber);
+
+        bool processValueOfCodeLengthAlphabet(const char *deflateStream, size_t &index,
+                                                      std::vector<char> &codeLengths, char value,
+                                                      char lastLength, size_t &addedCount);
     public:
         DefaultDeflateDecoder();
 
@@ -78,6 +98,7 @@ namespace dengine {
 
         void clear();
 
+        virtual ~DefaultDeflateDecoder();
     };
 }
 
