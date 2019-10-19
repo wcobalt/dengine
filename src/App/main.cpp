@@ -21,7 +21,9 @@ using namespace dengine;
 int main() {//memory safe
     DefaultDeflateDecoder decoder;
 
-        char* stream = new char[9]{0b01001'001, 0b11, 0b00, 0b11, 0b00, 'a', 'b', 'c', 4};
+        char stream[] = {0b01110011 , 0b01001001 , 0b01001101 , (char)0b11001011
+                 , 0b01001001 , 0b00101100 , 0b01001001 , 0b01010101
+                 , 0b00000000 , 0b00010001 , 0b00000000};
 
     decoder.decode(stream);
 
