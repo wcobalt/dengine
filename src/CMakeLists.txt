@@ -3,7 +3,7 @@ project(Dengine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(App App/main.cpp Utils/Compression/Huffman/Huffman.h Utils/Compression/Huffman/DefaultHuffman.cpp Utils/Compression/Huffman/DefaultHuffman.h)
+add_executable(App App/main.cpp Utils/Compression/Huffman/HuffmanDecoder.h Utils/Compression/Huffman/DefaultHuffmanDecoder.cpp Utils/Compression/Huffman/DefaultHuffmanDecoder.h Utils/Compression/Deflate/DeflateDecoder.h Utils/Compression/Deflate/DefaultDeflateDecoder.cpp Utils/Compression/Deflate/DefaultDeflateDecoder.h Exceptions/InvalidArgumentException.cpp Exceptions/InvalidArgumentException.h Exceptions/InvalidStateException.cpp Exceptions/InvalidStateException.h Utils/Compression/Deflate/Exceptions/DeflateException.cpp Utils/Compression/Deflate/Exceptions/DeflateException.h)
 
 #[[add_library(Dengine
         Platform/Window/X/WindowManagerX.cpp
@@ -44,7 +44,8 @@ add_executable(App App/main.cpp Utils/Compression/Huffman/Huffman.h Utils/Compre
         Exceptions/IOException.cpp Exceptions/IOException.h)]]
 
 add_library(PNG Graphics/PNG/PNG.h
-            Graphics/Image.h Graphics/Pixel.h Graphics/DefaultPixel.cpp Graphics/DefaultPixel.h Graphics/DefaultImage.cpp Graphics/DefaultImage.h)
+            Graphics/Image.h Graphics/Pixel.h Graphics/DefaultPixel.cpp        Exceptions/DengineException.h
+        Exceptions/DengineException.cpp Graphics/DefaultPixel.h Graphics/DefaultImage.cpp Graphics/DefaultImage.h)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
@@ -54,4 +55,4 @@ include_directories(${X11_INCLUDE_DIR})
 
 find_package (Threads)
 
-target_link_libraries(App PNG ${X11_LIBRARIES} ${OPENGL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(App PNG #[[${X11_LIBRARIES} ${OPENGL_LIBRARIES}]] ${CMAKE_THREAD_LIBS_INIT})

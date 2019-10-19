@@ -3,12 +3,17 @@
 //#include "../Events/Keyboard/KeyboardState.h"
 //#include "../Events/Window/WindowState.h"
 //#include "../Events/Keyboard/Key.h"
-#include "../Utils/Compression/Huffman/DefaultHuffman.h"
 #include <string>
 #include <memory>
 #include <chrono>
 #include <thread>
 #include <vector>
+
+#define private public
+
+#include "../Utils/Compression/Deflate/DefaultDeflateDecoder.h"
+#include "../Utils/Compression/Huffman/DefaultHuffmanDecoder.h"
+#include "../Utils/Compression/Huffman/HuffmanDecoder.h"
 
 //@TODO windows forms(later) support
 
@@ -16,18 +21,30 @@ using std::shared_ptr;
 using namespace dengine;
 
 int main() {//memory safe
-    DefaultHuffman defaultHuffman;
+    std::shared_ptr<HuffmanDecoder> s(new DefaultHuffmanDecoder());
 
-    std::vector<unsigned char> lengths = {3, 3, 3, 3, 3, 2, 4, 4};
+    DefaultDeflateDecoder decoder;
 
-    defaultHuffman.loadCodesByCodesLengths(lengths);
+        char stream[] = {(char)0b00001100 , (char)0b11001000 , 0b01000001 , 0b00001010 , (char)0b10000000 , 0b00100000 , 0b00010000 , 0b00000101
+                 , (char)0b11010000 , 0b01111101 , (char)0b11010000 , 0b00011101 , (char)0b11111110 , 0b00001001 , (char)0b10111010 , (char)0b10000100
+                , (char)0b11101011 ,(char) 0b10100000 , 0b00101011 , 0b01001100 ,(char) 0b11111010 ,(char) 0b10110101 , 0b00000001 , 0b00011101
+                , 0b00100001 , 0b00100111 , (char)0b10100001 , (char)0b11011011 ,(char) 0b11010111 , 0b01011011 ,(char) 0b10111110 , (char)0b11010000
+                , (char)0b10101101 ,(char) 0b11011100 , (char)0b11100010 , 0b01001111 , 0b00010101 , (char)0b11010111 , 0b01101110 , 0b00000011
+                 , (char)0b11011101 , 0b01110000 , 0b00110010 , (char)0b11110110 ,(char) 0b10100110 , 0b01010110 , 0b00100000 , (char)0b10000110
+                 , 0b00111101 , 0b00011100 , 0b00011011 , (char)0b10001110 , 0b01001010 , 0b00011001 ,(char) 0b11111100 , 0b00011111
+                 , (char)0b10010010 , (char)0b10100110 , 0b00001110 , 0b00100110 , (char)0b11111000 , 0b00100101 , 0b00001110 , (char)0b11100110
+                 , (char)0b11001100 , (char)0b11101000 , 0b00111010 , 0b00001001 , 0b01101101 ,(char) 0b10001101 , 0b01001001 , (char)0b11000101
+                 , 0b01011001 ,(char) 0b11011111 , 0b01110101 , (char)0b11111001 , 0b00000110 , 0b00000000};
 
-    defaultHuffman.navigate(true);
-    defaultHuffman.navigate(true);
-    defaultHuffman.navigate(true);
-    defaultHuffman.navigate(false);
+    decoder.decode(stream);
 
-    std::cout << std::endl << defaultHuffman.isResult() << " " << defaultHuffman.getResult();
+
+    for (int i = 0; i < decoder.getSize(); i++) std::cout << decoder[i];
+    /*for (int i = 0; i < 8 * 5; i++) {
+        std::cout << decoder.getBitFromBitStream(stream, i);
+
+        if ((i + 1) % 4 == 0) std::cout << ".";
+    }*/
 
     //std::cout << (char)0xd0 << (char)0xb6;
 //    std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
