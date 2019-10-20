@@ -65,7 +65,7 @@ void DefaultHuffmanDecoder::loadCodesByCodesLengths(const vector<char> &codesLen
 }
 
 void DefaultHuffmanDecoder::navigate(bool value) {
-    if (layer + 1 > height) throw InvalidArgumentException("Max layer is reached");
+    if (layer + 1 > height) throw InvalidStateException("Max layer is reached");
 
     offset = offset * 2u + (unsigned)value;
     layer++;

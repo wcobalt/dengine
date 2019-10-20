@@ -9,6 +9,7 @@
 #include "Exceptions/DeflateException.h"
 #include "../Huffman/DefaultHuffmanDecoder.h"
 #include "../../Streams/InputBitStream.h"
+#include "../../../Exceptions/InvalidStateException.h"
 
 using namespace dengine;
 
@@ -181,7 +182,7 @@ void DefaultDeflateDecoder::decodeFixed(std::shared_ptr<InputBitStream> deflateS
 
                 break;
             } else if (i == FIXED_HUFFMAN_CODES_RANGES_SIZES_COUNT - 1)
-                throw DeflateException("Unrecognized Fixed Huffman Code: " + std::to_string(currentCode));
+                throw DeflateException("Unrecognized fixed Huffman Code: " + std::to_string(currentCode));
         }
     } while (decodedValue != END_OF_BLOCK);
 }
@@ -220,7 +221,11 @@ void DefaultDeflateDecoder::decodeDynamic(std::shared_ptr<InputBitStream> deflat
             bool bit = deflateStream->read();
 
             //navigate by it in the tree
-            codeLengths->navigate(bit);
+            try {
+                codeLengths->navigate(bit);
+            } catch (InvalidStateException& exception) {
+                throw DeflateException("Invalid bit sequence. Unrecognized dynamic Huffman code in code lengths for Literals+Lengths/Distance");
+            }
         }
 
         unsigned value = codeLengths->getResult();
@@ -264,7 +269,11 @@ void DefaultDeflateDecoder::decodeDynamic(std::shared_ptr<InputBitStream> deflat
         while (!literals->isResult()) {
             bool bit = deflateStream->read();
 
-            literals->navigate(bit);
+            try {
+                literals->navigate(bit);
+            } catch (InvalidStateException& exception) {
+                throw DeflateException("Invalid bit sequence. Unrecognized dynamic Huffman code in compressed data");
+            }
         }
 
         //now we have some result
@@ -279,7 +288,11 @@ void DefaultDeflateDecoder::decodeDynamic(std::shared_ptr<InputBitStream> deflat
             while (!distances->isResult()) {
                 bool bit = deflateStream->read();
 
-                distances->navigate(bit);
+                try {
+                    distances->navigate(bit);
+                } catch (InvalidStateException& exception) {
+                    throw DeflateException("Invalid bit sequence. Unrecognized dynamic Huffman code of distance");
+                }
             }
 
             //now we have distance code
@@ -335,8 +348,11 @@ void DefaultDeflateDecoder::exposeToLiterals(std::shared_ptr<InputBitStream> def
 
     size_t currentSize = decodedData.size();
 
-    for (unsigned l = 0; l < length; l++)
-        decodedData.emplace_back(decodedData[currentSize++ - distance]);
+    if (currentSize < distance) throw DeflateException("Invalid decoded distance. There are not enough bytes in output");
+    else {
+        for (unsigned l = 0; l < length; l++)
+            decodedData.emplace_back(decodedData[currentSize++ - distance]);
+    }
 }
 
 bool DefaultDeflateDecoder::processValueOfCodeLengthAlphabet(std::shared_ptr<InputBitStream> deflateStream, std::vector<char> &codeLengths,
@@ -357,17 +373,22 @@ bool DefaultDeflateDecoder::processValueOfCodeLengthAlphabet(std::shared_ptr<Inp
             offsetForSumWithExtraBits = DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_COPY_PREVIOUS_OFFSET;
         } else {
             //copy zero
+            bool isMatch = false;
+
             for (auto copyZeroSet : DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_COPY_ZERO) {
                 if (copyZeroSet[0] == value) {
                     extraBitsToRead = copyZeroSet[1];
                     offsetForSumWithExtraBits = copyZeroSet[2];
                     valueForRepeating = 0;
 
+                    isMatch = true;
+
                     break;
                 }
             }
-        }
 
+            if (!isMatch) throw DeflateException("Unexpected code of code lengths alphabet: " + std::to_string(value));
+        }
 
         unsigned copiesCount = deflateStream->readNumber(extraBitsToRead, true) + offsetForSumWithExtraBits;
 
