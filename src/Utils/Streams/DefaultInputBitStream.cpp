@@ -18,7 +18,7 @@ bool DefaultInputBitStream::read() {
 unsigned long DefaultInputBitStream::readNumber(size_t size, bool isInverseOrder) {
     unsigned long result = 0;
 
-    for (size_t i = 0; i < size; i++, pointer++) {
+    for (size_t i = 0; i < size; i++) {
         bool bit = read();
 
         if (isInverseOrder)
@@ -30,4 +30,8 @@ unsigned long DefaultInputBitStream::readNumber(size_t size, bool isInverseOrder
     }
 
     return result;
+}
+
+void DefaultInputBitStream::skipUntilByteBoundary() {
+    while (pointer % BITS_IN_CHAR != 0) pointer++;
 }

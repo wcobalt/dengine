@@ -14,6 +14,7 @@
 #include "../Utils/Compression/Deflate/DefaultDeflateDecoder.h"
 #include "../Utils/Compression/Huffman/DefaultHuffmanDecoder.h"
 #include "../Utils/Compression/Huffman/HuffmanDecoder.h"
+#include "../Utils/Streams/DefaultInputBitStream.h"
 
 //@TODO windows forms(later) support
 
@@ -36,7 +37,9 @@ int main() {//memory safe
                  , (char)0b11001100 , (char)0b11101000 , 0b00111010 , 0b00001001 , 0b01101101 ,(char) 0b10001101 , 0b01001001 , (char)0b11000101
                  , 0b01011001 ,(char) 0b11011111 , 0b01110101 , (char)0b11111001 , 0b00000110 , 0b00000000};
 
-    decoder.decode(stream);
+        std::shared_ptr<InputBitStream> deflate(new DefaultInputBitStream(stream));
+
+    decoder.decode(deflate);
 
 
     for (int i = 0; i < decoder.getSize(); i++) std::cout << decoder[i];

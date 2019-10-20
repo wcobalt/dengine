@@ -9,7 +9,7 @@
 namespace dengine {
     class DeflateDecoder {
     public:
-        virtual void decode(const char *deflateStream) = 0;
+        virtual void decode(std::shared_ptr<InputBitStream> deflateStream) = 0;
 
         virtual char at(size_t index) const = 0;
 

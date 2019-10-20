@@ -15,6 +15,8 @@ namespace dengine {
         virtual bool read() = 0;
 
         virtual unsigned long readNumber(size_t size, bool isInverseOrder) = 0;
+
+        virtual void skipUntilByteBoundary() = 0;
     };
 }
 

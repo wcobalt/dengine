@@ -18,6 +18,8 @@ namespace dengine {
         bool read();
 
         unsigned long readNumber(size_t size, bool isInverseOrder);
+
+        void skipUntilByteBoundary();
     };
 }
 
