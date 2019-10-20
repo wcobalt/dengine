@@ -8,6 +8,7 @@
 #include "../../../Exceptions/InvalidArgumentException.h"
 #include "Exceptions/DeflateException.h"
 #include "../Huffman/DefaultHuffmanDecoder.h"
+#include "../../Streams/InputBitStream.h"
 
 using namespace dengine;
 
@@ -54,28 +55,28 @@ DefaultDeflateDecoder::DefaultDeflateDecoder() {
     }
 }
 
-void DefaultDeflateDecoder::decode(const char *deflateStream) {
-    size_t bitIndex = 0, decompressedDataIndex = 0;
+void DefaultDeflateDecoder::decode(std::shared_ptr<InputBitStream> deflateStream) {
+    size_t decompressedDataIndex = 0;
     bool lastBlock;
 
     do {
         //BFINAL
-        lastBlock = getBitFromBitStream(deflateStream, bitIndex++);
+        lastBlock = deflateStream->read();
 
         //BTYPE
-        unsigned btype = (unsigned)getNumberFromBitStream(deflateStream, bitIndex, BTYPE_SIZE, true);
+        unsigned btype = (unsigned)deflateStream->readNumber(BTYPE_SIZE, true);
 
         switch (btype) {
             case BTYPE_NO_COMPRESSION:
-                decodeNoCompression(deflateStream, bitIndex);
+                decodeNoCompression(deflateStream);
 
                 break;
             case BTYPE_FIXED_HUFFMAN:
-                decodeFixed(deflateStream, bitIndex);
+                decodeFixed(deflateStream);
 
                 break;
             case BTYPE_DYNAMIC_HUFFMAN:
-                decodeDynamic(deflateStream, bitIndex);
+                decodeDynamic(deflateStream);
 
                 break;
             case BTYPE_ERROR:
@@ -104,18 +105,12 @@ void DefaultDeflateDecoder::clear() {
     decodedData.clear();
 }
 
-bool DefaultDeflateDecoder::getBitFromBitStream(const char *stream, size_t index) const {
-    size_t bitNumber = index % BITS_IN_CHAR, byteNumber = index / BITS_IN_CHAR;
-
-    return ((stream[byteNumber] >> bitNumber) & 1) == 1;
-}
-
-void DefaultDeflateDecoder::decodeNoCompression(const char *deflateStream, size_t &index) {
+void DefaultDeflateDecoder::decodeNoCompression(std::shared_ptr<InputBitStream> deflateStream) {
     //go up to next byte boundary
-    while (index % BITS_IN_CHAR != 0) index++;
+    deflateStream->skipUntilByteBoundary();
 
-    unsigned len = (unsigned)getNumberFromBitStream(deflateStream, index, LEN_BYTES * BITS_IN_CHAR, true);
-    unsigned nlen = (unsigned)getNumberFromBitStream(deflateStream, index, NLEN_BYTES * BITS_IN_CHAR, true);
+    unsigned len = (unsigned)deflateStream->readNumber(LEN_BYTES * BITS_IN_CHAR, true);
+    unsigned nlen = (unsigned)deflateStream->readNumber(NLEN_BYTES * BITS_IN_CHAR, true);
 
     //check whether nlen is 1's complement of len
     unsigned lenOnesComplement = len;
@@ -141,13 +136,13 @@ void DefaultDeflateDecoder::decodeNoCompression(const char *deflateStream, size_
     if (lenOnesComplement != nlen) throw DeflateException("1's complement of LEN is not equals NLEN");
 
     for (size_t i = 0; i < len; i++) {
-        char data = (char)getNumberFromBitStream(deflateStream, index, BITS_IN_CHAR, true);
+        char data = (char)deflateStream->readNumber(BITS_IN_CHAR, true);
 
         decodedData.emplace_back(data);
     }
 }
 
-void DefaultDeflateDecoder::decodeFixed(const char *deflateStream, size_t &index) {
+void DefaultDeflateDecoder::decodeFixed(std::shared_ptr<InputBitStream> deflateStream) {
     unsigned decodedValue = ~0u;
 
     do {
@@ -158,7 +153,7 @@ void DefaultDeflateDecoder::decodeFixed(const char *deflateStream, size_t &index
 
             //shift because new bits must be right aligned in code
             currentCode <<= countOfBitsToGet;
-            currentCode |= (unsigned)getNumberFromBitStream(deflateStream, index, countOfBitsToGet, false);
+            currentCode |= (unsigned)deflateStream->readNumber(countOfBitsToGet, false);
 
             //get value of this code
             bool found = false;
@@ -175,13 +170,13 @@ void DefaultDeflateDecoder::decodeFixed(const char *deflateStream, size_t &index
             }
 
             if (found) {
-                unsigned length = processValue(deflateStream, index, decodedValue);
+                unsigned length = processValue(deflateStream, decodedValue);
 
                 if (length != NO_LENGTH) {
                     //decoded value is length, so we need to find the distance and then expose both them to literals
-                    unsigned distanceNumber = getNumberFromBitStream(deflateStream, index, FIXED_HUFFMAN_DISTANCE_SIZE, false);
+                    unsigned distanceNumber = deflateStream->readNumber(FIXED_HUFFMAN_DISTANCE_SIZE, false);
 
-                    exposeToLiterals(deflateStream, index, length, distanceNumber);
+                    exposeToLiterals(deflateStream, length, distanceNumber);
                 }
 
                 break;
@@ -191,17 +186,17 @@ void DefaultDeflateDecoder::decodeFixed(const char *deflateStream, size_t &index
     } while (decodedValue != END_OF_BLOCK);
 }
 
-void DefaultDeflateDecoder::decodeDynamic(const char *deflateStream, size_t &index) {
-    unsigned literalsCount = getNumberFromBitStream(deflateStream, index, DYNAMIC_HUFFMAN_HLIT_SIZE, true) + DYNAMIC_HUFFMAN_HLIT_START;
-    unsigned distancesCount = getNumberFromBitStream(deflateStream, index, DYNAMIC_HUFFMAN_HDIST_SIZE, true) + DYNAMIC_HUFFMAN_HDIST_START;
-    unsigned codeLengthsForCodeLengthsCount = getNumberFromBitStream(deflateStream, index, DYNAMIC_HUFFMAN_HCLEN_SIZE, true)
+void DefaultDeflateDecoder::decodeDynamic(std::shared_ptr<InputBitStream> deflateStream) {
+    unsigned literalsCount = deflateStream->readNumber(DYNAMIC_HUFFMAN_HLIT_SIZE, true) + DYNAMIC_HUFFMAN_HLIT_START;
+    unsigned distancesCount = deflateStream->readNumber(DYNAMIC_HUFFMAN_HDIST_SIZE, true) + DYNAMIC_HUFFMAN_HDIST_START;
+    unsigned codeLengthsForCodeLengthsCount = deflateStream->readNumber(DYNAMIC_HUFFMAN_HCLEN_SIZE, true)
                                               + DYNAMIC_HUFFMAN_HCLEN_START;
 
     //we need to get code lengths for code lengths
     std::vector<char> codeLengthsForCodeLengths(DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_SIZE, 0);
 
     for (unsigned i = 0; i < codeLengthsForCodeLengthsCount; i++) {
-        char length = getNumberFromBitStream(deflateStream, index, DYNAMIC_HUFFMAN_CODE_LENGTH_FOR_CODE_LENGTH_SIZE, true);
+        char length = deflateStream->readNumber(DYNAMIC_HUFFMAN_CODE_LENGTH_FOR_CODE_LENGTH_SIZE, true);
 
         codeLengthsForCodeLengths[DYNAMIC_HUFFMAN_CODE_LENGTHS_FOR_CODE_LENGTH_ORDER[i]] = length;
     }
@@ -222,7 +217,7 @@ void DefaultDeflateDecoder::decodeDynamic(const char *deflateStream, size_t &ind
     while (addedLiterals + addedDistances < sumOfLiteralsCountAnDistancesCount) {
         while (!codeLengths->isResult()) {
             //get another bit
-            bool bit = getBitFromBitStream(deflateStream, index++);
+            bool bit = deflateStream->read();
 
             //navigate by it in the tree
             codeLengths->navigate(bit);
@@ -236,7 +231,7 @@ void DefaultDeflateDecoder::decodeDynamic(const char *deflateStream, size_t &ind
         if (addedLiterals < literalsCount) {
             //if now we're processing literals/lengths
 
-            isLength = processValueOfCodeLengthAlphabet(deflateStream, index, codeLengthsForLiterals, value,
+            isLength = processValueOfCodeLengthAlphabet(deflateStream, codeLengthsForLiterals, value,
                                                         lastLength, addedLiterals);
         } else {
             //if distances
@@ -244,7 +239,7 @@ void DefaultDeflateDecoder::decodeDynamic(const char *deflateStream, size_t &ind
             //if on the previous iteration we were processing literals/lengths, then reset state
             if (addedLiterals == literalsCount) lastLength = 0;
 
-            isLength = processValueOfCodeLengthAlphabet(deflateStream, index, codeLengthsForDistances, value,
+            isLength = processValueOfCodeLengthAlphabet(deflateStream, codeLengthsForDistances, value,
                                                         lastLength, addedDistances);
         }
 
@@ -262,12 +257,12 @@ void DefaultDeflateDecoder::decodeDynamic(const char *deflateStream, size_t &ind
     distances->loadCodesByCodesLengths(codeLengthsForDistances);
 
     //we have the trees, the next and actually final step is directly decoding
-    unsigned decodedValue = ~0u;
+    unsigned decodedValue;
 
     do {
         //get bits til we haven't any result
         while (!literals->isResult()) {
-            bool bit = getBitFromBitStream(deflateStream, index++);
+            bool bit = deflateStream->read();
 
             literals->navigate(bit);
         }
@@ -276,19 +271,19 @@ void DefaultDeflateDecoder::decodeDynamic(const char *deflateStream, size_t &ind
         decodedValue = literals->getResult();
 
         //process value, and get real length if value is length marker
-        unsigned length = processValue(deflateStream, index, decodedValue);
+        unsigned length = processValue(deflateStream, decodedValue);
 
         if (length != NO_LENGTH) {
             //we need to get distance number
             //let's take a bit per iteration and navigate in the distances tree
             while (!distances->isResult()) {
-                bool bit = getBitFromBitStream(deflateStream, index++);
+                bool bit = deflateStream->read();
 
                 distances->navigate(bit);
             }
 
             //now we have distance code
-            exposeToLiterals(deflateStream, index, length, distances->getResult());
+            exposeToLiterals(deflateStream, length, distances->getResult());
             distances->reset();
         }
 
@@ -296,26 +291,7 @@ void DefaultDeflateDecoder::decodeDynamic(const char *deflateStream, size_t &ind
     } while (decodedValue != END_OF_BLOCK);
 }
 
-unsigned long DefaultDeflateDecoder::getNumberFromBitStream(const char *stream, size_t &index, unsigned size, bool isReverseOrder) const {
-    unsigned long result = 0;
-
-    for (size_t i = 0; i < size; i++) {
-        bool bit = getBitFromBitStream(stream, index + i);
-
-        if (isReverseOrder)
-            result |= ((unsigned long)bit << i);
-        else {
-            result <<= 1u;
-            result |= bit;
-        }
-    }
-
-    index += size;
-
-    return result;
-}
-
-unsigned int DefaultDeflateDecoder::processValue(const char *deflateStream, size_t &index, unsigned value) {
+unsigned int DefaultDeflateDecoder::processValue(std::shared_ptr<InputBitStream> deflateStream, unsigned value) {
     if (value >= LITERALS_START && value <= LITERALS_END) {
         decodedData.emplace_back(value); //literal
     } else if (value >= LENGTH_START && value <= LENGTH_END) {
@@ -326,7 +302,7 @@ unsigned int DefaultDeflateDecoder::processValue(const char *deflateStream, size
         unsigned lengthNumber = value - LENGTH_START;
 
         //extra bits + length offset
-        return getNumberFromBitStream(deflateStream, index, LENGTH_EXTRA_BITS[lengthNumber], true) + lengthOffsets[lengthNumber];
+        return deflateStream->readNumber(LENGTH_EXTRA_BITS[lengthNumber], true) + lengthOffsets[lengthNumber];
     } else if (value != END_OF_BLOCK) {
         bool found = false;
 
@@ -351,11 +327,10 @@ unsigned int DefaultDeflateDecoder::processValue(const char *deflateStream, size
     return NO_LENGTH;
 }
 
-void DefaultDeflateDecoder::exposeToLiterals(const char *deflateStream, size_t &index, unsigned length,
-                                             unsigned distanceNumber) {
+void DefaultDeflateDecoder::exposeToLiterals(std::shared_ptr<InputBitStream> deflateStream, unsigned length, unsigned distanceNumber) {
     //first of all we need to get a real distance from extra bits
     //then we need to add to them distance offset
-    unsigned long distance = getNumberFromBitStream(deflateStream, index, DISTANCES_EXTRA_BITS[distanceNumber], true)
+    unsigned long distance = deflateStream->readNumber(DISTANCES_EXTRA_BITS[distanceNumber], true)
                              + distancesOffsets[distanceNumber];
 
     size_t currentSize = decodedData.size();
@@ -364,9 +339,8 @@ void DefaultDeflateDecoder::exposeToLiterals(const char *deflateStream, size_t &
         decodedData.emplace_back(decodedData[currentSize++ - distance]);
 }
 
-bool DefaultDeflateDecoder::processValueOfCodeLengthAlphabet(const char *deflateStream, size_t &index,
-                                                             std::vector<char> &codeLengths, char value,
-                                                             char lastLength, size_t &addedCount) {
+bool DefaultDeflateDecoder::processValueOfCodeLengthAlphabet(std::shared_ptr<InputBitStream> deflateStream, std::vector<char> &codeLengths,
+                                                             char value, char lastLength, size_t &addedCount) {
     if (value >= DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_LITERALS_START && value <= DYNAMIC_HUFFMAN_CODE_LENGTHS_ALPHABET_LITERALS_END) {
         codeLengths[addedCount++] = value;
 
@@ -395,7 +369,7 @@ bool DefaultDeflateDecoder::processValueOfCodeLengthAlphabet(const char *deflate
         }
 
 
-        unsigned copiesCount = getNumberFromBitStream(deflateStream, index, extraBitsToRead, true) + offsetForSumWithExtraBits;
+        unsigned copiesCount = deflateStream->readNumber(extraBitsToRead, true) + offsetForSumWithExtraBits;
 
         for (unsigned i = 0; i < copiesCount; i++) codeLengths[addedCount++] = valueForRepeating;
 
