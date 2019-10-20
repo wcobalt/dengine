@@ -3,6 +3,8 @@
 //
 #include <cstdint>
 #include <vector>
+#include <memory>
+#include "../../Streams/InputByteStream.h"
 
 #ifndef DENGINE_ADLER32_H
 #define DENGINE_ADLER32_H
@@ -15,6 +17,8 @@ namespace dengine {
         virtual uint32_t calculateAdler32(const char *data, size_t size) const = 0;
 
         virtual uint32_t calculateAdler32(std::vector<char> data) const = 0;
+
+        virtual uint32_t calculateAdler32(std::shared_ptr<InputByteStream> inputStream, size_t size) const = 0;
     };
 }
 

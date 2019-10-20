@@ -86,7 +86,7 @@ namespace dengine {
     public:
         DefaultDeflateDecoder();
 
-        void decode(std::shared_ptr<InputBitStream> deflateStream);
+        void decode(std::shared_ptr<InputByteStream> deflateStream);
 
         char at(size_t index) const;
 
@@ -95,6 +95,8 @@ namespace dengine {
         size_t getSize() const;
 
         void clear();
+
+        std::shared_ptr<InputByteStream> getStream() const;
 
         virtual ~DefaultDeflateDecoder();
     };

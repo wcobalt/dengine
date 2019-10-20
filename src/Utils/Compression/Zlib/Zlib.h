@@ -1,11 +1,13 @@
 //
 // Created by wcobalt on 10/20/19.
 //
+#include <vector>
+#include <cstdlib>
+#include <memory>
+#include "../../Streams/InputByteStream.h"
 
 #ifndef DENGINE_ZLIB_H
 #define DENGINE_ZLIB_H
-
-#include <cstdlib>
 
 namespace dengine {
     class ZlibDecoder {
@@ -17,7 +19,8 @@ namespace dengine {
         static const unsigned DICT = 4;
         static const unsigned ADLER32 = 5;
 
-        virtual void decode(const char* encodedData) = 0;
+        //maybe it's better to make some InputByteStream or something else than provide two decode methods (also for Adler32)
+        virtual void decode(std::shared_ptr<InputByteStream> inputStream) = 0;
 
         virtual char at(size_t index) const = 0;
 

@@ -3,10 +3,16 @@
 //
 
 #include "DefaultInputBitStream.h"
+#include "InputByteStream.h"
 
 using namespace dengine;
 
+DefaultInputBitStream::DefaultInputBitStream(
+        std::shared_ptr<InputByteStream> inputByteStream): stream(inputByteStream->getDataPointer()), pointer(0) {}
+
 DefaultInputBitStream::DefaultInputBitStream(const char *stream):stream(stream), pointer(0) {}
+
+DefaultInputBitStream::DefaultInputBitStream(const std::vector<char> &stream): DefaultInputBitStream(&stream[0]) {}
 
 bool DefaultInputBitStream::read() {
     size_t bitNumber = pointer % BITS_IN_CHAR, byteNumber = pointer / BITS_IN_CHAR;

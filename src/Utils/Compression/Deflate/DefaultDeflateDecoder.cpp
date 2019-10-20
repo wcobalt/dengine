@@ -10,6 +10,8 @@
 #include "../Huffman/DefaultHuffmanDecoder.h"
 #include "../../Streams/InputBitStream.h"
 #include "../../../Exceptions/InvalidStateException.h"
+#include "../../Streams/DefaultInputBitStream.h"
+#include "../../Streams/DefaultInputByteStream.h"
 
 using namespace dengine;
 
@@ -56,28 +58,29 @@ DefaultDeflateDecoder::DefaultDeflateDecoder() {
     }
 }
 
-void DefaultDeflateDecoder::decode(std::shared_ptr<InputBitStream> deflateStream) {
-    size_t decompressedDataIndex = 0;
+void DefaultDeflateDecoder::decode(std::shared_ptr<InputByteStream> deflateStream) {
+    std::shared_ptr<InputBitStream> stream(new DefaultInputBitStream(deflateStream));
+
     bool lastBlock;
 
     do {
         //BFINAL
-        lastBlock = deflateStream->read();
+        lastBlock = stream->read();
 
         //BTYPE
-        unsigned btype = (unsigned)deflateStream->readNumber(BTYPE_SIZE, true);
+        unsigned btype = (unsigned)stream->readNumber(BTYPE_SIZE, true);
 
         switch (btype) {
             case BTYPE_NO_COMPRESSION:
-                decodeNoCompression(deflateStream);
+                decodeNoCompression(stream);
 
                 break;
             case BTYPE_FIXED_HUFFMAN:
-                decodeFixed(deflateStream);
+                decodeFixed(stream);
 
                 break;
             case BTYPE_DYNAMIC_HUFFMAN:
-                decodeDynamic(deflateStream);
+                decodeDynamic(stream);
 
                 break;
             case BTYPE_ERROR:
@@ -104,6 +107,12 @@ size_t DefaultDeflateDecoder::getSize() const {
 
 void DefaultDeflateDecoder::clear() {
     decodedData.clear();
+}
+
+std::shared_ptr<InputByteStream> DefaultDeflateDecoder::getStream() const {
+    std::shared_ptr<InputByteStream> result(new DefaultInputByteStream(decodedData));
+
+    return result;
 }
 
 void DefaultDeflateDecoder::decodeNoCompression(std::shared_ptr<InputBitStream> deflateStream) {

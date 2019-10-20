@@ -29,3 +29,7 @@ uint32_t DefaultAdler32::calculateAdler32(const char *data, size_t size) const {
 uint32_t DefaultAdler32::calculateAdler32(std::vector<char> data) const {
     return calculateAdler32(&data[0], data.size());
 }
+
+uint32_t DefaultAdler32::calculateAdler32(std::shared_ptr<InputByteStream> inputStream, size_t size) const {
+    return calculateAdler32(inputStream->getDataPointer(), size);
+}
