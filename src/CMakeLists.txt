@@ -3,7 +3,7 @@ project(Dengine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(App App/main.cpp Utils/Compression/Huffman/HuffmanDecoder.h Utils/Compression/Huffman/DefaultHuffmanDecoder.cpp Utils/Compression/Huffman/DefaultHuffmanDecoder.h Utils/Compression/Deflate/DeflateDecoder.h Utils/Compression/Deflate/DefaultDeflateDecoder.cpp Utils/Compression/Deflate/DefaultDeflateDecoder.h Exceptions/InvalidArgumentException.cpp Exceptions/InvalidArgumentException.h Exceptions/InvalidStateException.cpp Exceptions/InvalidStateException.h Utils/Compression/Deflate/Exceptions/DeflateException.cpp Utils/Compression/Deflate/Exceptions/DeflateException.h Utils/Streams/InputBitStream.h Utils/Streams/DefaultInputBitStream.cpp Utils/Streams/DefaultInputBitStream.h)
+add_executable(App App/main.cpp Utils/Compression/Huffman/HuffmanDecoder.h Utils/Compression/Huffman/DefaultHuffmanDecoder.cpp Utils/Compression/Huffman/DefaultHuffmanDecoder.h Utils/Compression/Deflate/DeflateDecoder.h Utils/Compression/Deflate/DefaultDeflateDecoder.cpp Utils/Compression/Deflate/DefaultDeflateDecoder.h Exceptions/InvalidArgumentException.cpp Exceptions/InvalidArgumentException.h Exceptions/InvalidStateException.cpp Exceptions/InvalidStateException.h Utils/Compression/Deflate/Exceptions/DeflateException.cpp Utils/Compression/Deflate/Exceptions/DeflateException.h Utils/Streams/InputBitStream.h Utils/Streams/DefaultInputBitStream.cpp Utils/Streams/DefaultInputBitStream.h Utils/Compression/Zlib/Zlib.h Utils/Compression/Zlib/Exceptions/ZlibException.cpp Utils/Compression/Zlib/Exceptions/ZlibException.h)
 
 #[[add_library(Dengine
         Platform/Window/X/WindowManagerX.cpp
