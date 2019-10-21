@@ -11,9 +11,13 @@ DefaultInputByteStream::DefaultInputByteStream(const char *data):stream(data), p
 DefaultInputByteStream::DefaultInputByteStream(const std::vector<char> &data): DefaultInputByteStream(&data[0]) {}
 
 char DefaultInputByteStream::read() {
-    return 0;
+    return stream[pointer++];
 }
 
-const char * DefaultInputByteStream::getDataPointer() const {
-    return stream;
+size_t DefaultInputByteStream::getReadBytesCount() const {
+    return pointer;
+}
+
+const char & DefaultInputByteStream::peek() const {
+    return stream[pointer];
 }

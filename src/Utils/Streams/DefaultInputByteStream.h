@@ -20,7 +20,9 @@ namespace dengine {
 
         char read();
 
-        const char * getDataPointer() const;
+        const char & peek() const override;
+
+        size_t getReadBytesCount() const;
     };
 }
 

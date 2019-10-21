@@ -9,8 +9,6 @@
 #include <thread>
 #include <vector>
 
-#define private public
-
 #include "../Utils/Compression/Deflate/DefaultDeflateDecoder.h"
 #include "../Utils/Compression/Huffman/DefaultHuffmanDecoder.h"
 #include "../Utils/Compression/Huffman/HuffmanDecoder.h"
@@ -41,10 +39,16 @@ int main() {//memory safe
 
         std::shared_ptr<InputByteStream> deflate(new DefaultInputByteStream(stream));
 
-    decoder.decode(deflate);
+    decoder.decode(*deflate);
 
 
     for (int i = 0; i < decoder.getSize(); i++) std::cout << decoder[i];
+
+    char a[] = {"Wikipedia"};
+
+    std::shared_ptr<DefaultInputByteStream> inputByteStream(new DefaultInputByteStream(a));
+    DefaultAdler32 adler32;
+    std::cout << adler32.calculateAdler32(*inputByteStream, sizeof a - 1);
 
     /*for (int i = 0; i < 8 * 5; i++) {
         std::cout << decoder.getBitFromBitStream(stream, i);

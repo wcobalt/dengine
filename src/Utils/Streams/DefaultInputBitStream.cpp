@@ -8,7 +8,7 @@
 using namespace dengine;
 
 DefaultInputBitStream::DefaultInputBitStream(
-        std::shared_ptr<InputByteStream> inputByteStream): stream(inputByteStream->getDataPointer()), pointer(0) {}
+        const InputByteStream &inputByteStream): stream(&inputByteStream.peek()), pointer(0) {}
 
 DefaultInputBitStream::DefaultInputBitStream(const char *stream):stream(stream), pointer(0) {}
 
@@ -19,6 +19,10 @@ bool DefaultInputBitStream::read() {
     pointer++;
 
     return ((stream[byteNumber] >> bitNumber) & 1) == 1;
+}
+
+size_t DefaultInputBitStream::getReadBitsCount() const {
+    return pointer;
 }
 
 unsigned long DefaultInputBitStream::readNumber(size_t size, bool isInverseOrder) {

@@ -18,7 +18,7 @@ namespace dengine {
 
         virtual uint32_t calculateAdler32(std::vector<char> data) const = 0;
 
-        virtual uint32_t calculateAdler32(std::shared_ptr<InputByteStream> inputStream, size_t size) const = 0;
+        virtual uint32_t calculateAdler32(const InputByteStream &inputStream, size_t size) const = 0;
     };
 }
 

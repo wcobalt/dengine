@@ -20,7 +20,7 @@ namespace dengine {
         static const unsigned ADLER32 = 5;
 
         //maybe it's better to make some InputByteStream or something else than provide two decode methods (also for Adler32)
-        virtual void decode(std::shared_ptr<InputByteStream> inputStream) = 0;
+        virtual void decode(InputByteStream &inputStream) = 0;
 
         virtual char at(size_t index) const = 0;
 

@@ -71,22 +71,22 @@ namespace dengine {
 
         std::vector<char> decodedData;
 
-        void decodeNoCompression(std::shared_ptr<InputBitStream> deflateStream);
+        void decodeNoCompression(InputBitStream &deflateStream);
 
-        void decodeFixed(std::shared_ptr<InputBitStream> deflateStream);
+        void decodeFixed(InputBitStream &deflateStream);
 
-        void decodeDynamic(std::shared_ptr<InputBitStream> deflateStream);
+        void decodeDynamic(InputBitStream &deflateStream);
 
-        unsigned int processValue(std::shared_ptr<InputBitStream> deflateStream, unsigned value);
+        unsigned int processValue(InputBitStream &deflateStream, unsigned value);
 
-        void exposeToLiterals(std::shared_ptr<InputBitStream> deflateStream, unsigned length, unsigned distanceNumber);
+        void exposeToLiterals(InputBitStream &deflateStream, unsigned length, unsigned distanceNumber);
 
-        bool processValueOfCodeLengthAlphabet(std::shared_ptr<InputBitStream> deflateStream, std::vector<char> &codeLengths,
-                                                      char value, char lastLength, size_t &addedCount);
+        bool processValueOfCodeLengthAlphabet(InputBitStream &deflateStream, std::vector<char> &codeLengths,
+                                              char value, char lastLength, size_t &addedCount);
     public:
         DefaultDeflateDecoder();
 
-        void decode(std::shared_ptr<InputByteStream> deflateStream);
+        size_t decode(InputByteStream &deflateStream);
 
         char at(size_t index) const;
 

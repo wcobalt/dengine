@@ -19,13 +19,15 @@ namespace dengine {
         const char* stream;
         size_t pointer;
     public:
-        DefaultInputBitStream(std::shared_ptr<InputByteStream> inputByteStream);
+        DefaultInputBitStream(const InputByteStream &inputByteStream);
 
         DefaultInputBitStream(const char* stream);
 
         DefaultInputBitStream(const std::vector<char> &stream);
 
         bool read();
+
+        size_t getReadBitsCount() const override;
 
         unsigned long readNumber(size_t size, bool isInverseOrder);
 
