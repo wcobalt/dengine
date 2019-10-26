@@ -1,9 +1,14 @@
 //
 // Created by wcobalt on 10/15/19.
 //
+#include <memory>
 
 #ifndef DENGINE_DEFAULTDEFLATEDECODER_H
 #define DENGINE_DEFAULTDEFLATEDECODER_H
+
+namespace dengine {
+    class InputBitStream;
+}
 
 #include "DeflateDecoder.h"
 
@@ -64,31 +69,24 @@ namespace dengine {
         unsigned long* lengthOffsets;
         unsigned long* distancesOffsets;
 
-
         std::vector<char> decodedData;
 
-        bool getBitFromBitStream(const char *stream, size_t index) const;
+        void decodeNoCompression(InputBitStream &deflateStream);
 
-        void decodeNoCompression(const char *deflateStream, size_t &index);
+        void decodeFixed(InputBitStream &deflateStream);
 
-        void decodeFixed(const char *deflateStream, size_t &index);
+        void decodeDynamic(InputBitStream &deflateStream);
 
-        void decodeDynamic(const char *deflateStream, size_t &index);
+        unsigned int processValue(InputBitStream &deflateStream, unsigned value);
 
-        unsigned long
-        getNumberFromBitStream(const char *stream, size_t &index, unsigned size, bool isReverseOrder) const;
+        void exposeToLiterals(InputBitStream &deflateStream, unsigned length, unsigned distanceNumber);
 
-        unsigned int processValue(const char *deflateStream, size_t &index, unsigned value);
-
-        void exposeToLiterals(const char* deflateStream, size_t& index, unsigned length, unsigned distanceNumber);
-
-        bool processValueOfCodeLengthAlphabet(const char *deflateStream, size_t &index,
-                                                      std::vector<char> &codeLengths, char value,
-                                                      char lastLength, size_t &addedCount);
+        bool processValueOfCodeLengthAlphabet(InputBitStream &deflateStream, std::vector<char> &codeLengths,
+                                              char value, char lastLength, size_t &addedCount);
     public:
         DefaultDeflateDecoder();
 
-        void decode(const char *deflateStream);
+        size_t decode(InputByteStream &deflateStream);
 
         char at(size_t index) const;
 
@@ -97,6 +95,10 @@ namespace dengine {
         size_t getSize() const;
 
         void clear();
+
+        std::shared_ptr<InputByteStream> getStream() const;
+
+        std::vector<char> getDecodedData() const;
 
         virtual ~DefaultDeflateDecoder();
     };

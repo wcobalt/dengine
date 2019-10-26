@@ -9,11 +9,13 @@
 #include <thread>
 #include <vector>
 
-#define private public
-
 #include "../Utils/Compression/Deflate/DefaultDeflateDecoder.h"
 #include "../Utils/Compression/Huffman/DefaultHuffmanDecoder.h"
 #include "../Utils/Compression/Huffman/HuffmanDecoder.h"
+#include "../Utils/Streams/DefaultInputBitStream.h"
+#include "../Utils/HashSum/Adler32/DefaultAdler32.h"
+#include "../Utils/Streams/DefaultInputByteStream.h"
+#include "../Utils/Compression/Zlib/DefaultZlibDecoder.h"
 
 //@TODO windows forms(later) support
 
@@ -25,6 +27,7 @@ int main() {//memory safe
 
     DefaultDeflateDecoder decoder;
 
+/*
         char stream[] = {(char)0b00001100 , (char)0b11001000 , 0b01000001 , 0b00001010 , (char)0b10000000 , 0b00100000 , 0b00010000 , 0b00000101
                  , (char)0b11010000 , 0b01111101 , (char)0b11010000 , 0b00011101 , (char)0b11111110 , 0b00001001 , (char)0b10111010 , (char)0b10000100
                 , (char)0b11101011 ,(char) 0b10100000 , 0b00101011 , 0b01001100 ,(char) 0b11111010 ,(char) 0b10110101 , 0b00000001 , 0b00011101
@@ -35,11 +38,16 @@ int main() {//memory safe
                  , (char)0b10010010 , (char)0b10100110 , 0b00001110 , 0b00100110 , (char)0b11111000 , 0b00100101 , 0b00001110 , (char)0b11100110
                  , (char)0b11001100 , (char)0b11101000 , 0b00111010 , 0b00001001 , 0b01101101 ,(char) 0b10001101 , 0b01001001 , (char)0b11000101
                  , 0b01011001 ,(char) 0b11011111 , 0b01110101 , (char)0b11111001 , 0b00000110 , 0b00000000};
+*/
+char stream[] = {0b01111000, (char)0b11011010, (char)0b11001011, 0b00101000, (char)0b11001101, (char)0b11001100, (char)0b11001001, 0b00000111, 0b00000000, 0b00000110, 0b01100011, 0b00000010, 0b00100010};
+        std::shared_ptr<InputByteStream> deflate(new DefaultInputByteStream(stream));
 
-    decoder.decode(stream);
+    DefaultZlibDecoder decoder1;
+    decoder1.decode(*deflate);
 
 
-    for (int i = 0; i < decoder.getSize(); i++) std::cout << decoder[i];
+    for (int i = 0; i < decoder1.getSize(); i++) std::cout << decoder1[i];
+
     /*for (int i = 0; i < 8 * 5; i++) {
         std::cout << decoder.getBitFromBitStream(stream, i);
 
