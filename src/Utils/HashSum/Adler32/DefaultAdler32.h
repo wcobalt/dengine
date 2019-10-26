@@ -12,7 +12,7 @@ namespace dengine {
     public:
         uint32_t calculateAdler32(const char *data, size_t size) const;
 
-        uint32_t calculateAdler32(std::vector<char> data) const;
+        uint32_t calculateAdler32(const std::vector<char> &data) const;
 
         uint32_t calculateAdler32(const InputByteStream &inputStream, size_t size) const;
     };

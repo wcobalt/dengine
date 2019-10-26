@@ -98,6 +98,8 @@ namespace dengine {
 
         std::shared_ptr<InputByteStream> getStream() const;
 
+        std::vector<char> getDecodedData() const;
+
         virtual ~DefaultDeflateDecoder();
     };
 }

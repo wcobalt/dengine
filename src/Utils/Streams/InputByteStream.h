@@ -14,6 +14,8 @@ namespace dengine {
         virtual const char & peek() const = 0;
 
         virtual size_t getReadBytesCount() const = 0;
+
+        virtual void skip(size_t bytesCount) = 0;
     };
 }
 

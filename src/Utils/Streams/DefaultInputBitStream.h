@@ -27,11 +27,15 @@ namespace dengine {
 
         bool read();
 
-        size_t getReadBitsCount() const override;
+        size_t getReadBitsCount() const;
 
         unsigned long readNumber(size_t size, bool isInverseOrder);
 
+        unsigned long readMultibyteNumber(unsigned int size, bool isMsb);
+
         void skipUntilByteBoundary();
+
+        void skip(size_t bitsCount);
     };
 }
 

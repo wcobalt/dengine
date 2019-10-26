@@ -22,6 +22,8 @@ namespace dengine {
         virtual void clear() = 0;
 
         virtual std::shared_ptr<InputByteStream> getStream() const = 0;
+
+        virtual std::vector<char> getDecodedData() const = 0;
     };
 }
 

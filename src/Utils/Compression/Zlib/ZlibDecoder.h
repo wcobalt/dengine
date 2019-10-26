@@ -16,10 +16,11 @@ namespace dengine {
         static const unsigned CINFO = 1;
         static const unsigned FDICT = 2;
         static const unsigned FLEVEL = 3;
-        static const unsigned DICT = 4;
+        static const unsigned DICTID = 4;
         static const unsigned ADLER32 = 5;
+        static const unsigned CM_DEFLATE = 8;
+        static const unsigned CHECK_DIVIDER = 31;
 
-        //maybe it's better to make some InputByteStream or something else than provide two decode methods (also for Adler32)
         virtual void decode(InputByteStream &inputStream) = 0;
 
         virtual char at(size_t index) const = 0;

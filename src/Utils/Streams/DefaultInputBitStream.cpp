@@ -45,3 +45,24 @@ unsigned long DefaultInputBitStream::readNumber(size_t size, bool isInverseOrder
 void DefaultInputBitStream::skipUntilByteBoundary() {
     while (pointer % BITS_IN_CHAR != 0) pointer++;
 }
+
+void DefaultInputBitStream::skip(size_t bitsCount) {
+    pointer += bitsCount;
+}
+
+unsigned long DefaultInputBitStream::readMultibyteNumber(unsigned int size, bool isMsb) {
+    unsigned long result = 0;
+
+    for (unsigned i = 0; i < size; i++) {
+        unsigned long byte = readNumber(BITS_IN_CHAR, true);
+
+        if (isMsb)
+            result |= (byte << (size - i - 1) * BITS_IN_CHAR);
+        else {
+            result <<= BITS_IN_CHAR;
+            result |= byte;
+        }
+    }
+
+    return result;
+}

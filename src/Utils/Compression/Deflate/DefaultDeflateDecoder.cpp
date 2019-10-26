@@ -15,13 +15,6 @@
 
 using namespace dengine;
 
-const unsigned DefaultDeflateDecoder::BTYPE_SIZE;
-const unsigned DefaultDeflateDecoder::BTYPE_NO_COMPRESSION;
-const unsigned DefaultDeflateDecoder::BTYPE_FIXED_HUFFMAN;
-const unsigned DefaultDeflateDecoder::BTYPE_DYNAMIC_HUFFMAN;
-const unsigned DefaultDeflateDecoder::BTYPE_ERROR;
-const unsigned DefaultDeflateDecoder::BITS_IN_CHAR;
-
 DefaultDeflateDecoder::DefaultDeflateDecoder() {
     //calculate the offsets
     unsigned lengthCount = LENGTH_END - LENGTH_START + 1 - ERRONEOUS_LENGTHS_COUNT;
@@ -119,12 +112,16 @@ std::shared_ptr<InputByteStream> DefaultDeflateDecoder::getStream() const {
     return result;
 }
 
+std::vector<char> DefaultDeflateDecoder::getDecodedData() const {
+    return decodedData;
+}
+
 void DefaultDeflateDecoder::decodeNoCompression(InputBitStream &deflateStream) {
     //go up to next byte boundary
     deflateStream.skipUntilByteBoundary();
 
-    unsigned len = (unsigned)deflateStream.readNumber(LEN_BYTES * BITS_IN_CHAR, true);
-    unsigned nlen = (unsigned)deflateStream.readNumber(NLEN_BYTES * BITS_IN_CHAR, true);
+    unsigned len = deflateStream.readMultibyteNumber(LEN_BYTES, false);
+    unsigned nlen = deflateStream.readMultibyteNumber(NLEN_BYTES, false);
 
     //check whether nlen is 1's complement of len
     unsigned lenOnesComplement = len;

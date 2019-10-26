@@ -21,3 +21,7 @@ size_t DefaultInputByteStream::getReadBytesCount() const {
 const char & DefaultInputByteStream::peek() const {
     return stream[pointer];
 }
+
+void DefaultInputByteStream::skip(size_t bytesCount) {
+    pointer += bytesCount;
+}

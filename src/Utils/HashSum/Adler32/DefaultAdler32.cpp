@@ -26,7 +26,7 @@ uint32_t DefaultAdler32::calculateAdler32(const char *data, size_t size) const {
     return result;
 }
 
-uint32_t DefaultAdler32::calculateAdler32(std::vector<char> data) const {
+uint32_t DefaultAdler32::calculateAdler32(const std::vector<char> &data) const {
     return calculateAdler32(&data[0], data.size());
 }
 
