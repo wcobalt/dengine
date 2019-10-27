@@ -39,8 +39,11 @@ int main() {//memory safe
                  , (char)0b11001100 , (char)0b11101000 , 0b00111010 , 0b00001001 , 0b01101101 ,(char) 0b10001101 , 0b01001001 , (char)0b11000101
                  , 0b01011001 ,(char) 0b11011111 , 0b01110101 , (char)0b11111001 , 0b00000110 , 0b00000000};
 */
-char stream[] = {0b01111000, (char)0b11011010, (char)0b11001011, 0b00101000, (char)0b11001101, (char)0b11001100, (char)0b11001001, 0b00000111, 0b00000000, 0b00000110, 0b01100011, 0b00000010, 0b00100010};
-        std::shared_ptr<InputByteStream> deflate(new DefaultInputByteStream(stream));
+    char stream[] = {0b01111000, (char)0b11011010, 0b00101011, 0b00101101,(char) 0b11001001, 0b01001111, (char)0b11001110, (char)0b11001000
+                    , 0b01001110, 0b00000100, 0b00000000
+                    , 0b00001100, 0b00011000, 0b00000010, (char)0b11110000};
+
+    std::shared_ptr<InputByteStream> deflate(new DefaultInputByteStream(stream));
 
     DefaultZlibDecoder decoder1;
     decoder1.decode(*deflate);

@@ -3,7 +3,7 @@ project(Dengine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(App App/main.cpp Utils/Compression/Huffman/HuffmanDecoder.h Utils/Compression/Huffman/DefaultHuffmanDecoder.cpp Utils/Compression/Huffman/DefaultHuffmanDecoder.h Utils/Compression/Deflate/DeflateDecoder.h Utils/Compression/Deflate/DefaultDeflateDecoder.cpp Utils/Compression/Deflate/DefaultDeflateDecoder.h Exceptions/InvalidArgumentException.cpp Exceptions/InvalidArgumentException.h Exceptions/InvalidStateException.cpp Exceptions/InvalidStateException.h Utils/Compression/Deflate/Exceptions/DeflateException.cpp Utils/Compression/Deflate/Exceptions/DeflateException.h Utils/Streams/InputBitStream.h Utils/Streams/DefaultInputBitStream.cpp Utils/Streams/DefaultInputBitStream.h Utils/Compression/Zlib/ZlibDecoder.h Utils/Compression/Zlib/Exceptions/ZlibException.cpp Utils/Compression/Zlib/Exceptions/ZlibException.h Utils/HashSum/Adler32/Adler32.h Utils/HashSum/Adler32/DefaultAdler32.cpp Utils/HashSum/Adler32/DefaultAdler32.h Utils/Streams/InputByteStream.h Utils/Streams/DefaultInputByteStream.cpp Utils/Streams/DefaultInputByteStream.h Utils/Compression/Zlib/DefaultZlibDecoder.cpp Utils/Compression/Zlib/DefaultZlibDecoder.h)
+add_executable(App App/main.cpp Utils/Compression/Huffman/HuffmanDecoder.h Utils/Compression/Huffman/DefaultHuffmanDecoder.cpp Utils/Compression/Huffman/DefaultHuffmanDecoder.h Utils/Compression/Deflate/DeflateDecoder.h Utils/Compression/Deflate/DefaultDeflateDecoder.cpp Utils/Compression/Deflate/DefaultDeflateDecoder.h Exceptions/InvalidArgumentException.cpp Exceptions/InvalidArgumentException.h Exceptions/InvalidStateException.cpp Exceptions/InvalidStateException.h Utils/Compression/Deflate/Exceptions/DeflateException.cpp Utils/Compression/Deflate/Exceptions/DeflateException.h Utils/Streams/InputBitStream.h Utils/Streams/DefaultInputBitStream.cpp Utils/Streams/DefaultInputBitStream.h Utils/Compression/Zlib/ZlibDecoder.h Utils/Compression/Zlib/Exceptions/ZlibException.cpp Utils/Compression/Zlib/Exceptions/ZlibException.h Utils/HashSum/Adler32/Adler32.h Utils/HashSum/Adler32/DefaultAdler32.cpp Utils/HashSum/Adler32/DefaultAdler32.h Utils/Streams/InputByteStream.h Utils/Streams/DefaultInputByteStream.cpp Utils/Streams/DefaultInputByteStream.h Utils/Compression/Zlib/DefaultZlibDecoder.cpp Utils/Compression/Zlib/DefaultZlibDecoder.h Graphics/PNG/DefaultPng.cpp Graphics/PNG/DefaultPng.h)
 
 #[[add_library(Dengine
         Platform/Window/X/WindowManagerX.cpp
@@ -43,7 +43,7 @@ add_executable(App App/main.cpp Utils/Compression/Huffman/HuffmanDecoder.h Utils
         Exceptions/DengineException.cpp
         Exceptions/IOException.cpp Exceptions/IOException.h)]]
 
-add_library(PNG Graphics/PNG/PNG.h
+add_library(PNG Graphics/PNG/Png.h
             Graphics/Image.h Graphics/Pixel.h Graphics/DefaultPixel.cpp        Exceptions/DengineException.h
         Exceptions/DengineException.cpp Graphics/DefaultPixel.h Graphics/DefaultImage.cpp Graphics/DefaultImage.h)
 
