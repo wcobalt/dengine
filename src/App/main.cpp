@@ -9,13 +9,7 @@
 #include <thread>
 #include <vector>
 
-#include "../Utils/Compression/Deflate/DefaultDeflateDecoder.h"
-#include "../Utils/Compression/Huffman/DefaultHuffmanDecoder.h"
-#include "../Utils/Compression/Huffman/HuffmanDecoder.h"
-#include "../Utils/Streams/DefaultInputBitStream.h"
-#include "../Utils/HashSum/Adler32/DefaultAdler32.h"
-#include "../Utils/Streams/DefaultInputByteStream.h"
-#include "../Utils/Compression/Zlib/DefaultZlibDecoder.h"
+#include "../Graphics/PNG/DefaultPngLoader.h"
 
 //@TODO windows forms(later) support
 
@@ -23,9 +17,9 @@ using std::shared_ptr;
 using namespace dengine;
 
 int main() {//memory safe
-    std::shared_ptr<HuffmanDecoder> s(new DefaultHuffmanDecoder());
+/*    std::shared_ptr<HuffmanDecoder> s(new DefaultHuffmanDecoder());
 
-    DefaultDeflateDecoder decoder;
+    DefaultDeflateDecoder decoder;*/
 
 /*
         char stream[] = {(char)0b00001100 , (char)0b11001000 , 0b01000001 , 0b00001010 , (char)0b10000000 , 0b00100000 , 0b00010000 , 0b00000101
@@ -39,17 +33,23 @@ int main() {//memory safe
                  , (char)0b11001100 , (char)0b11101000 , 0b00111010 , 0b00001001 , 0b01101101 ,(char) 0b10001101 , 0b01001001 , (char)0b11000101
                  , 0b01011001 ,(char) 0b11011111 , 0b01110101 , (char)0b11111001 , 0b00000110 , 0b00000000};
 */
-    char stream[] = {0b01111000, (char)0b11011010, 0b00101011, 0b00101101,(char) 0b11001001, 0b01001111, (char)0b11001110, (char)0b11001000
+/*    char stream[] = {0b01111000, (char)0b11011010, 0b00101011, 0b00101101,(char) 0b11001001, 0b01001111, (char)0b11001110, (char)0b11001000
                     , 0b01001110, 0b00000100, 0b00000000
-                    , 0b00001100, 0b00011000, 0b00000010, (char)0b11110000};
+                    , 0b00001100, 0b00011000, 0b00000010, (char)0b11110000};*/
 
-    std::shared_ptr<InputByteStream> deflate(new DefaultInputByteStream(stream));
+/*
+    std::shared_ptr<InputByteFlow> deflate(new DefaultInputByteFlow(stream));
 
     DefaultZlibDecoder decoder1;
     decoder1.decode(*deflate);
 
 
     for (int i = 0; i < decoder1.getSize(); i++) std::cout << decoder1[i];
+*/
+
+    DefaultPngLoader pngLoader;
+
+    std::shared_ptr<Image> png = pngLoader.load("test_png.png");
 
     /*for (int i = 0; i < 8 * 5; i++) {
         std::cout << decoder.getBitFromBitStream(stream, i);

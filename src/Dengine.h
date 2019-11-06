@@ -18,12 +18,13 @@ namespace dengine {
 #include "Coreutils/ID.h"
 #include "DObject.h"
 
-/* Core release features for implementation:
- * optimize by assignments, init list and other
- * Image class
- * virtual inheritance of interfaces
- * review run/pause/stop API
- * review Dengine->ScenesManager->Scene->GameObject->Component API (Core API)
+/* "Core" release features for implementation:
+ * 1) Image class
+ * 2) optimize by assignments, init list and other
+ * 3) clear methods for builders
+ * 4) virtual inheritance of interfaces
+ * 5) review run/pause/stop API
+ * 6) review Dengine->ScenesManager->Scene->GameObject->Component API (Core API)
  */
 
 namespace dengine {

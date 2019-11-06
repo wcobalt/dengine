@@ -7,10 +7,12 @@
 #ifndef DENGINE_PNG_H
 #define DENGINE_PNG_H
 
-#include "../Image.h"
+namespace dengine {
+    class Image;
+}
 
 namespace dengine {
-    class Png {
+    class PngLoader {
     public:
         virtual std::shared_ptr<Image> load(const std::string& fileName) const = 0;
     };

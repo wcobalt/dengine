@@ -15,7 +15,10 @@ namespace dengine {
 namespace dengine {
     class Image {
     public:
-        virtual std::shared_ptr<const Pixel> getPixel(unsigned x, unsigned y) const = 0;
+        static const unsigned TYPE_RGB = 0;
+        static const unsigned TYPE_RGBA = 1;
+
+        virtual std::shared_ptr<const Pixel> getPixel(unsigned long x, unsigned long y) const = 0;
 
         virtual unsigned getWidth() const = 0;
 
