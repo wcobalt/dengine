@@ -1,13 +1,17 @@
 #include <iostream>
-#include "../Platform/Window/X/WindowManagerX.h"
-#include "../Events/Keyboard/KeyboardState.h"
-#include "../Events/Window/WindowState.h"
-#include "../Events/Keyboard/Key.h"
+//#include "../Platform/Window/X/WindowManagerX.h"
+//#include "../Events/Keyboard/KeyboardState.h"
+//#include "../Events/Window/WindowState.h"
+//#include "../Events/Keyboard/Key.h"
 #include <string>
 #include <memory>
 #include <chrono>
 #include <thread>
 #include <vector>
+
+#include "../Graphics/PNG/PngLoader.h"
+#include "../Graphics/DefaultTextureIO.h"
+#include "../Graphics/Texture.h"
 
 //@TODO windows forms(later) support
 
@@ -15,8 +19,30 @@ using std::shared_ptr;
 using namespace dengine;
 
 int main() {//memory safe
+    DefaultTextureIO textureIO;
+
+    std::shared_ptr<Texture> png = textureIO.load("png_test.png");
+
+    std::byte** data = png->getRawData();
+
+    for (int y = 0; y < png->getWidth(); y++) {
+        for (int x = 0; x < png->getHeight()*3; x+=3) {
+            std::cout << (int)data[y][x] << " ";
+            std::cout << (int)data[y][x + 1] << " ";
+            std::cout << (int)data[y][x + 2] << " ";
+        }
+
+        std::cout << "\n";
+    }
+
+    /*for (int i = 0; i < 8 * 5; i++) {
+        std::cout << decoder.getBitFromBitStream(stream, i);
+
+        if ((i + 1) % 4 == 0) std::cout << ".";
+    }*/
+
     //std::cout << (char)0xd0 << (char)0xb6;
-    std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
+//    std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
 
 /*    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     manager->setSize(500, 500);
@@ -38,7 +64,7 @@ int main() {//memory safe
 
    manager->setIcon(buffer, 4 + 16 * 16 + 32*32);*/
 
-    while (1) {
+/*    while (1) {
         std::shared_ptr<WindowState> windowState = manager->getWindowState();
 
         std::cout << "Tick:\nClosing: " << windowState->isClosing() << "\n";
@@ -50,7 +76,7 @@ int main() {//memory safe
         std::cout << "Was moved: " << windowState->wasMoved() << "\n";
         std::cout << "Was resized: " << windowState->wasResized() << "\n\n";
         std::this_thread::sleep_for(std::chrono::milliseconds(800));
-    }
+    }*/
 /*manager->focus();
 std::cout << manager->isFocused();
 fflush(stdout);
