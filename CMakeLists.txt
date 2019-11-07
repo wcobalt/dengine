@@ -17,7 +17,7 @@ add_executable(App
     src/Graphics/PNG/Exceptions/PngException.cpp
     src/Graphics/PNG/Exceptions/PngException.h src/Exceptions/ImageException.h)
 
-#[[add_library(Dengine
+add_library(Dengine
         src/Platform/Window/X/WindowManagerX.cpp
         src/Platform/Window/X/WindowManagerX.h
         src/Platform/Window/WindowManager.h
@@ -53,7 +53,7 @@ add_executable(App
         src/Platform/Window/X/Util/XDefaultKeyboardConverter.cpp
         src/Exceptions/DengineException.h
         src/Exceptions/DengineException.cpp
-        src/Exceptions/IOException.cpp src/Exceptions/IOException.h)]]
+        src/Exceptions/IOException.cpp src/Exceptions/IOException.h)
 
 add_library(PNG
         src/Graphics/TextureLoader.h
@@ -79,4 +79,4 @@ find_library(LIB_PNG png)
 
 find_package (Threads)
 
-target_link_libraries(App PNG #[[${X11_LIBRARIES} ${OPENGL_LIBRARIES}]] ${CMAKE_THREAD_LIBS_INIT} ${LIB_PNG})
+target_link_libraries(App PNG ${X11_LIBRARIES} #[[${OPENGL_LIBRARIES}]] ${CMAKE_THREAD_LIBS_INIT} ${LIB_PNG})
