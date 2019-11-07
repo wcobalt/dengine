@@ -4,7 +4,18 @@ project(Dengine)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_PREFIX_PATH lib)
 
-add_executable(App src/App/main.cpp src/Exceptions/InvalidArgumentException.cpp src/Exceptions/InvalidArgumentException.h src/Exceptions/InvalidStateException.cpp src/Exceptions/InvalidStateException.h src/Graphics/PNG/DefaultPngLoader.cpp src/Graphics/PNG/DefaultPngLoader.h src/Graphics/PNG/Exceptions/PngException.cpp src/Graphics/PNG/Exceptions/PngException.h)
+add_executable(App
+    src/App/main.cpp
+    src/Exceptions/InvalidArgumentException.cpp
+    src/Exceptions/InvalidArgumentException.h
+    src/Exceptions/InvalidStateException.cpp
+    src/Exceptions/InvalidStateException.h
+    src/Exceptions/IOException.h
+    src/Exceptions/IOException.cpp
+        src/Graphics/PNG/PngLoader.cpp
+        src/Graphics/PNG/PngLoader.h
+    src/Graphics/PNG/Exceptions/PngException.cpp
+    src/Graphics/PNG/Exceptions/PngException.h src/Exceptions/ImageException.h)
 
 #[[add_library(Dengine
         src/Platform/Window/X/WindowManagerX.cpp
@@ -44,9 +55,18 @@ add_executable(App src/App/main.cpp src/Exceptions/InvalidArgumentException.cpp 
         src/Exceptions/DengineException.cpp
         src/Exceptions/IOException.cpp src/Exceptions/IOException.h)]]
 
-add_library(PNG src/Graphics/PNG/PngLoader.h
-            src/Graphics/Image.h src/Graphics/Pixel.h src/Graphics/DefaultPixel.cpp        src/Exceptions/DengineException.h
-        src/Exceptions/DengineException.cpp src/Graphics/DefaultPixel.h src/Graphics/DefaultImage.cpp src/Graphics/DefaultImage.h src/Graphics/ImageBuilder.h src/Graphics/DefaultImageBuilder.cpp src/Graphics/DefaultImageBuilder.h)
+add_library(PNG
+        src/Graphics/TextureLoader.h
+
+        src/Graphics/Texture.h
+src/Exceptions/DengineException.h
+
+src/Exceptions/DengineException.cpp
+        src/Graphics/DefaultTexture.cpp
+        src/Graphics/DefaultTexture.h
+        src/Graphics/TextureBuilder.h
+        src/Graphics/DefaultTextureBuilder.cpp
+        src/Graphics/DefaultTextureBuilder.h src/Graphics/TextureIO.h src/Graphics/DefaultTextureIO.cpp src/Graphics/DefaultTextureIO.h)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})

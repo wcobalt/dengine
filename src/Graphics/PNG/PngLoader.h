@@ -1,21 +1,27 @@
 //
-// Created by wcobalt on 5/24/19.
+// Created by wcobalt on 10/27/19.
 //
-#include <memory>
-#include <string>
 
-#ifndef DENGINE_PNG_H
-#define DENGINE_PNG_H
+#ifndef DENGINE_DEFAULTPNG_H
+#define DENGINE_DEFAULTPNG_H
 
 namespace dengine {
-    class Image;
+    class Texture;
 }
 
+#include "../TextureLoader.h"
+
 namespace dengine {
-    class PngLoader {
+    class PngLoader : public TextureLoader {
+    private:
+        const unsigned SIGNATURE_SIZE = 8;
+
+        bool hasPngSignature(FILE* stream) const;
     public:
-        virtual std::shared_ptr<Image> load(const std::string& fileName) const = 0;
+        std::shared_ptr<Texture> load(const std::string &fileName) const;
+
+        bool isCompatible(const std::string &fileName) const;
     };
 }
 
-#endif //DENGINE_PNG_H
+#endif //DENGINE_DEFAULTPNG_H

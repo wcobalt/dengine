@@ -7,26 +7,23 @@
 
 #include <vector>
 #include <cstddef>
-#include "ImageBuilder.h"
+#include "TextureBuilder.h"
 
 namespace dengine {
-    class DefaultImageBuilder : public ImageBuilder {
+    class DefaultTextureBuilder : public TextureBuilder {
     private:
         unsigned imageType;
         unsigned long width, height;
-        std::byte* data;
+        std::byte** data;
 
-        static const unsigned TYPE_NONE = ~0u;
         static const unsigned TYPE_RGB_SIZE = 3;
         static const unsigned TYPE_RGBA_SIZE = 4;
 
-        void initialize();
+        void checkIfAllocable();
 
-        unsigned getPixelSize() const;
-        
-        void setRgbPixel(size_t index, std::byte r, std::byte g, std::byte b);
+        unsigned getSampleDepth() const;
     public:
-        DefaultImageBuilder();
+        DefaultTextureBuilder();
 
         virtual void setImageType(unsigned imageType);
 
@@ -34,11 +31,17 @@ namespace dengine {
 
         virtual void setHeight(unsigned long height);
 
+        void allocate();
+
+        void allocate(std::byte **rawData);
+
         virtual void setRgbPixel(size_t x, size_t y, std::byte r, std::byte g, std::byte b);
 
         virtual void setRgbaPixel(size_t x, size_t y, std::byte r, std::byte g, std::byte b, std::byte a);
 
-        std::shared_ptr<Image> build() const;
+        std::shared_ptr<Texture> build() const;
+
+        void clear();
     };
 }
 

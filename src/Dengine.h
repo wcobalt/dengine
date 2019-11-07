@@ -20,7 +20,7 @@ namespace dengine {
 
 /* "Core" release features for implementation:
  * 1) Image class
- * 2) optimize by assignments, init list and other
+ * 2) optimize by assignments, init list and other, exceptions reduce
  * 3) clear methods for builders
  * 4) virtual inheritance of interfaces
  * 5) review run/pause/stop API
