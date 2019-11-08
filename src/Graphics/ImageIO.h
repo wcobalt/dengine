@@ -7,13 +7,13 @@
 #define DENGINE_IMAGELOADER_H
 
 namespace dengine {
-    class Texture;
+    class Image;
 }
 
 namespace dengine {
-    class TextureIO {
+    class ImageIO {
     public:
-        virtual std::shared_ptr<Texture> load(const std::string &fileName) const = 0;
+        virtual std::shared_ptr<Image> load(const std::string &fileName) const = 0;
     };
 }
 

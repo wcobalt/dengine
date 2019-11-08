@@ -13,6 +13,7 @@ namespace dengine {
     class MouseState;
     class KeyboardState;
     class WindowState;
+    class Image;
 }
 
 #include "../../DObject.h"
@@ -37,7 +38,7 @@ namespace dengine {
 
         virtual void setSize(uint width, uint height) = 0;
 
-        virtual void setIcon(const long* buffer, int length) = 0;
+        virtual void setIcon(std::shared_ptr<const Image> iconTexture) = 0;
 
         virtual void setRatio(uint width, uint height) = 0;
 
@@ -104,7 +105,7 @@ namespace dengine {
 
         virtual std::shared_ptr<dengine::WindowState> getWindowState() = 0;
 
-        virtual ~WindowManager();
+        virtual ~WindowManager() = default;
     };
 }
 

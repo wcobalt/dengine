@@ -108,7 +108,7 @@ namespace dengine {
 
         void setSize(uint width, uint height);
 
-        void setIcon(const long* buffer, int length);
+        void setIcon(std::shared_ptr<const Image> iconTexture);
 
         void setRatio(uint ratioX, uint ratioY);
 

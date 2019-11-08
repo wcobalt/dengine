@@ -10,7 +10,7 @@
 #define DENGINE_IMAGE_H
 
 namespace dengine {
-    class Texture {
+    class Image {
     public:
         static const unsigned TYPE_RGB = 1;
         static const unsigned TYPE_RGBA = 2;
@@ -20,6 +20,8 @@ namespace dengine {
         virtual unsigned long getHeight() const = 0;
 
         virtual unsigned getImageType() const = 0;
+
+        virtual unsigned getSampleSize() const = 0;
 
         virtual std::byte ** getRawData() const = 0;
     };
