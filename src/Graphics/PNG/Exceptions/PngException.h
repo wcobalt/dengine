@@ -10,7 +10,7 @@
 namespace dengine {
     class PngException : public DengineException {
     public:
-        PngException(const std::string &message);
+        PngException(const std::string &message) : DengineException(message) {}
     };
 }
 

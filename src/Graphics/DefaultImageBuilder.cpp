@@ -4,7 +4,7 @@
 
 #include "DefaultImageBuilder.h"
 #include "Image.h"
-#include "../Exceptions/InvalidStateException.h"
+#include "../Exceptions/IllegalStateException.h"
 #include "DefaultImage.h"
 #include "../Exceptions/ImageException.h"
 
@@ -25,7 +25,7 @@ void DefaultImageBuilder::setImageType(unsigned imageType) {
 }
 
 void DefaultImageBuilder::setRgbPixel(size_t x, size_t y, std::byte r, std::byte g, std::byte b) {
-    if (imageType != Image::TYPE_RGB) throw InvalidStateException("Type of the image is not RGB");
+    if (imageType != Image::TYPE_RGB) throw IllegalStateException("Type of the image is not RGB");
 
     unsigned sampleDepth = getSampleDepth();
     unsigned long xOffset = x * sampleDepth;
@@ -36,7 +36,7 @@ void DefaultImageBuilder::setRgbPixel(size_t x, size_t y, std::byte r, std::byte
 }
 
 void DefaultImageBuilder::setRgbaPixel(size_t x, size_t y, std::byte r, std::byte g, std::byte b, std::byte a) {
-    if (imageType != Image::TYPE_RGBA) throw InvalidStateException("Type of the image is not RGBA");
+    if (imageType != Image::TYPE_RGBA) throw IllegalStateException("Type of the image is not RGBA");
 
     setRgbPixel(x, y, r, g, b);
 

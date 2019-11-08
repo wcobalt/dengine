@@ -8,8 +8,9 @@
 #include "DengineException.h"
 
 namespace dengine {
-    class NoSuitableSceneException : public DengineException {
-        const char* what() const noexcept;
+    class SceneException : public DengineException {
+    public:
+        SceneException(const std::string& message) : DengineException(message) {}
     };
 }
 

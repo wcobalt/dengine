@@ -9,9 +9,9 @@
 #include "DengineException.h"
 
 namespace dengine {
-    class InvalidStateException : public DengineException {
+    class IllegalStateException : public DengineException {
     public:
-        InvalidStateException(const std::string& message);
+        IllegalStateException(const std::string& message) : DengineException(message) {}
     };
 }
 

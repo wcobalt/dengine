@@ -13,10 +13,7 @@
 #include "Dengine.h"
 #include "Components/Component.h"
 #include "Components/TransformComponent.h"
-#include "Exceptions/NoSuitableComponentException.h"
-#include "Exceptions/TransformComponentRemovingException.h"
-#include "Exceptions/ComponentAlreadyAddedException.h"
-#include "Exceptions/NoCastToComponentException.h"
+#include "Exceptions/ComponentException.h"
 
 using namespace dengine;
 
@@ -38,7 +35,7 @@ void GameObject::initParent() {
 void GameObject::addComponent(shared_ptr<Component> component) {
     for (shared_ptr<GameObject>& currentComponent : children) {
         if (typeid(currentComponent).hash_code() == typeid(component).hash_code())
-            throw ComponentAlreadyAddedException();
+            throw ComponentException("The component is already bound to this game object");
     }
 
     components.push_back(component);
@@ -49,15 +46,16 @@ void GameObject::addComponent(shared_ptr<Component> component) {
 }
 //@todo think about weak_ptr
 //only if T has default constructor
+//SFINAE
 template <class T>
 void GameObject::addComponent() {
-    shared_ptr<T> object = std::make_shared<T>();//exceptionable
-    shared_ptr<Component> component = std::dynamic_pointer_cast<Component>(object);
+    shared_ptr<T> object = std::make_shared<T>();
+    shared_ptr<Component> component = std::dynamic_pointer_cast<Component>(object);//exceptionable
 
     if (component)
         addComponent(component);
     else
-        throw NoCastToComponentException();
+        throw ComponentException("T type is not an exception type");
 }
 
 template <class T>
@@ -70,7 +68,7 @@ void GameObject::removeComponent() {
         }
     }
 
-    throw NoSuitableComponentException();
+    throw ComponentException("No such component was found");
 }
 
 void GameObject::removeComponent(shared_ptr<Component> component) {
@@ -82,14 +80,14 @@ void GameObject::removeComponent(shared_ptr<Component> component) {
         }
     }
 
-    throw NoSuitableComponentException();
+    throw ComponentException("No such component was found");
 }
 
 void GameObject::safelyRemoveComponent(vector<shared_ptr<Component>>::iterator it) {
     if (!std::dynamic_pointer_cast<TransformComponent>(*it))
         removeComponent(it);
     else
-        throw TransformComponentRemovingException();
+        throw ComponentException("Unable to remove Transform Component");
 }
 
 void GameObject::removeComponent(vector<shared_ptr<Component>>::iterator it) {
@@ -140,7 +138,7 @@ shared_ptr<T> GameObject::getComponent() const {
             return component;
     }
 
-    throw NoSuitableComponentException();
+    throw ComponentException("No such component was found");
 }
 
 vector<shared_ptr<Component>> GameObject::getAllComponents() const {

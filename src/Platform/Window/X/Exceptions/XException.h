@@ -12,7 +12,7 @@
 namespace dengine {
 class XException : public dengine::DengineException {
     public:
-        XException(const std::string& description);
+        XException(const std::string& message) : DengineException(message) {}
     };
 }
 
