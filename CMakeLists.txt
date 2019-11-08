@@ -5,23 +5,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_PREFIX_PATH lib)
 
 add_executable(App
-    src/App/main.cpp
-    src/Exceptions/InvalidArgumentException.cpp
-    src/Exceptions/InvalidArgumentException.h
-    src/Exceptions/InvalidStateException.cpp
-    src/Exceptions/InvalidStateException.h
-    src/Exceptions/IOException.h
-    src/Exceptions/IOException.cpp
-        src/Graphics/PNG/PngLoader.cpp
-        src/Graphics/PNG/PngLoader.h
-    src/Graphics/PNG/Exceptions/PngException.cpp
-    src/Graphics/PNG/Exceptions/PngException.h src/Exceptions/ImageException.h)
+        src/App/main.cpp
+)
 
 add_library(Dengine
         src/Platform/Window/X/WindowManagerX.cpp
         src/Platform/Window/X/WindowManagerX.h
         src/Platform/Window/WindowManager.h
-
         src/Events/Keyboard/KeyboardState.h
         src/Events/Mouse/MouseState.h
         src/Events/Keyboard/Keyboard.cpp
@@ -40,8 +30,14 @@ add_library(Dengine
         src/Events/Keyboard/KeyByDKeyCodeComparator.h
         src/Events/Keyboard/KeyBySymbolComparator.cpp
         src/Events/Keyboard/KeyBySymbolComparator.h
-
-        src/Platform/Window/WindowManager.cpp src/Events/Keyboard/KeyComparator.h src/Events/Mouse/MouseStateBuilder.h src/Events/Mouse/Mouse.h src/Events/Mouse/DefaultMouseStateBuilder.cpp src/Events/Mouse/DefaultMouseStateBuilder.h src/Events/Window/WindowStateBuilder.h src/Events/Window/DefaultWindowStateBuilder.cpp src/Events/Window/DefaultWindowStateBuilder.h
+        src/Events/Keyboard/KeyComparator.h
+        src/Events/Mouse/MouseStateBuilder.h
+        src/Events/Mouse/Mouse.h
+        src/Events/Mouse/DefaultMouseStateBuilder.cpp
+        src/Events/Mouse/DefaultMouseStateBuilder.h
+        src/Events/Window/WindowStateBuilder.h
+        src/Events/Window/DefaultWindowStateBuilder.cpp
+        src/Events/Window/DefaultWindowStateBuilder.h
         src/Events/Keyboard/KeyboardStateBuilder.h
         src/Events/Keyboard/DefaultKeyboardStateBuilder.h
         src/Events/Keyboard/DefaultKeyboardStateBuilder.cpp
@@ -53,20 +49,31 @@ add_library(Dengine
         src/Platform/Window/X/Util/XDefaultKeyboardConverter.cpp
         src/Exceptions/DengineException.h
         src/Exceptions/DengineException.cpp
-        src/Exceptions/IOException.cpp src/Exceptions/IOException.h)
+        src/Exceptions/IOException.cpp
+        src/Exceptions/IOException.h
+        src/Exceptions/InvalidArgumentException.cpp
+        src/Exceptions/InvalidArgumentException.h
+        src/Exceptions/InvalidStateException.cpp
+        src/Exceptions/InvalidStateException.h
+)
 
-add_library(PNG
-        src/Graphics/TextureLoader.h
-
-        src/Graphics/Texture.h
-src/Exceptions/DengineException.h
-
-src/Exceptions/DengineException.cpp
-        src/Graphics/DefaultTexture.cpp
-        src/Graphics/DefaultTexture.h
-        src/Graphics/TextureBuilder.h
-        src/Graphics/DefaultTextureBuilder.cpp
-        src/Graphics/DefaultTextureBuilder.h src/Graphics/TextureIO.h src/Graphics/DefaultTextureIO.cpp src/Graphics/DefaultTextureIO.h)
+add_library(Graphics
+        src/Graphics/ImageLoader.h
+        src/Graphics/Image.h
+        src/Graphics/DefaultImage.cpp
+        src/Graphics/DefaultImage.h
+        src/Graphics/ImageBuilder.h
+        src/Graphics/DefaultImageBuilder.cpp
+        src/Graphics/DefaultImageBuilder.h
+        src/Graphics/ImageIO.h
+        src/Graphics/DefaultImageIO.cpp
+        src/Graphics/DefaultImageIO.h
+        src/Graphics/PNG/PngLoader.cpp
+        src/Graphics/PNG/PngLoader.h
+        src/Graphics/PNG/Exceptions/PngException.cpp
+        src/Graphics/PNG/Exceptions/PngException.h
+        src/Exceptions/ImageException.h
+)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
@@ -79,4 +86,4 @@ find_library(LIB_PNG png)
 
 find_package (Threads)
 
-target_link_libraries(App PNG ${X11_LIBRARIES} #[[${OPENGL_LIBRARIES}]] ${CMAKE_THREAD_LIBS_INIT} ${LIB_PNG})
+target_link_libraries(App  Graphics Dengine ${X11_LIBRARIES} ${OPENGL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${LIB_PNG})

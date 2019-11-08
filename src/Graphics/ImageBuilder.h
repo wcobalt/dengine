@@ -8,11 +8,11 @@
 #define DENGINE_IMAGEBUILDER_H
 
 namespace dengine {
-    class Texture;
+    class Image;
 }
 
 namespace dengine {
-    class TextureBuilder {
+    class ImageBuilder {
     public:
         virtual void setImageType(unsigned imageType) = 0;
 
@@ -28,7 +28,7 @@ namespace dengine {
 
         virtual void setRgbaPixel(size_t x, size_t y, std::byte r, std::byte g, std::byte b, std::byte a) = 0;
 
-        virtual std::shared_ptr<Texture> build() const = 0;
+        virtual std::shared_ptr<Image> build() const = 0;
 
         virtual void clear() = 0;
     };

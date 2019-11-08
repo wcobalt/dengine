@@ -10,8 +10,10 @@
 #include <vector>
 
 #include "../Graphics/PNG/PngLoader.h"
-#include "../Graphics/DefaultTextureIO.h"
-#include "../Graphics/Texture.h"
+#include "../Graphics/DefaultImageIO.h"
+#include "../Graphics/Image.h"
+#include "../Platform/Window/WindowManager.h"
+#include "../Platform/Window/X/WindowManagerX.h"
 
 //@TODO windows forms(later) support
 
@@ -19,9 +21,9 @@ using std::shared_ptr;
 using namespace dengine;
 
 int main() {//memory safe
-    DefaultTextureIO textureIO;
+    DefaultImageIO textureIO;
 
-    std::shared_ptr<Texture> png = textureIO.load("png_test.png");
+    std::shared_ptr<Image> png = textureIO.load("png_test.png");
 
     std::byte** data = png->getRawData();
 
@@ -35,6 +37,10 @@ int main() {//memory safe
         std::cout << "\n";
     }
 
+    std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
+
+    manager->setIcon(png);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
     /*for (int i = 0; i < 8 * 5; i++) {
         std::cout << decoder.getBitFromBitStream(stream, i);
 

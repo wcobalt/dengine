@@ -32,6 +32,7 @@
 #include "../../../Events/Keyboard/DKey.h"
 #include "../../../Events/Keyboard/Keyboard.h"
 #include "../../../Events/Mouse/Mouse.h"
+#include "../../../Graphics/Image.h"
 #include "Util/XDefaultKeyboardConverter.h"
 #include "Util/XKeyboardConverter.h"
 
@@ -171,12 +172,62 @@ void WindowManagerX::setSize(uint width, uint height) {
     XFlush(display);
 }
 
-void WindowManagerX::setIcon(const long* buffer, int length) {
+void WindowManagerX::setIcon(std::shared_ptr<const Image> iconTexture) {
     //https://stackoverflow.com/questions/10699927/xlib-argb-window-icon
+    const unsigned BITS_IN_BYTE = 8;
+    const unsigned COMPONENTS_COUNT = 3;
+    const unsigned BUFFER_OFFSET = 2;
+    using ulong = unsigned long;
+
     Atom icon = XInternAtom(display, "_NET_WM_ICON", False);
     Atom typeCardinal = XInternAtom(display, "CARDINAL", False);
 
-    XChangeProperty(display, window, icon, typeCardinal, 32, PropModeReplace, (const unsigned char*)buffer, length);
+    ulong width = iconTexture->getWidth(), height = iconTexture->getWidth();
+    unsigned sampleSize = iconTexture->getSampleSize();
+    int length = width * height + 2; //overflow risk
+    auto* buffer = new uint64_t[length];
+    std::byte** rawData = iconTexture->getRawData();
+    unsigned imageType = iconTexture->getImageType();
+
+    buffer[0] = width;
+    buffer[1] = height;
+
+    //ARGB pixel of CARDINAL32 is 32 bit integer, but in 64bit systems it must be 64bit integer,
+    //but only 4 less significant bytes are used
+    for (ulong y = 0; y < height; y++) {
+        for (ulong x = 0; x < width; x++) {
+            uint32_t pixel = 0;
+            char alpha = 0;
+
+            switch (imageType) {
+                case Image::TYPE_RGB:
+                    alpha = 0xFF;
+
+                    break;
+                case Image::TYPE_RGBA:
+                    alpha = static_cast<char>(rawData[y][x * sampleSize + 3]);
+
+                    break;
+            }
+
+            pixel |= alpha;
+            pixel <<= BITS_IN_BYTE * COMPONENTS_COUNT;
+
+            for (unsigned i = 0; i < COMPONENTS_COUNT; i++) {
+                //3 components (rgb)
+
+                uint32_t component = static_cast<uint32_t>(rawData[y][x * sampleSize + i]);
+                component <<= (COMPONENTS_COUNT - i - 1) * BITS_IN_BYTE;
+
+                pixel |= component;
+            }
+
+            buffer[BUFFER_OFFSET + y * width + x] = pixel;
+        }
+    }
+
+    XChangeProperty(display, window, icon, typeCardinal, 32, PropModeReplace,
+            (const unsigned char*)(buffer), length);
 
     XFlush(display);
 }

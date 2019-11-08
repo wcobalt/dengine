@@ -8,13 +8,13 @@
 #define DENGINE_PNG_H
 
 namespace dengine {
-    class Texture;
+    class Image;
 }
 
 namespace dengine {
-    class TextureLoader {
+    class ImageLoader {
     public:
-        virtual std::shared_ptr<Texture> load(const std::string& fileName) const = 0;
+        virtual std::shared_ptr<Image> load(const std::string& fileName) const = 0;
 
         virtual bool isCompatible(const std::string& fileName) const = 0;
     };
