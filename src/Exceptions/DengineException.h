@@ -15,9 +15,11 @@ namespace dengine {
     private:
         std::string message;
     public:
-        DengineException(const std::string& message);
+        inline DengineException(const std::string& message) : message(message) {}
 
-        virtual const char* what() const noexcept;
+        inline virtual const char* what() const noexcept {
+            return message.c_str();
+        }
     };
 }
 

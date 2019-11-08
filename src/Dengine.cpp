@@ -9,9 +9,9 @@
 
 #include "Dengine.h"
 #include "DengineAccessor.h"
-#include "Window/WindowManager.h"
+#include "Platform/Window/WindowManager.h"
 #include "ScenesManager.h"
-#include "Exceptions/DengineIsNotInitializedException.h"
+#include "Exceptions/DengineException.h"
 
 using std::shared_ptr;
 using namespace dengine;
@@ -33,7 +33,7 @@ void Dengine::init(shared_ptr<WindowManager> windowManager) {
 }
 
 void Dengine::update() {
-    windowManager->checkEvents();
+    //windowManager->checkEvents();
     scenesManager->update({});
 }
 
@@ -84,5 +84,5 @@ shared_ptr<Dengine> Dengine::get() {
     if (!dengine)
         return dengine;
 
-    throw DengineIsNotInitializedException();
+    throw DengineException("Dengine is not initialized. Call init()");
 }

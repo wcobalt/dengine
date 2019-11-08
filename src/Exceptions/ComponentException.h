@@ -8,8 +8,9 @@
 #include "DengineException.h"
 
 namespace dengine {
-    class NoCastToComponentException : public DengineException {
-        const char* what() const noexcept;
+    class ComponentException : public DengineException {
+    public:
+        ComponentException(const std::string& message) : DengineException(message) {}
     };
 }
 

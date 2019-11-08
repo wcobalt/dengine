@@ -11,9 +11,7 @@
 #include "Coreutils/ID.h"
 #include "Scene.h"
 #include "DengineAccessor.h"
-#include "Exceptions/NoCurrentSceneException.h"
-#include "Exceptions/NoSuitableSceneException.h"
-#include "Exceptions/CurrentSceneRemovingException.h"
+#include "Exceptions/SceneException.h"
 
 using std::shared_ptr;
 using std::string;
@@ -29,7 +27,7 @@ void ScenesManager::update(const DengineAccessor& dengineAccessor) {
         return;
     }
 
-    throw NoCurrentSceneException();
+    throw SceneException("No current scene exception");
 }
 
 ID ScenesManager::addScene(shared_ptr<Scene> scene) {
@@ -54,7 +52,7 @@ void ScenesManager::loadScene(ID id) {
         return;
     }
 
-    throw NoSuitableSceneException();
+    throw SceneException("Suitable scene is not found");
 }
 
 void ScenesManager::loadScene(const string& alias) {
@@ -66,7 +64,7 @@ void ScenesManager::loadScene(const string& alias) {
         return;
     }
 
-    throw NoSuitableSceneException();
+    throw SceneException("Suitable scene is not found");
 }
 
 void ScenesManager::removeScene(ID id) {
@@ -80,10 +78,10 @@ void ScenesManager::removeScene(ID id) {
             return;
         }
 
-        throw NoSuitableSceneException();
+        throw SceneException("Suitable scene is not found");
     }
 
-    throw CurrentSceneRemovingException();
+    throw SceneException("Cannot remove current scene");
 }
 
 void ScenesManager::removeScene(const string& alias) {
@@ -99,10 +97,10 @@ void ScenesManager::removeScene(const string& alias) {
             return;
         }
 
-        throw CurrentSceneRemovingException();
+        throw SceneException("Cannot remove current scene");
     }
 
-    throw NoSuitableSceneException();
+    throw SceneException("Suitable scene is not found");
 }
 
 void ScenesManager::setCurrentScene(std::pair<ID, shared_ptr<Scene>> scene) {
@@ -123,7 +121,7 @@ shared_ptr<Scene> ScenesManager::getScene(ID id) const {
     if (it != scenesIds.end())
         return it->second.second;
 
-    throw NoSuitableSceneException();
+    throw SceneException("Suitable scene is not found");
 }
 
 shared_ptr<Scene> ScenesManager::getScene(const string& alias) const {
@@ -132,21 +130,21 @@ shared_ptr<Scene> ScenesManager::getScene(const string& alias) const {
     if (it != scenesAliases.end())
         return it->second.second;
 
-    throw NoSuitableSceneException();
+    throw SceneException("Suitable scene is not found");
 }
 
 ID ScenesManager::getCurrentSceneID() const {
     if (currentScene.first != NOT_EXIST_SCENE)
         return currentScene.first;
 
-    throw NoCurrentSceneException();
+    throw SceneException("There is no current scene");
 }
 
 shared_ptr<Scene> ScenesManager::getCurrentScene() const {
     if (currentScene.first != NOT_EXIST_SCENE)
         return currentScene.second;
 
-    throw NoCurrentSceneException();
+    throw SceneException("There is no current scene");
 }
 
 ID ScenesManager::getIDByAlias(const string& alias) const {
@@ -155,7 +153,7 @@ ID ScenesManager::getIDByAlias(const string& alias) const {
     if (it != scenesAliases.end())
         return it->second.first;
 
-    throw NoSuitableSceneException();
+    throw SceneException("Suitable scene is not found");
 }
 
 string ScenesManager::getAliasByID(ID id) const {
@@ -164,7 +162,7 @@ string ScenesManager::getAliasByID(ID id) const {
     if (it != scenesIds.end())
         return it->second.first;
 
-    throw NoSuitableSceneException();
+    throw SceneException("Suitable scene is not found");
 }
 
 ID ScenesManager::getUniqueSceneId() {

@@ -20,41 +20,41 @@ namespace dengine {
 namespace dengine {
     class ScenesManager : public DObject {
     public:
-        static const coreutils::ID NOT_EXIST_SCENE = 0;
+        static const ID NOT_EXIST_SCENE = 0;
     private:
-        std::map<coreutils::ID, std::pair<std::string, std::shared_ptr<dengine::Scene>>> scenesIds;
-        std::map<std::string, std::pair<coreutils::ID, std::shared_ptr<dengine::Scene>>> scenesAliases;
+        std::map<ID, std::pair<std::string, std::shared_ptr<dengine::Scene>>> scenesIds;
+        std::map<std::string, std::pair<ID, std::shared_ptr<dengine::Scene>>> scenesAliases;
 
-        std::pair<coreutils::ID, std::shared_ptr<dengine::Scene>> currentScene;
+        std::pair<ID, std::shared_ptr<dengine::Scene>> currentScene;
 
-        coreutils::ID nextSceneId;
+        ID nextSceneId;
 
-        void setCurrentScene(std::pair<coreutils::ID, std::shared_ptr<dengine::Scene>> scene);
+        void setCurrentScene(std::pair<ID, std::shared_ptr<dengine::Scene>> scene);
 
-        coreutils::ID getUniqueSceneId();
+        ID getUniqueSceneId();
     public:
         ScenesManager();
 
         void update(const dengine::DengineAccessor& dengineAccessor);
 
-        coreutils::ID addScene(std::shared_ptr<dengine::Scene> scene);
-        coreutils::ID addScene(std::shared_ptr<dengine::Scene> scene, const std::string& alias);
+        ID addScene(std::shared_ptr<dengine::Scene> scene);
+        ID addScene(std::shared_ptr<dengine::Scene> scene, const std::string& alias);
 
-        void removeScene(coreutils::ID id);
+        void removeScene(ID id);
         void removeScene(const std::string& alias);
 
-        void loadScene(coreutils::ID id);
+        void loadScene(ID id);
         void loadScene(const std::string& alias);
 
-        coreutils::ID getCurrentSceneID() const;
+        ID getCurrentSceneID() const;
 
         std::shared_ptr<dengine::Scene> getCurrentScene() const;
 
-        std::shared_ptr<dengine::Scene> getScene(coreutils::ID id) const;
+        std::shared_ptr<dengine::Scene> getScene(ID id) const;
         std::shared_ptr<dengine::Scene> getScene(const std::string& alias) const;
 
-        coreutils::ID getIDByAlias(const std::string& alias) const;
-        std::string getAliasByID(coreutils::ID id) const;
+        ID getIDByAlias(const std::string& alias) const;
+        std::string getAliasByID(ID id) const;
     };
 }
 

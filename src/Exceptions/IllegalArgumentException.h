@@ -9,9 +9,9 @@
 #include "DengineException.h"
 
 namespace dengine {
-    class InvalidArgumentException : public DengineException {
+    class IllegalArgumentException : public DengineException {
     public:
-        InvalidArgumentException(const std::string& message);
+        IllegalArgumentException(const std::string& message) : DengineException(message) {}
     };
 }
 

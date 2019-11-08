@@ -7,7 +7,6 @@
 
 #include "Vector2.h"
 #include "Vector3.h"
-#include "../Exceptions/LessThanVectorException.h"
 
 using std::vector;
 
@@ -28,11 +27,11 @@ Vector2<T>::Vector2(T x, T y):x(x), y(y) {}
 
 template <class T>
 Vector2<T>::Vector2(const std::vector<T> &vector) {
-    if (vector.size() >= 2) {
+/*    if (vector.size() >= 2) {
         x = vector[0];
         y = vector[1];
-    } else
-        throw LessThanVectorException(2);
+    } else //rewrite as zero where is not
+        throw LessThanVectorException(2);*/
 }
 
 template <class T>

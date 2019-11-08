@@ -11,11 +11,11 @@ namespace dengine {
     class GameObject;
 }
 
-#include "DefaultComponent.h"
+#include "BaseComponent.h"
 #include "../Geometry/vectors.h"
 
 namespace dengine {
-    class TransformComponent : public DefaultComponent {
+    class TransformComponent : public BaseComponent {
     private:
         dengine::vec3f position;
         dengine::vec3f rotation;
