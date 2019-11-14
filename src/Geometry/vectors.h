@@ -9,9 +9,10 @@
 #include "Vector3.h"
 
 namespace dengine {
-    typedef Vector3<float> vec3f;
-    typedef Vector3<int> vec3i;
-    typedef Vector2<float> vec2f;
-    typedef Vector2<int> vec2i;
+    using vec3f = Vector3<float>;
+    using vec3i = Vector3<int>;
+    using vec2f = Vector2<float>;
+    using vec2i = Vector2<int>;
 }
+
 #endif //DENGINE_VECTORS_H

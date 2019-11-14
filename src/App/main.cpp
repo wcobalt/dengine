@@ -9,11 +9,8 @@
 #include <thread>
 #include <vector>
 
-#include "../Graphics/PNG/PngLoader.h"
-#include "../Graphics/DefaultImageIO.h"
-#include "../Graphics/Image.h"
-#include "../Platform/Window/WindowManager.h"
-#include "../Platform/Window/X/WindowManagerX.h"
+#include "../Geometry/Geometry.h"
+#include "../Geometry/vectors.h"
 
 //@TODO windows forms(later) support
 
@@ -21,7 +18,13 @@ using std::shared_ptr;
 using namespace dengine;
 
 int main() {//memory safe
-    DefaultImageIO textureIO;
+    vec3f a(1, -1, 0), b(-1, 1, 0);
+
+    std::cout << a << " and " << b << "\n";
+
+    std::cout << a.scalar(b) << " : " << a.getAngleAuto(b) << "\n";
+
+/*    DefaultImageIO textureIO;
 
     std::shared_ptr<Image> png = textureIO.load("png_test.png");
 
@@ -40,7 +43,7 @@ int main() {//memory safe
     std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
 
     manager->setIcon(png);
-    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));*/
     /*for (int i = 0; i < 8 * 5; i++) {
         std::cout << decoder.getBitFromBitStream(stream, i);
 

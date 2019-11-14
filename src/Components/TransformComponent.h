@@ -15,34 +15,46 @@ namespace dengine {
 #include "../Geometry/vectors.h"
 
 namespace dengine {
-    class TransformComponent : public BaseComponent {
+    class TransformComponent : public virtual BaseComponent {
     private:
-        dengine::vec3f position;
-        dengine::vec3f rotation;
-        dengine::vec3f scale;
+        vec3f position;
+        vec3f rotation;
+        vec3f scale;
     public:
         TransformComponent();
-        TransformComponent(const dengine::vec3f& position);
+
+        TransformComponent(const vec3f& position);
+
         TransformComponent(float x, float y, float z);
-        TransformComponent(const dengine::vec3f& position, const dengine::vec3f& rotation,
-                             const dengine::vec3f& scale);
+
+        TransformComponent(const vec3f& position, const vec3f& rotation,
+                             const vec3f& scale);
 
         void setPosition(float x, float y, float z);
-        void setPosition(const dengine::vec3f& vec);
+
+        void setPosition(const vec3f& vec);
+
         void setRotation(float x, float y, float z);
-        void setRotation(const dengine::vec3f& vec);
+
+        void setRotation(const vec3f& vec);
+
         void setScale(float x, float y, float z);
-        void setScale(const dengine::vec3f& vec);
 
-        dengine::vec3f getPosition() const;
-        dengine::vec3f getRotation() const;
-        dengine::vec3f getScale() const;
+        void setScale(const vec3f& vec);
 
-        double getDistanceTo(std::shared_ptr<dengine::GameObject> instance) const;
-        double getDistanceTo(const dengine::vec3f& position) const;
+        vec3f getPosition() const;
+
+        vec3f getRotation() const;
+
+        vec3f getScale() const;
+
+        //@todo should they be here??? And what's about calculation distnace to transformcomponent rather than gameobject?
+        double getDistanceTo(std::shared_ptr<GameObject> instance) const;
+
+        double getDistanceTo(const vec3f& position) const;
 
         template <class T>
-        std::shared_ptr<dengine::GameObject> getNearestInstance() const;
+        std::shared_ptr<GameObject> getNearestInstance() const;
     };
 }
 

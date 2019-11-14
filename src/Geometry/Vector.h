@@ -10,17 +10,20 @@
 #include "../DObject.h"
 
 namespace dengine {
-    template <class T>
+    template <typename T>
     class Vector : public DObject {
     public:
-        virtual T getModule() const = 0;
+        static const double constexpr AUTO_ANGLE_CALC_PRECISION = 10e-6;
+
+        virtual T getModulo() const = 0;
 
         virtual void normalize() = 0;
 
-        virtual Vector<T> getNormalizedVector() const = 0;
-
-        virtual std::vector<T> getstl() const = 0;
+        virtual std::vector<T> toStlVector() const = 0;
     };
+
+    template<typename T>
+    const double Vector<T>::AUTO_ANGLE_CALC_PRECISION;
 }
 
 #endif //DENGINE_VECTOR_H
