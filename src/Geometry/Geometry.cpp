@@ -6,6 +6,7 @@
 
 #include "Geometry.h"
 #include "vectors.h"
+#include "Number.h"
 
 using namespace dengine;
 
@@ -30,11 +31,11 @@ double Geometry::calculateAngle(const T &a, const T &b, double error) {
     double modulusMultiplication = a.getModulo() * b.getModulo();
     double scalarWithB = a.scalar(b);
     int signOfScalar = scalarWithB < 0 ? -1 : 1;
-    double absOfSubtraction = fabs(fabs(scalarWithB) / modulusMultiplication);
 
-    if (fabs(absOfSubtraction - 1) < error) return acos(signOfScalar);
-    else if (fabs(absOfSubtraction) < error) return acos(0);
-    else return acos(scalarWithB / modulusMultiplication);
+    if (Number::equals(fabs(scalarWithB), modulusMultiplication, error))
+        return acos(signOfScalar); //for -1 and 1
+    else
+        return acos(scalarWithB / modulusMultiplication);
 }
 
 

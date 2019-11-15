@@ -104,7 +104,7 @@ add_library(Dengine
 
         src/Platform/Audio/AudioManager.h
         src/Platform/Audio/AudioManager.cpp
-        src/DObject.cpp)
+        src/DObject.cpp src/Geometry/Number.h)
 
 
 find_package(OpenGL REQUIRED)

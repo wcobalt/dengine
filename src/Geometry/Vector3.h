@@ -67,11 +67,11 @@ namespace dengine {
         }
 
         inline bool operator==(const Vector3<T>& b) const {
-            return x == b.x && y == b.y && z == b.z;
+            return (x == b.x) && (y == b.y) && (z == b.z);
         }
 
         inline bool equals(const Vector3<T>& b, T error) const {
-            return abs(x - b.x) <= error && abs(y - b.y) <= error && abs(z - b.z) <= error;
+            return Number::equals(x, b.x, error) && Number::equals(y, b.y, error) && Number::equals(z, b.z, error);
         }
 
         inline double getAngle(const Vector3<T>& b) const {
@@ -123,9 +123,11 @@ namespace dengine {
         }
 
         inline Vector3<T> operator-() const {
-            Vector3<T> result = *this;
+            Vector3<T> result;
 
-            result *= static_cast<T>(-1);
+            result.x = -x;
+            result.y = -y;
+            result.z = -z;
 
             return result;
         }

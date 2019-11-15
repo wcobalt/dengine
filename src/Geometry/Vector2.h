@@ -14,6 +14,7 @@ namespace dengine {
 
 #include "Vector.h"
 #include "Geometry.h"
+#include "Number.h"
 
 namespace dengine {
     template <typename T>
@@ -65,11 +66,11 @@ namespace dengine {
         }
 
         inline bool operator==(const Vector2<T>& b) const {
-            return x == b.x && y == b.y;
+            return (x == b.x) && (y == b.y);
         }
 
         inline bool equals(const Vector2<T>& b, T error) const {
-            return abs(x - b.x) <= error && abs(y - b.y) <= error;
+            return Number::equals(x, b.x, error) && Number::equals(y, b.y, error);
         }
 
         inline double getAngle(const Vector2<T>& b) const {
@@ -106,9 +107,10 @@ namespace dengine {
         }
 
         inline Vector2<T> operator-() const {
-            Vector2<T> result = *this;
+            Vector2<T> result;
 
-            result *= static_cast<T>(-1);
+            result.x = -x;
+            result.y = -y;
 
             return result;
         }

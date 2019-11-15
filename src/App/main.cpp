@@ -17,12 +17,12 @@
 using std::shared_ptr;
 using namespace dengine;
 
-int main() {//memory safe
+int main() {
     vec3f a(1, -1, 0), b(-1, 1, 0);
 
     std::cout << a << " and " << b << "\n";
 
-    std::cout << a.scalar(b) << " : " << a.getAngleAuto(b) << "\n";
+    std::cout << a.scalar(b) << " : " << a.getAngleAuto(-a) << "\n";
 
 /*    DefaultImageIO textureIO;
 
@@ -123,7 +123,7 @@ fflush(stdout);
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     manager->setVisible(true);
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));*/
-    return 0;
+
     //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     //std::shared_ptr<WindowManager> manager(new WindowManagerX(0, 0, 400, 200, "Test window"));
