@@ -27,9 +27,9 @@ namespace dengine {
 namespace dengine {
     class WindowManagerX : public WindowManager {
     private:
-        const uint DEFAULT_SCREEN = 0,
+        static const uint DEFAULT_SCREEN = 0,
                 DEFAULT_WINDOW_DEPTH = 0;
-        const int VISUAL_DEPTH = 24;
+        static const int VISUAL_DEPTH = 24;
 
         static const int DEFAULT_LEFT_BUTTON = Button1,
                 DEFAULT_MIDDLE_BUTTON = Button2,
@@ -77,7 +77,7 @@ namespace dengine {
             }
         };
 
-        std::shared_ptr<dengine::XKeyboardConverter> xKeyboardConverter;
+        std::shared_ptr<XKeyboardConverter> xKeyboardConverter;
 
         PropertyData getProperty(const char *propertyName, Window window) const;
 
@@ -89,8 +89,8 @@ namespace dengine {
                        Window from, Window to);
         void setMaximized(bool mode, Atom *atoms, int count);
         bool find(long needle, const PropertyData& haystack) const;
-        dengine::DMouseButton toDMouseButton(int xButton) const;
-        std::shared_ptr<dengine::Key> toDKey(XEvent *xEvent) const;
+        DMouseButton toDMouseButton(int xButton) const;
+        std::shared_ptr<Key> toDKey(XEvent *xEvent) const;
 
         static Bool selectKeyboardEventsPredicate(Display *display, XEvent *xEvent, XPointer arg);
         static Bool selectWindowEventsPredicate(Display *display, XEvent *xEvent, XPointer arg);
@@ -168,11 +168,11 @@ namespace dengine {
 
         //@todo GLXContext
 
-        std::shared_ptr<dengine::MouseState> getMouseState() const;
+        std::shared_ptr<MouseState> getMouseState() const;
 
-        std::shared_ptr<dengine::KeyboardState> getKeyboardState() const;
+        std::shared_ptr<KeyboardState> getKeyboardState() const;
 
-        std::shared_ptr<dengine::WindowState> getWindowState();
+        std::shared_ptr<WindowState> getWindowState();
 
         ~WindowManagerX();//
     };

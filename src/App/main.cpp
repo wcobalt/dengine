@@ -1,5 +1,5 @@
 #include <iostream>
-//#include "../Platform/Window/X/WindowManagerX.h"
+#include "../Platform/Window/X/WindowManagerX.h"
 //#include "../Events/Keyboard/KeyboardState.h"
 //#include "../Events/Window/WindowState.h"
 //#include "../Events/Keyboard/Key.h"
@@ -22,9 +22,10 @@ int main() {
 
     std::cout << a << " and " << b << "\n";
 
-    std::cout << a.scalar(b) << " : " << a.getAngleAuto(-a) << "\n";
-
-/*    DefaultImageIO textureIO;
+    std::cout << a.scalar(b) << " : " << a.getAngleAuto(-a) << " " << "\n";
+   // std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
+    //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    /*    DefaultImageIO textureIO;
 
     std::shared_ptr<Image> png = textureIO.load("png_test.png");
 
@@ -40,7 +41,6 @@ int main() {
         std::cout << "\n";
     }
 
-    std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
 
     manager->setIcon(png);
     std::this_thread::sleep_for(std::chrono::milliseconds(10000));*/
