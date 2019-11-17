@@ -42,7 +42,7 @@ void GameObject::addComponent(shared_ptr<Component> component) {
 
     shared_ptr<GameObject> th(this);
 
-    component->componentLoad({}, th);
+    component->onComponentLoad({}, th);
 }
 //@todo think about weak_ptr
 //only if T has default constructor
@@ -91,7 +91,7 @@ void GameObject::safelyRemoveComponent(vector<shared_ptr<Component>>::iterator i
 }
 
 void GameObject::removeComponent(vector<shared_ptr<Component>>::iterator it) {
-    (*it)->componentUnload({});
+    (*it)->onComponentUnload({});
 
     components.erase(it);
 }
@@ -147,7 +147,7 @@ vector<shared_ptr<Component>> GameObject::getAllComponents() const {
 
 void GameObject::create(const DengineAccessor& dengineAccessor) {
     for (shared_ptr<Component>& component : components)
-        component->instanceCreate(dengineAccessor);
+        component->oInstanceCreate(dengineAccessor);
 }
 
 void GameObject::destroy(const DengineAccessor& dengineAccessor, bool isSceneUnloading) {
@@ -157,7 +157,7 @@ void GameObject::destroy(const DengineAccessor& dengineAccessor, bool isSceneUnl
 
             removeComponent(it);
 
-            component->instanceDestroy(dengineAccessor);
+            component->onInstanceDestroy(dengineAccessor);
         } else
             removeComponent(it);
     }
@@ -169,5 +169,5 @@ void GameObject::destroy(const DengineAccessor& dengineAccessor, bool isSceneUnl
 
 void GameObject::update(const DengineAccessor& dengineAccessor) {
     for (shared_ptr<Component>& component : components)
-        component->update(dengineAccessor);
+        component->onUpdate(dengineAccessor);
 }

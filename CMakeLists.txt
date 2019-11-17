@@ -6,7 +6,7 @@ set(CMAKE_PREFIX_PATH lib)
 
 add_executable(App
         src/App/main.cpp
-        )
+        src/Events/EventsState.cpp src/Events/EventsState.h)
 
 add_library(Dengine
         src/Components/BaseComponent.cpp
@@ -104,7 +104,7 @@ add_library(Dengine
 
         src/Platform/Audio/AudioManager.h
         src/Platform/Audio/AudioManager.cpp
-        src/DObject.cpp src/Math/Number.h src/Math/Quaternion.h src/Math/Euler.h src/Math/Euler.cpp)
+        src/DObject.cpp src/Math/Number.h src/Math/Quaternion.h src/Math/Euler.h src/Math/Euler.cpp src/SceneBehavior.h src/BaseSceneBehavior.cpp src/BaseSceneBehavior.h)
 
 
 find_package(OpenGL REQUIRED)

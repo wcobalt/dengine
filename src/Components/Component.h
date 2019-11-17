@@ -11,23 +11,23 @@
 
 namespace dengine {
     class GameObject;
-    class DengineAccessor;
+    class EventsState;
 }
 
 namespace dengine {
     class Component : public DObject {
     public:
-        virtual void componentLoad(const DengineAccessor& dengineAccessor, std::shared_ptr<GameObject> instance) = 0;
+        virtual void onComponentLoad() = 0;
 
-        virtual void componentUnload(const DengineAccessor& dengineAccessor) = 0;
+        virtual void onComponentUnload() = 0;
 
-        virtual void update(const DengineAccessor& dengineAccessor) = 0;
+        virtual void onUpdate(std::shared_ptr<EventsState> eventsState) = 0;
 
-        virtual void instanceCreate(const DengineAccessor& dengineAccessor) = 0;
+        virtual void onInstanceDestroy() = 0;
 
-        virtual void instanceDestroy(const DengineAccessor& dengineAccessor) = 0;
+        virtual void onSceneUnload() = 0;
 
-        virtual void sceneUnload(const DengineAccessor& dengineAccessor) = 0;
+        virtual void onGameEnd() = 0;
 
         virtual void setEnabled(bool isEnabled) = 0;
 

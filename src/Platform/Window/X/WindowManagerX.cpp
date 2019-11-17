@@ -32,6 +32,7 @@
 #include "../../../Events/Keyboard/DKey.h"
 #include "../../../Events/Keyboard/Keyboard.h"
 #include "../../../Events/Mouse/Mouse.h"
+#include "../../../Events/EventsState.h"
 #include "../../../Graphics/Image.h"
 #include "Util/XDefaultKeyboardConverter.h"
 #include "Util/XKeyboardConverter.h"
@@ -906,4 +907,8 @@ shared_ptr<Key> WindowManagerX::toDKey(XEvent *xEvent) const {
     std::string keySymbol = xKeyboardConverter->convertXKeyCodeToSymbol(xEvent);
 
     return std::make_shared<DKey>(dKeyCode, keySymbol);
+}
+
+shared_ptr<EventsState> WindowManagerX::getEventsState() {
+    return std::make_shared<EventsState>(getWindowState(), getKeyboardState(), getMouseState());
 }

@@ -13,6 +13,7 @@ namespace dengine {
     class MouseState;
     class KeyboardState;
     class WindowState;
+    class EventsState;
     class Image;
 }
 
@@ -104,6 +105,8 @@ namespace dengine {
         virtual std::shared_ptr<KeyboardState> getKeyboardState() const = 0;
 
         virtual std::shared_ptr<WindowState> getWindowState() = 0;
+
+        virtual std::shared_ptr<EventsState> getEventsState() = 0;
 
         virtual ~WindowManager() = default;
     };

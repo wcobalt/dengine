@@ -19,35 +19,31 @@ namespace dengine {
 
 namespace dengine {
     class Scene : public DObject {
-    public:
-        const float ROOT_GAME_OBJECT_X = 0;
-        const float ROOT_GAME_OBJECT_Y = 0;
-        const float ROOT_GAME_OBJECT_Z = 0;
     private:
         std::shared_ptr<GameObject> root;
 
         void deleteInstance(std::shared_ptr<GameObject> instance, bool isSceneUnloading);
-    protected:
-        virtual void sceneLoad(const DengineAccessor& dengineAccessor);
-        virtual void sceneUnload(const DengineAccessor& dengineAccessor);
     public:
         Scene();
 
         void placeInstance(std::shared_ptr<GameObject> instance);
 
         void placeInstance(std::shared_ptr<GameObject> instance, float x, float y);
+
         void placeInstance(std::shared_ptr<GameObject> instance, float x, float y, float z);
 
         void destroyInstance(std::shared_ptr<GameObject> instance);
 
-        void update(const DengineAccessor& dengineAccessor);
+        void update();
 
-        void create(const DengineAccessor& dengineAccessor);
+        void create();
 
-        void destroy(const DengineAccessor& dengineAccessor);
+        void destroy();
 
-        template <class T>
-        std::vector<std::shared_ptr<GameObject>> getInstances() const;
+        void endGame();
+
+        template<typename T>
+        std::vector<std::shared_ptr<GameObject>> getInstances() const; //@todo to filter or something
 
         std::shared_ptr<GameObject> getRoot() const;
     };

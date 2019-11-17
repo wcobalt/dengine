@@ -175,6 +175,8 @@ namespace dengine {
 
         std::shared_ptr<WindowState> getWindowState();
 
+        std::shared_ptr<EventsState> getEventsState() override;
+
         ~WindowManagerX();//
     };
 }

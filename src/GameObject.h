@@ -20,48 +20,51 @@ namespace dengine {
 namespace dengine {
     class GameObject : public DObject {
     private:
-        std::vector<std::shared_ptr<dengine::Component>> components;
+        std::vector<std::shared_ptr<Component>> components;
 
-        std::shared_ptr<dengine::GameObject> parent;
-        std::vector<std::shared_ptr<dengine::GameObject>> children;
+        std::shared_ptr<GameObject> parent;
+        std::vector<std::shared_ptr<GameObject>> children;
 
-        void safelyRemoveComponent(std::vector<std::shared_ptr<dengine::Component>>::iterator it);
-        void removeComponent(std::vector<std::shared_ptr<dengine::Component>>::iterator it);
-        void removeChild(std::vector<std::shared_ptr<dengine::GameObject>>::iterator it);
+        void safelyRemoveComponent(std::vector<std::shared_ptr<Component>>::iterator it);
+        void removeComponent(std::vector<std::shared_ptr<Component>>::iterator it);
+        void removeChild(std::vector<std::shared_ptr<GameObject>>::iterator it);
 
         void initParent();
     public:
         GameObject();
-        GameObject(std::shared_ptr<dengine::TransformComponent> transform);
 
-        void addComponent(std::shared_ptr<dengine::Component> component);
+        GameObject(std::shared_ptr<TransformComponent> transform);
 
-        template <class T>
+        void addComponent(std::shared_ptr<Component> component);
+
+        template<typename T>
         void addComponent();
 
-        template <class T>
+        template<typename T>
         void removeComponent();
 
-        void removeComponent(std::shared_ptr<dengine::Component> component);
+        void removeComponent(std::shared_ptr<Component> component);
 
-        void addChild(std::shared_ptr<dengine::GameObject> instance);
+        void addChild(std::shared_ptr<GameObject> instance);
 
-        void removeChild(std::shared_ptr<dengine::GameObject> instance);
+        void removeChild(std::shared_ptr<GameObject> instance);
 
         void removeAllChildren();
 
-        std::shared_ptr<dengine::GameObject> getParent() const;
+        std::shared_ptr<GameObject> getParent() const;
 
-        std::vector<std::shared_ptr<dengine::GameObject>> getChildren() const;
+        std::vector<std::shared_ptr<GameObject>> getChildren() const;
 
-        template <class T>
+        template<typename T>
         std::shared_ptr<T> getComponent() const;
 
-        std::vector<std::shared_ptr<dengine::Component>> getAllComponents() const;
+        std::vector<std::shared_ptr<Component>> getAllComponents() const;
 
-        void create(const dengine::DengineAccessor& dengineAccessor);
-        void destroy(const dengine::DengineAccessor& dengineAccessor, bool isSceneUnloading);
-        void update(const dengine::DengineAccessor& dengineAccessor);
+        void create();
+
+        void destroy(bool isSceneUnloading);
+
+        void update();
     };
 }
 
