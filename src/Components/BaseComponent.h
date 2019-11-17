@@ -9,7 +9,6 @@
 
 namespace dengine {
     class GameObject;
-    class DengineAccessor;
 }
 
 #include "Component.h"
@@ -23,17 +22,17 @@ namespace dengine {
     public:
         BaseComponent() = default;
 
-        virtual void componentLoad(const DengineAccessor& dengineAccessor, std::shared_ptr<GameObject> instance);
+        virtual void componentLoad(std::shared_ptr<GameObject> instance);
 
-        virtual void componentUnload(const DengineAccessor& dengineAccessor);
+        virtual void componentUnload();
 
-        virtual void update(const DengineAccessor& dengineAccessor);
+        virtual void update();
 
-        virtual void instanceCreate(const DengineAccessor& dengineAccessor);
+        virtual void instanceCreate();
 
-        virtual void instanceDestroy(const DengineAccessor& dengineAccessor);
+        virtual void instanceDestroy();
 
-        virtual void sceneUnload(const DengineAccessor& dengineAccessor);
+        virtual void sceneUnload();
 
         virtual void setEnabled(bool isEnabled);
 

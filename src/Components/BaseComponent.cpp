@@ -4,23 +4,22 @@
 #include <memory>
 
 #include "BaseComponent.h"
-#include "../DengineAccessor.h"
 #include "../GameObject.h"
 #include "../Exceptions/ComponentException.h"
 
 using namespace dengine;
 
-void BaseComponent::componentUnload(const DengineAccessor& dengineAccessor) {}
+void BaseComponent::componentUnload() {}
 
-void BaseComponent::update(const DengineAccessor& dengineAccessor) {}
+void BaseComponent::update() {}
 
-void BaseComponent::instanceCreate(const DengineAccessor& dengineAccessor) {}
+void BaseComponent::instanceCreate() {}
 
-void BaseComponent::instanceDestroy(const DengineAccessor& dengineAccessor) {}
+void BaseComponent::instanceDestroy() {}
 
-void BaseComponent::sceneUnload(const DengineAccessor& dengineAccessor) {}
+void BaseComponent::sceneUnload() {}
 
-void BaseComponent::componentLoad(const DengineAccessor& dengineAccessor, std::shared_ptr<GameObject> instance) {
+void BaseComponent::componentLoad(std::shared_ptr<GameObject> instance) {
     boundInstance = instance;
 }
 

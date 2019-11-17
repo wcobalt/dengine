@@ -8,7 +8,6 @@
 #include <memory>
 
 #include "Dengine.h"
-#include "DengineAccessor.h"
 #include "Platform/Window/WindowManager.h"
 #include "ScenesManager.h"
 #include "Scene.h"

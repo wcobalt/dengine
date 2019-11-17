@@ -9,7 +9,6 @@
 #include "GameObject.h"
 #include "Scene.h"
 #include "ScenesManager.h"
-#include "DengineAccessor.h"
 #include "Dengine.h"
 #include "Components/Component.h"
 #include "Components/TransformComponent.h"
@@ -145,12 +144,12 @@ vector<shared_ptr<Component>> GameObject::getAllComponents() const {
     return components;
 }
 
-void GameObject::create(const DengineAccessor& dengineAccessor) {
+void GameObject::create() {
     for (shared_ptr<Component>& component : components)
         component->oInstanceCreate(dengineAccessor);
 }
 
-void GameObject::destroy(const DengineAccessor& dengineAccessor, bool isSceneUnloading) {
+void GameObject::destroy(, bool isSceneUnloading) {
     for (auto it = components.begin(); it != components.end(); it++) {
         if (isSceneUnloading) {
             shared_ptr<Component> component = *it;
@@ -167,7 +166,7 @@ void GameObject::destroy(const DengineAccessor& dengineAccessor, bool isSceneUnl
     getParent()->removeChild(shared_ptr<GameObject>(this));
 }
 
-void GameObject::update(const DengineAccessor& dengineAccessor) {
+void GameObject::update() {
     for (shared_ptr<Component>& component : components)
         component->onUpdate(dengineAccessor);
 }

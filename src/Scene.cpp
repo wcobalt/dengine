@@ -8,7 +8,6 @@
 
 #include "Scene.h"
 #include "GameObject.h"
-#include "DengineAccessor.h"
 #include "Components/Component.h"
 #include "Components/TransformComponent.h"
 
@@ -25,9 +24,9 @@ Scene::Scene() {
     root = std::make_shared<GameObject>(transform);
 }
 
-void Scene::sceneLoad(const DengineAccessor& dengineAccessor) {}
+void Scene::sceneLoad() {}
 
-void Scene::sceneUnload(const DengineAccessor& dengineAccessor) {}
+void Scene::sceneUnload() {}
 
 void Scene::placeInstance(shared_ptr<GameObject> instance) {
     root->addChild(instance);
@@ -88,7 +87,7 @@ shared_ptr<GameObject> Scene::getRoot() const {
     return root;
 }
 
-void Scene::update(const DengineAccessor& dengineAccessor) {
+void Scene::update() {
     queue<shared_ptr<GameObject>> q;
 
     q.push(root);
@@ -107,7 +106,7 @@ void Scene::update(const DengineAccessor& dengineAccessor) {
     }
 }
 
-void Scene::destroy(const DengineAccessor& dengineAccessor) {
+void Scene::destroy() {
     sceneUnload(dengineAccessor);
 
     queue<shared_ptr<GameObject>> q;
@@ -128,6 +127,6 @@ void Scene::destroy(const DengineAccessor& dengineAccessor) {
     }
 }
 
-void Scene::create(const DengineAccessor& dengineAccessor) {
+void Scene::create() {
     sceneLoad(dengineAccessor);
 }

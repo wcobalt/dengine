@@ -11,7 +11,6 @@
 
 namespace dengine {
     class Scene;
-    class DengineAccessor;
     class WindowState;
     class KeyboardState;
     class MouseState;

@@ -11,7 +11,6 @@
 #define DENGINE_SCENE_H
 
 namespace dengine {
-    class DengineAccessor;
     class GameObject;
 }
 

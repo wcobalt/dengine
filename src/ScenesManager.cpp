@@ -10,7 +10,6 @@
 #include "Dengine.h"
 #include "Coreutils/ID.h"
 #include "Scene.h"
-#include "DengineAccessor.h"
 #include "Exceptions/SceneException.h"
 
 using std::shared_ptr;
@@ -105,8 +104,6 @@ void ScenesManager::removeScene(const string& alias) {
 }
 
 void ScenesManager::setCurrentScene(std::pair<ID, shared_ptr<Scene>> scene) {
-    DengineAccessor key;
-
     if (currentScene.first != NOT_EXIST_SCENE)
         currentScene.second->destroy(key);
 

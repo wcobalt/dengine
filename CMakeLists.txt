@@ -6,7 +6,7 @@ set(CMAKE_PREFIX_PATH lib)
 
 add_executable(App
         src/App/main.cpp
-        src/Events/EventsState.cpp src/Events/EventsState.h)
+        )
 
 add_library(Dengine
         src/Components/BaseComponent.cpp
@@ -15,11 +15,10 @@ add_library(Dengine
         src/Components/TransformComponent.h
         src/Components/Component.h
 
-        src/DengineAccessor.cpp
-        src/DengineAccessor.h
         src/Dengine.cpp
         src/Dengine.h
         src/DObject.h
+        src/DObject.cpp
         src/Scene.cpp
         src/Scene.h
         src/ScenesManager.cpp
@@ -28,6 +27,9 @@ add_library(Dengine
         src/GameObject.h
         src/Platform/PlatformSet.h
         src/Coreutils/ID.h
+        src/SceneBehavior.h
+        src/BaseSceneBehavior.cpp
+        src/BaseSceneBehavior.h
 
         src/Events/Window/DefaultWindowStateBuilder.h
         src/Events/Window/DefaultWindowStateBuilder.cpp
@@ -58,6 +60,8 @@ add_library(Dengine
         src/Events/Mouse/MouseStateBuilder.h
         src/Events/Mouse/DefaultMouseState.h
         src/Events/Mouse/DefaultMouseState.cpp
+        src/Events/EventsState.cpp
+        src/Events/EventsState.h
 
         src/Exceptions/IllegalStateException.h
         src/Exceptions/ImageException.h
@@ -73,6 +77,10 @@ add_library(Dengine
         src/Math/Vector2.h
         src/Math/Vector.h
         src/Math/Geometry.h
+        src/Math/Number.h
+        src/Math/Quaternion.h
+        src/Math/Euler.h
+        src/Math/Euler.cpp
 
         src/Graphics/ImageIO.h
         src/Graphics/PNG/PngLoader.h
@@ -95,16 +103,13 @@ add_library(Dengine
         src/Platform/Window/X/WindowManagerX.cpp
         src/Platform/Window/X/WindowManagerX.h
         src/Platform/Window/WindowManager.h
-
         src/Platform/Input/GamepadManager.cpp
         src/Platform/Input/GamepadManager.h
-
         src/Platform/Network/NetworkManager.cpp
         src/Platform/Network/NetworkManager.h
-
         src/Platform/Audio/AudioManager.h
         src/Platform/Audio/AudioManager.cpp
-        src/DObject.cpp src/Math/Number.h src/Math/Quaternion.h src/Math/Euler.h src/Math/Euler.cpp src/SceneBehavior.h src/BaseSceneBehavior.cpp src/BaseSceneBehavior.h)
+        )
 
 
 find_package(OpenGL REQUIRED)
