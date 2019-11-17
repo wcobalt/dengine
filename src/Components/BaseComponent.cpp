@@ -10,8 +10,6 @@
 
 using namespace dengine;
 
-using std::shared_ptr;
-
 void BaseComponent::componentUnload(const DengineAccessor& dengineAccessor) {}
 
 void BaseComponent::update(const DengineAccessor& dengineAccessor) {}
@@ -22,7 +20,7 @@ void BaseComponent::instanceDestroy(const DengineAccessor& dengineAccessor) {}
 
 void BaseComponent::sceneUnload(const DengineAccessor& dengineAccessor) {}
 
-void BaseComponent::componentLoad(const DengineAccessor& dengineAccessor, shared_ptr<GameObject> instance) {
+void BaseComponent::componentLoad(const DengineAccessor& dengineAccessor, std::shared_ptr<GameObject> instance) {
     boundInstance = instance;
 }
 
@@ -34,7 +32,7 @@ bool BaseComponent::isEnabled() const {
     return mIsEnabled;
 }
 
-shared_ptr<GameObject> BaseComponent::getBoundInstance() const {
+std::shared_ptr<GameObject> BaseComponent::getBoundInstance() const {
     if (boundInstance != nullptr)
         return boundInstance;
 

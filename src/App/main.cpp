@@ -1,5 +1,5 @@
 #include <iostream>
-//#include "../Platform/Window/X/WindowManagerX.h"
+#include "../Platform/Window/X/WindowManagerX.h"
 //#include "../Events/Keyboard/KeyboardState.h"
 //#include "../Events/Window/WindowState.h"
 //#include "../Events/Keyboard/Key.h"
@@ -9,19 +9,30 @@
 #include <thread>
 #include <vector>
 
-#include "../Graphics/PNG/PngLoader.h"
-#include "../Graphics/DefaultImageIO.h"
-#include "../Graphics/Image.h"
-#include "../Platform/Window/WindowManager.h"
-#include "../Platform/Window/X/WindowManagerX.h"
+#include "../Math/Quaternion.h"
+#include "../Math/vectors.h"
 
 //@TODO windows forms(later) support
 
 using std::shared_ptr;
 using namespace dengine;
 
-int main() {//memory safe
-    DefaultImageIO textureIO;
+int main() {
+    vec3f a(1, 0, 0), b(-1, 1, 0);
+
+    Quaternion<float> q(0, 0, Euler::rad(2));
+    Quaternion<float> q1(Euler::rad(2), 0, 0);
+    Quaternion<float> q2(45, 45,45);
+    a *= q;
+    std::cout << a << "\n";
+    a *= q1;
+
+    std::cout << a;
+
+    //std::cout << a.scalar(b) << " : " << a.getAngle(-a) << " " << "\n";
+   // std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
+    //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    /*    DefaultImageIO textureIO;
 
     std::shared_ptr<Image> png = textureIO.load("png_test.png");
 
@@ -37,10 +48,9 @@ int main() {//memory safe
         std::cout << "\n";
     }
 
-    std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
 
     manager->setIcon(png);
-    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));*/
     /*for (int i = 0; i < 8 * 5; i++) {
         std::cout << decoder.getBitFromBitStream(stream, i);
 
@@ -120,7 +130,7 @@ fflush(stdout);
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     manager->setVisible(true);
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));*/
-    return 0;
+
     //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     //std::shared_ptr<WindowManager> manager(new WindowManagerX(0, 0, 400, 200, "Test window"));

@@ -67,14 +67,12 @@ add_library(Dengine
         src/Exceptions/ComponentException.h
         src/Exceptions/SceneException.h
 
-        src/Geometry/Vector2.cpp
-        src/Geometry/Vector3.h
-        src/Geometry/vectors.h
-        src/Geometry/Geometry.cpp
-        src/Geometry/Vector3.cpp
-        src/Geometry/Vector2.h
-        src/Geometry/Vector.h
-        src/Geometry/Geometry.h
+        src/Math/Vector3.h
+        src/Math/vectors.h
+        src/Math/Geometry.cpp
+        src/Math/Vector2.h
+        src/Math/Vector.h
+        src/Math/Geometry.h
 
         src/Graphics/ImageIO.h
         src/Graphics/PNG/PngLoader.h
@@ -106,7 +104,7 @@ add_library(Dengine
 
         src/Platform/Audio/AudioManager.h
         src/Platform/Audio/AudioManager.cpp
-)
+        src/DObject.cpp src/Math/Number.h src/Math/Quaternion.h src/Math/Euler.h src/Math/Euler.cpp)
 
 
 find_package(OpenGL REQUIRED)

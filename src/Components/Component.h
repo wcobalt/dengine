@@ -17,25 +17,23 @@ namespace dengine {
 namespace dengine {
     class Component : public DObject {
     public:
-        virtual void componentLoad(const dengine::DengineAccessor& dengineAccessor, std::shared_ptr<dengine::GameObject> instance) = 0;
+        virtual void componentLoad(const DengineAccessor& dengineAccessor, std::shared_ptr<GameObject> instance) = 0;
 
-        virtual void componentUnload(const dengine::DengineAccessor& dengineAccessor) = 0;
+        virtual void componentUnload(const DengineAccessor& dengineAccessor) = 0;
 
-        virtual void update(const dengine::DengineAccessor& dengineAccessor) = 0;
+        virtual void update(const DengineAccessor& dengineAccessor) = 0;
 
-        virtual void instanceCreate(const dengine::DengineAccessor& dengineAccessor) = 0;
+        virtual void instanceCreate(const DengineAccessor& dengineAccessor) = 0;
 
-        virtual void instanceDestroy(const dengine::DengineAccessor& dengineAccessor) = 0;
+        virtual void instanceDestroy(const DengineAccessor& dengineAccessor) = 0;
 
-        virtual void sceneUnload(const dengine::DengineAccessor& dengineAccessor) = 0;
+        virtual void sceneUnload(const DengineAccessor& dengineAccessor) = 0;
 
         virtual void setEnabled(bool isEnabled) = 0;
 
         virtual bool isEnabled() const = 0;
 
-        virtual std::shared_ptr<dengine::GameObject> getBoundInstance() const = 0;
-
-        //@todo make mechanism for pause-exceptions (object which still be calculated when game paused)
+        virtual std::shared_ptr<GameObject> getBoundInstance() const = 0;
     };
 }
 

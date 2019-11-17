@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "TransformComponent.h"
-#include "../Geometry/Geometry.h"
+#include "../Math/Geometry.h"
 #include "../GameObject.h"
 #include "../Scene.h"
 #include "../Dengine.h"

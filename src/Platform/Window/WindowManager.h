@@ -21,12 +21,12 @@ namespace dengine {
 namespace dengine {
     class WindowManager : public DObject {
     public:
-        static const int NORMAL = 0, //may be to typedef or enum or something?
-                ICONIFIED = 1,
-                HIDDEN_TO_TRAY = 2,
-                MAXIMIZED_HORIZONTAL = 3,
-                MAXIMIZED_VERTICAL = 4,
-                MAXIMIZED_BOTH = 5;
+        static constexpr int NORMAL = 1, //may be to typedef or enum or something?
+                ICONIFIED = 2,
+                HIDDEN_TO_TRAY = 3,
+                MAXIMIZED_HORIZONTAL = 4,
+                MAXIMIZED_VERTICAL = 5,
+                MAXIMIZED_BOTH = 6;
 
         virtual void setVisible(bool isVisible) = 0;
 
@@ -99,11 +99,11 @@ namespace dengine {
 
         virtual bool isFocused() const = 0;
 
-        virtual std::shared_ptr<dengine::MouseState> getMouseState() const = 0;
+        virtual std::shared_ptr<MouseState> getMouseState() const = 0;
 
-        virtual std::shared_ptr<dengine::KeyboardState> getKeyboardState() const = 0;
+        virtual std::shared_ptr<KeyboardState> getKeyboardState() const = 0;
 
-        virtual std::shared_ptr<dengine::WindowState> getWindowState() = 0;
+        virtual std::shared_ptr<WindowState> getWindowState() = 0;
 
         virtual ~WindowManager() = default;
     };
