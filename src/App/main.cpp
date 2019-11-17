@@ -9,7 +9,7 @@
 #include <thread>
 #include <vector>
 
-#include "../Geometry/Geometry.h"
+#include "../Geometry/Quaternion.h"
 #include "../Geometry/vectors.h"
 
 //@TODO windows forms(later) support
@@ -18,11 +18,18 @@ using std::shared_ptr;
 using namespace dengine;
 
 int main() {
-    vec3f a(1, -1, 0), b(-1, 1, 0);
+    vec3f a(1, 0, 0), b(-1, 1, 0);
 
-    std::cout << a << " and " << b << "\n";
+    Quaternion<float> q(0, 0, Euler::rad(2));
+    Quaternion<float> q1(Euler::rad(2), 0, 0);
+    Quaternion<float> q2(45, 45,45);
+    a *= q;
+    std::cout << a << "\n";
+    a *= q1;
 
-    std::cout << a.scalar(b) << " : " << a.getAngleAuto(-a) << " " << "\n";
+    std::cout << a;
+
+    //std::cout << a.scalar(b) << " : " << a.getAngle(-a) << " " << "\n";
    // std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
     //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
     /*    DefaultImageIO textureIO;

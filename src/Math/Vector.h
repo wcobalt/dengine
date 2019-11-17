@@ -13,8 +13,6 @@ namespace dengine {
     template <typename T>
     class Vector : public DObject {
     public:
-        static constexpr double AUTO_ANGLE_CALC_PRECISION = 10e-6;
-
         virtual T getModulo() const = 0;
 
         virtual void normalize() = 0;

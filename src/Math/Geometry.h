@@ -20,15 +20,15 @@ namespace dengine {
     class Geometry {
     private:
         template<typename T>
-        static double calculateAngle(const T &a, const T &b, double error);
+        static double calculateAngle(const T &a, const T &b);
     public:
         static double getDistance(const vec3f &from, const vec3f &to);
 
         static double getDistance(const vec2f &from, const vec2f &to);
 
-        static double getAngle(const vec3f &a, const vec3f &b, double error);
+        static double getAngle(const vec3f &a, const vec3f &b);
 
-        static double getAngle(const vec2f &a, const vec2f &b, double error);
+        static double getAngle(const vec2f &a, const vec2f &b);
     };
 }
 

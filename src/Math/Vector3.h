@@ -22,15 +22,15 @@ namespace dengine {
     public:
         T x, y, z;
 
-        inline Vector3() : x(0), y(0), z(0) {}
+        Vector3() : x(0), y(0), z(0) {}
 
-        inline Vector3(const Vector3<T>& vector) = default;
+        Vector3(const Vector3<T>& vector) = default;
 
-        inline Vector3(const Vector2<T>& vector) : x(vector.x), y(vector.y), z(0) {}
+        Vector3(const Vector2<T>& vector) : x(vector.x), y(vector.y), z(0) {}
 
-        inline Vector3(T x, T y, T z) : x(x), y(y), z(z) {}
+        Vector3(T x, T y, T z) : x(x), y(y), z(z) {}
 
-        inline Vector3(const std::vector<T>& vector) : Vector3() {
+        Vector3(const std::vector<T>& vector) : Vector3() {
             size_t size = vector.size();
 
             if (size > 0) x = vector[0];
@@ -39,16 +39,16 @@ namespace dengine {
         }
 
         inline T getModulo() const override {
-            return sqrt(x * x + y * y + z * z);
+            return std::sqrt(x * x + y * y + z * z);
         }
 
-        inline void normalize() override {
+        void normalize() override {
             T modulo = getModulo();
 
             *this /= modulo;
         }
 
-        inline Vector3<T> getNormalizedVector() const {
+        Vector3<T> getNormalizedVector() const {
             Vector3<T> temp = *this;
 
             temp.normalize();
@@ -56,37 +56,29 @@ namespace dengine {
             return temp;
         }
 
-        inline std::vector<T> toStlVector() const override {
+        std::vector<T> toStlVector() const override {
             return {x, y, z};
         }
 
-        inline Vector3<T>& operator=(const Vector3<T>& b) = default;
+        Vector3<T>& operator=(const Vector3<T>& b) = default;
 
-        inline T scalar(const Vector3<T>& b) const {
+        T scalar(const Vector3<T>& b) const {
             return x * b.x + y * b.y + z * b.z;
         }
 
-        inline bool operator==(const Vector3<T>& b) const {
+        bool operator==(const Vector3<T>& b) const {
             return (x == b.x) && (y == b.y) && (z == b.z);
         }
 
-        inline bool equals(const Vector3<T>& b, T error) const {
+        bool equals(const Vector3<T>& b, T error) const {
             return Number::equals(x, b.x, error) && Number::equals(y, b.y, error) && Number::equals(z, b.z, error);
         }
 
-        inline double getAngle(const Vector3<T>& b) const {
-            return acos(scalar(b) / (getModulo() * b.getModulo()));
+        double getAngle(const Vector3<T>& b) const {
+            return Geometry::getAngle(*this, b);
         }
 
-        inline double getAngleAuto(const Vector3<T>& b) const {
-            return getAngle(b, Vector<T>::AUTO_ANGLE_CALC_PRECISION);
-        }
-
-        inline double getAngle(const Vector3<T>& b, double error) const {
-            return Geometry::getAngle(*this, b, error);
-        }
-
-        inline Vector3<T> operator*(const Vector3<T>& b) const {
+        Vector3<T> operator*(const Vector3<T>& b) const {
             Vector3<T> result;
 
             result.x = y * b.z - b.y * z;
@@ -96,15 +88,15 @@ namespace dengine {
             return result;
         }
 
-        inline Vector3<T>& operator*=(const Vector3<T>& b) {
-            *this = *this * b;
+        Vector3<T>& operator*=(const Vector3<T>& b) {
+            return *this = *this * b;
         }
 
-        inline Vector3<T>& operator+=(const Vector3<T>& b) {
+        Vector3<T>& operator+=(const Vector3<T>& b) {
             return *this = *this + b;
         }
 
-        inline Vector3<T> operator+(const Vector3<T>& b) const {
+        Vector3<T> operator+(const Vector3<T>& b) const {
             Vector3<T> result = *this;
 
             result.x += b.x;
@@ -114,15 +106,21 @@ namespace dengine {
             return result;
         }
 
-        inline Vector3<T>& operator-=(const Vector3<T>& b) {
+        Vector3<T>& operator-=(const Vector3<T>& b) {
             return *this = *this - b;
         }
 
-        inline Vector3<T> operator-(const Vector3<T>& b) const {
-            return *this + -b;
+        Vector3<T> operator-(const Vector3<T>& b) const {
+            Vector3<T> result = *this;
+
+            result.x -= b.x;
+            result.y -= b.y;
+            result.z -= b.z;
+
+            return result;
         }
 
-        inline Vector3<T> operator-() const {
+        Vector3<T> operator-() const {
             Vector3<T> result;
 
             result.x = -x;
@@ -132,11 +130,11 @@ namespace dengine {
             return result;
         }
 
-        inline Vector3<T>& operator*=(T b) {
+        Vector3<T>& operator*=(T b) {
             return *this = *this * b;
         }
 
-        inline Vector3<T> operator*(T b) const {
+        Vector3<T> operator*(T b) const {
             Vector3<T> result = *this;
 
             result.x *= b;
@@ -146,11 +144,11 @@ namespace dengine {
             return result;
         }
 
-        inline Vector3<T>& operator/=(T b) {
+        Vector3<T>& operator/=(T b) {
             return *this = *this / b;
         }
 
-        inline Vector3<T> operator/(T b) const {
+        Vector3<T> operator/(T b) const {
             Vector3<T> result = *this;
 
             result.x /= b;
@@ -166,12 +164,12 @@ namespace dengine {
     };
 
     template<typename T>
-    inline Vector3<T> operator*(T a, const Vector3<T>& b) {
+    Vector3<T> operator*(T a, const Vector3<T>& b) {
         return b * a;
     }
 
     template<typename T>
-    inline std::ostream& operator<<(std::ostream& stream, const Vector3<T>& vector) {
+    std::ostream& operator<<(std::ostream& stream, const Vector3<T>& vector) {
         return stream << vector.toString();
     }
 }

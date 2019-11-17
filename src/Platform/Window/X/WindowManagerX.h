@@ -62,7 +62,8 @@ namespace dengine {
         int lastState;
         int lastMaximizationState;
 
-        struct PropertyData {
+        class PropertyData {
+        public:
             unsigned char *data;
 
             ulong numberOfItems;
