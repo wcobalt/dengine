@@ -12,6 +12,9 @@
 namespace dengine {
     class Scene;
     class DengineAccessor;
+    class WindowState;
+    class KeyboardState;
+    class MouseState;
 }
 
 #include "Coreutils/ID.h"
@@ -35,7 +38,8 @@ namespace dengine {
     public:
         ScenesManager();
 
-        void update(const dengine::DengineAccessor& dengineAccessor);
+        void update(std::shared_ptr<WindowState> windowState, std::shared_ptr<KeyboardState> keyboardState,
+                            std::shared_ptr<MouseState> mouseState);
 
         ID addScene(std::shared_ptr<dengine::Scene> scene);
         ID addScene(std::shared_ptr<dengine::Scene> scene, const std::string& alias);

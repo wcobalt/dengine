@@ -10,13 +10,14 @@
 namespace dengine {
     class ScenesManager;
     class WindowManager;
+    class PlatformSet;
 }
 
 #include "Coreutils/ID.h"
 #include "DObject.h"
 
 /* "Core" release features for implementation:
- * 2) optimize by assignments, init list and other, exceptions reduce
+ * 2) optimize by assignments, init list and other
  * 3) clear methods for builders
  * 4) virtual inheritance of interfaces
  * 5) review run/pause/stop API
@@ -26,12 +27,10 @@ namespace dengine {
 namespace dengine {
     //singleton
     class Dengine : public DObject {
-    public:
-        static const dengine::ID MINIMAL_SAFE_ID = 3;
     private:
-        float fps;
+        float fps, deltaTime;
 
-        std::shared_ptr<WindowManager> windowManager;
+        std::shared_ptr<PlatformSet> platformSet;
         std::shared_ptr<ScenesManager> scenesManager;
 
         bool mIsPaused;
@@ -40,29 +39,44 @@ namespace dengine {
         static std::shared_ptr<Dengine> dengine;
 
         void update();
+
+        Dengine(std::shared_ptr<PlatformSet> platformSet, float fps);
+    public:
+        static const ID MINIMAL_SAFE_ID = 3;
+        static const char VERSION_STRING[];
+        static constexpr unsigned VERSION_MAJOR = 0;
+        static constexpr unsigned VERSION_MINOR = 2;
+        static constexpr unsigned VERSION_INDEX = 0;
+        static constexpr unsigned VERSION_BUILD = 0;
+
+        //SOLID
+        static void init(std::shared_ptr<PlatformSet> platformSet);
+
+        static void init(std::shared_ptr<PlatformSet> platformSet, float fps);
+
+        static std::shared_ptr<Dengine> get();
+
+        void setFps(float fps);
+
+        float getFps() const;
+
+        float getRealFps() const;
+
+        float getDeltaTime() const;
+
+        void setIgnoreInactive(bool doIgnoreInactive);
+
+        bool isIgnoringInactive() const;
+
         void run();
 
-        Dengine(std::shared_ptr<WindowManager> windowManager);
-    public:
-        //SOLID
-        static void init(std::shared_ptr<WindowManager> windowManager);
-
-        void setFPS(float fps);
-
-        void setWindowManager(std::shared_ptr<WindowManager> windowManager);
-
-        void setPaused(bool isPaused);
         void stop();
 
-        float getFPS() const;
-
-        std::shared_ptr<WindowManager> getWindowManager() const;
-
-        bool isPaused() const;
+        std::string toString() const;
 
         std::shared_ptr<ScenesManager> getScenesManager() const;
 
-        static std::shared_ptr<Dengine> get();
+        std::shared_ptr<PlatformSet> getPlatformSet() const;
     };
 }
 

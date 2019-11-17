@@ -30,8 +30,10 @@ int main() {
     std::cout << a;
 
     //std::cout << a.scalar(b) << " : " << a.getAngle(-a) << " " << "\n";
-   // std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
-    //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    std::shared_ptr<WindowManager> manager(new WindowManagerX(100, 0, 400, 200, "tet a tet"));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    manager->setVisible(true);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
     /*    DefaultImageIO textureIO;
 
     std::shared_ptr<Image> png = textureIO.load("png_test.png");
@@ -142,7 +144,7 @@ fflush(stdout);
     //std::shared_ptr<WindowManager> windowManager(new WindowManager(accessor));
     //std::shared_ptr<Dengine> dengine(new Dengine(windowManager));
 
-    //dengine->setFPS(60);
+    //dengine->setFps(60);
 
     //std::shared_ptr<Scene> mainScene(new Scene("MainScene", 400, 400));
 

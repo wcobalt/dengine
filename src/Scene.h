@@ -24,32 +24,32 @@ namespace dengine {
         const float ROOT_GAME_OBJECT_Y = 0;
         const float ROOT_GAME_OBJECT_Z = 0;
     private:
-        std::shared_ptr<dengine::GameObject> root;
+        std::shared_ptr<GameObject> root;
 
-        void deleteInstance(std::shared_ptr<dengine::GameObject> instance, bool isSceneUnloading);
+        void deleteInstance(std::shared_ptr<GameObject> instance, bool isSceneUnloading);
     protected:
-        virtual void sceneLoad(const dengine::DengineAccessor& dengineAccessor);
-        virtual void sceneUnload(const dengine::DengineAccessor& dengineAccessor);
+        virtual void sceneLoad(const DengineAccessor& dengineAccessor);
+        virtual void sceneUnload(const DengineAccessor& dengineAccessor);
     public:
         Scene();
 
-        void placeInstance(std::shared_ptr<dengine::GameObject> instance);
+        void placeInstance(std::shared_ptr<GameObject> instance);
 
-        void placeInstance(std::shared_ptr<dengine::GameObject> instance, float x, float y);
-        void placeInstance(std::shared_ptr<dengine::GameObject> instance, float x, float y, float z);
+        void placeInstance(std::shared_ptr<GameObject> instance, float x, float y);
+        void placeInstance(std::shared_ptr<GameObject> instance, float x, float y, float z);
 
-        void destroyInstance(std::shared_ptr<dengine::GameObject> instance);
+        void destroyInstance(std::shared_ptr<GameObject> instance);
 
-        void update(const dengine::DengineAccessor& dengineAccessor);
+        void update(const DengineAccessor& dengineAccessor);
 
-        void create(const dengine::DengineAccessor& dengineAccessor);
+        void create(const DengineAccessor& dengineAccessor);
 
-        void destroy(const dengine::DengineAccessor& dengineAccessor);
+        void destroy(const DengineAccessor& dengineAccessor);
 
         template <class T>
         std::vector<std::shared_ptr<GameObject>> getInstances() const;
 
-        std::shared_ptr<dengine::GameObject> getRoot() const;
+        std::shared_ptr<GameObject> getRoot() const;
     };
 }
 

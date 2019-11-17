@@ -11,20 +11,28 @@
 #include "DengineAccessor.h"
 #include "Platform/Window/WindowManager.h"
 #include "ScenesManager.h"
+#include "Scene.h"
 #include "Exceptions/DengineException.h"
+#include "Platform/PlatformSet.h"
 
 using std::shared_ptr;
 using namespace dengine;
 
-Dengine::Dengine(shared_ptr<WindowManager> windowManager):mIsPaused(0), isGameStopped(0) {
-    setWindowManager(windowManager);
+const char Dengine::VERSION_STRING[] = "0.2.0:0";
+
+Dengine::Dengine(shared_ptr<PlatformSet> platformSet, float fps) : mIsPaused(false), isGameStopped(false), fps(fps) {
+    this->platformSet = platformSet;
 
     scenesManager = std::make_shared<ScenesManager>();
 }
 
-void Dengine::init(shared_ptr<WindowManager> windowManager) {
+void Dengine::init(shared_ptr<PlatformSet> platformSet) {
+    init(platformSet, 0);
+}
+
+void Dengine::init(std::shared_ptr<PlatformSet> platformSet, float fps) {
     if (!dengine) {
-        Dengine* dengine = new Dengine(windowManager);
+        Dengine* dengine = new Dengine(platformSet, fps);
 
         shared_ptr<Dengine> fake(dengine);
 
@@ -32,57 +40,84 @@ void Dengine::init(shared_ptr<WindowManager> windowManager) {
     }
 }
 
-void Dengine::update() {
-    //windowManager->checkEvents();
-    scenesManager->update({});
+shared_ptr<Dengine> Dengine::get() {
+    if (!dengine)
+        return dengine;
+
+    throw DengineException("Dengine is not initialized. Call init()");
 }
 
-void Dengine::setFPS(float fps) {
+void Dengine::setFps(float fps) {
     this->fps = fps;
 }
 
-void Dengine::setWindowManager(shared_ptr<WindowManager> windowManager) {
-    this->windowManager = windowManager;
+float Dengine::getFps() const {
+    return getRealFps() < fps ? getRealFps() : fps;
+}
+
+float Dengine::getRealFps() const {
+    return static_cast<float>(10e9 / deltaTime);
+}
+
+float Dengine::getDeltaTime() const {
+    return deltaTime;
+}
+
+void Dengine::update() {
+    std::shared_ptr<WindowManager> windowManager = platformSet->getWindowManager();
+
+    std::shared_ptr<WindowState> windowState = windowManager->getWindowState();
+    std::shared_ptr<MouseState> mouseState = windowManager->getMouseState();
+    std::shared_ptr<KeyboardState> keyboardState = windowManager->getKeyboardState();
+
+    scenesManager->update(windowState, keyboardState, mouseState);
+}
+
+void Dengine::setIgnoreInactive(bool doIgnoreInactive) {
+    mIsPaused = doIgnoreInactive;
+}
+
+bool Dengine::isIgnoringInactive() const {
+    return mIsPaused;
 }
 
 void Dengine::run() {
-    isGameStopped = false;
+    if (fps == 0) throw DengineException("Fps cannot be zero. Use setFps()");
 
     while (!isGameStopped) {
-        std::future fut = std::async(&Dengine::update, *this);
+        auto start = std::chrono::high_resolution_clock::now();
 
-        //@todo async may take some time real_fps != fps
-        std::this_thread::sleep_for(std::chrono::milliseconds((int) (1000.0 / fps)));
+        update();
+
+        auto finish = std::chrono::high_resolution_clock::now();
+
+        deltaTime = (finish - start).count();
+        float supposedFrameTime = static_cast<float>(10e9 / fps);
+        float awaitTime = supposedFrameTime - deltaTime;
+
+        if (awaitTime > 0)
+            std::this_thread::sleep_for(std::chrono::nanoseconds(static_cast<long>(awaitTime)));
     }
-}
 
-void Dengine::setPaused(bool isPaused) {
-    mIsPaused = isPaused;
+    //stop must be called from within the loop, so if loop is broken then stop was called for sure (almost)
+    platformSet->getWindowManager()->destroy();
 }
 
 void Dengine::stop() {
     isGameStopped = true;
 }
 
-shared_ptr<WindowManager> Dengine::getWindowManager() const {
-    return windowManager;
-}
-
-float Dengine::getFPS() const {
-    return fps;
-}
-
-bool Dengine::isPaused() const {
-    return mIsPaused;
+std::string Dengine::toString() const {
+    return "Dengine (v" + std::string(VERSION_STRING) + "):\n" +
+            "Current scene: " + std::to_string(scenesManager->getCurrentSceneID()) + "\n"
+            "Credits: \n" +
+            "Author: Wert Cobalt (Artyom Drapun) <cobalt.itech@gmail.com>\n";
 }
 
 shared_ptr<ScenesManager> Dengine::getScenesManager() const {
     return scenesManager;
 }
 
-shared_ptr<Dengine> Dengine::get() {
-    if (!dengine)
-        return dengine;
-
-    throw DengineException("Dengine is not initialized. Call init()");
+std::shared_ptr<PlatformSet> Dengine::getPlatformSet() const {
+    return platformSet;
 }

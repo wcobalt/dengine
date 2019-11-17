@@ -45,7 +45,7 @@ using namespace dengine;
 int WindowManagerX::xkbEventType = 0;
 Atom WindowManagerX::wmProtocols = 0;
 
-WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std::string& title):title(title) {
+WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std::string& title) : title(title) {
     display = XOpenDisplay(nullptr);
 
     if (display) {
@@ -72,7 +72,7 @@ WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std:
 
             xSizeHints = XAllocSizeHints();
 
-            setVisible(true);
+            setVisible(false);
 
             lastX = x; lastY = y;
             lastWidth = width; lastHeight = height;

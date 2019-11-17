@@ -20,9 +20,10 @@ using namespace dengine;
 
 ScenesManager::ScenesManager():currentScene(NOT_EXIST_SCENE, nullptr), nextSceneId(Dengine::MINIMAL_SAFE_ID) {}
 
-void ScenesManager::update(const DengineAccessor& dengineAccessor) {
+void ScenesManager::update(std::shared_ptr<WindowState> windowState, std::shared_ptr<KeyboardState> keyboardState,
+                           std::shared_ptr<MouseState> mouseState) {
     if (currentScene.first != NOT_EXIST_SCENE) {
-        currentScene.second->update(dengineAccessor);
+        //currentScene.second->update(dengineAccessor);
 
         return;
     }
