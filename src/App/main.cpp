@@ -9,8 +9,8 @@
 #include <thread>
 #include <vector>
 
-#include "../Geometry/Quaternion.h"
-#include "../Geometry/vectors.h"
+#include "../Math/Quaternion.h"
+#include "../Math/vectors.h"
 
 //@TODO windows forms(later) support
 

@@ -12,7 +12,7 @@ namespace dengine {
 }
 
 #include "BaseComponent.h"
-#include "../Geometry/vectors.h"
+#include "../Math/vectors.h"
 
 namespace dengine {
     class TransformComponent : public virtual BaseComponent {
