@@ -11,11 +11,11 @@ namespace dengine {
     class GameObject;
 }
 
-#include "BaseComponent.h"
+#include "Component.h"
 #include "../Math/vectors.h"
 
 namespace dengine {
-    class TransformComponent : public virtual BaseComponent {
+    class TransformComponent : public virtual Component {
     private:
         vec3f position;
         vec3f rotation;

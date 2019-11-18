@@ -8,14 +8,15 @@
 #ifndef DENGINE_GAMEOBJECT_H
 #define DENGINE_GAMEOBJECT_H
 
-#include "Components/TransformComponent.h"
-
 namespace dengine {
     class Component;
     class TransformComponent;
+    class Initializer;
 }
 
 #include "DObject.h"
+#include "Coreutils/ID.h"
+#include "Coreutils/Messages.h"
 
 namespace dengine {
     class GameObject : public DObject {
@@ -24,30 +25,29 @@ namespace dengine {
 
         std::shared_ptr<GameObject> parent;
         std::vector<std::shared_ptr<GameObject>> children;
-
-        void safelyRemoveComponent(std::vector<std::shared_ptr<Component>>::iterator it);
-        void removeComponent(std::vector<std::shared_ptr<Component>>::iterator it);
-        void removeChild(std::vector<std::shared_ptr<GameObject>>::iterator it);
-
-        void initParent();
     public:
         GameObject();
 
+        GameObject(const Initializer& initializer);
+
         GameObject(std::shared_ptr<TransformComponent> transform);
 
-        void addComponent(std::shared_ptr<Component> component);
+        GameObject(const Initializer& initializer, std::shared_ptr<TransformComponent> transform);
 
-        template<typename T>
-        void addComponent();
+        void addComponent(std::shared_ptr<Component> component);
 
         template<typename T>
         void removeComponent();
 
         void removeComponent(std::shared_ptr<Component> component);
 
-        void addChild(std::shared_ptr<GameObject> instance);
+        static void instantiate(std::shared_ptr<GameObject> instance);
 
-        void removeChild(std::shared_ptr<GameObject> instance);
+        void instantiateChild(std::shared_ptr<GameObject> instance);
+
+        static void destroy(std::shared_ptr<GameObject> instance);
+
+        void destroyChild(std::shared_ptr<GameObject> instance);
 
         void removeAllChildren();
 
@@ -60,11 +60,9 @@ namespace dengine {
 
         std::vector<std::shared_ptr<Component>> getAllComponents() const;
 
-        void create();
+        void sendMessage(GameObjectMessage message);
 
-        void destroy(bool isSceneUnloading);
-
-        void update();
+        ID getId();
     };
 }
 

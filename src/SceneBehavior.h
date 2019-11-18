@@ -1,21 +1,24 @@
 //
 // Created by wcobalt on 11/17/19.
 //
+#include <memory>
 
-#ifndef DENGINE_SCENEBEHAVIOR_H
-#define DENGINE_SCENEBEHAVIOR_H
-
-#include "DObject.h"
+#ifndef DENGINE_BASESCENEBEHAVIOR_H
+#define DENGINE_BASESCENEBEHAVIOR_H
 
 namespace dengine {
-    class SceneBehavior : public DObject {
+    class Scene;
+}
+
+namespace dengine {
+    class SceneBehavior {
     public:
-        virtual void onSceneLoad() = 0;
+        void onSceneLoad(Scene &scene);
 
-        virtual void onSceneUnload() = 0;
+        void onSceneUnload(Scene &scene);
 
-        virtual void onGameEnd() = 0;
+        void onGameEnd(Scene &scene);
     };
 }
 
-#endif //DENGINE_SCENEBEHAVIOR_H
+#endif //DENGINE_BASESCENEBEHAVIOR_H

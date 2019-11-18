@@ -40,7 +40,7 @@ void TransformComponent::setPosition(const vec3f& vec) {
 
     position = vec;
 
-    vector<shared_ptr<GameObject>> children = getBoundInstance()->getChildren();
+    vector<shared_ptr<GameObject>> children = getGameObject()->getChildren();
 
     for (shared_ptr<GameObject>& child : children) {
         shared_ptr<TransformComponent> transform = child->getComponent<TransformComponent>();
@@ -58,7 +58,7 @@ void TransformComponent::setRotation(const vec3f& vec) {
 
     rotation = vec;
 
-    vector<shared_ptr<GameObject>> children = getBoundInstance()->getChildren();
+    vector<shared_ptr<GameObject>> children = getGameObject()->getChildren();
 
     for (shared_ptr<GameObject>& child : children) {
         shared_ptr<TransformComponent> transform = child->getComponent<TransformComponent>();
@@ -76,7 +76,7 @@ void TransformComponent::setScale(const vec3f& vec) {
 
     scale = vec;
 
-    vector<shared_ptr<GameObject>> children = getBoundInstance()->getChildren();
+    vector<shared_ptr<GameObject>> children = getGameObject()->getChildren();
 
     for (shared_ptr<GameObject>& child : children) {
         shared_ptr<TransformComponent> transform = child->getComponent<TransformComponent>();

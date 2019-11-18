@@ -15,34 +15,27 @@ namespace dengine {
 }
 
 #include "DObject.h"
+#include "Coreutils/ID.h"
+#include "Coreutils/Messages.h"
+#include "SceneBehavior.h"
 
 namespace dengine {
     class Scene : public DObject {
     private:
         std::shared_ptr<GameObject> root;
 
-        void deleteInstance(std::shared_ptr<GameObject> instance, bool isSceneUnloading);
+        SceneBehavior& sceneBehavior;
+
+        ID currentId;
     public:
-        Scene();
+        Scene(SceneBehavior& sceneBehavior);
 
-        void placeInstance(std::shared_ptr<GameObject> instance);
+        void sendMessage(SceneMessage message);
 
-        void placeInstance(std::shared_ptr<GameObject> instance, float x, float y);
+/*        template<typename T>
+        std::vector<std::shared_ptr<GameObject>> getInstances() const; //@todo to filter or something*/
 
-        void placeInstance(std::shared_ptr<GameObject> instance, float x, float y, float z);
-
-        void destroyInstance(std::shared_ptr<GameObject> instance);
-
-        void update();
-
-        void create();
-
-        void destroy();
-
-        void endGame();
-
-        template<typename T>
-        std::vector<std::shared_ptr<GameObject>> getInstances() const; //@todo to filter or something
+        ID takeNextId();
 
         std::shared_ptr<GameObject> getRoot() const;
     };

@@ -6,14 +6,13 @@ set(CMAKE_PREFIX_PATH lib)
 
 add_executable(App
         src/App/main.cpp
-        )
+        src/Coreutils/Messages.h)
 
 add_library(Dengine
-        src/Components/BaseComponent.cpp
+        src/Components/Component.cpp
         src/Components/TransformComponent.cpp
-        src/Components/BaseComponent.h
-        src/Components/TransformComponent.h
         src/Components/Component.h
+        src/Components/TransformComponent.h
 
         src/Dengine.cpp
         src/Dengine.h
@@ -28,8 +27,8 @@ add_library(Dengine
         src/Platform/PlatformSet.h
         src/Coreutils/ID.h
         src/SceneBehavior.h
-        src/BaseSceneBehavior.cpp
-        src/BaseSceneBehavior.h
+        src/SceneBehavior.cpp
+        src/SceneBehavior.h
 
         src/Events/Window/DefaultWindowStateBuilder.h
         src/Events/Window/DefaultWindowStateBuilder.cpp

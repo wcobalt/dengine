@@ -1,13 +1,11 @@
 //
-// Created by wcobalt on 19.09.18.
+// Created by wcobalt on 3/30/19.
 //
 
 #include <memory>
 
-#ifndef DENGINE_COMPONENT_H
-#define DENGINE_COMPONENT_H
-
-#include "../DObject.h"
+#ifndef DENGINE_DEFAULTCOMPONENT_H
+#define DENGINE_DEFAULTCOMPONENT_H
 
 namespace dengine {
     class GameObject;
@@ -15,26 +13,32 @@ namespace dengine {
 }
 
 namespace dengine {
-    class Component : public DObject {
+    class Component {
+    private:
+        bool mIsEnabled;
+    protected:
+        std::shared_ptr<GameObject> gameObject;
     public:
-        virtual void onComponentLoad() = 0;
+        Component(std::shared_ptr<GameObject> gameObject);
 
-        virtual void onComponentUnload() = 0;
+        void onComponentLoad();
 
-        virtual void onUpdate(std::shared_ptr<EventsState> eventsState) = 0;
+        void onComponentUnload();
 
-        virtual void onInstanceDestroy() = 0;
+        void onUpdate(std::shared_ptr<EventsState> eventsState);
 
-        virtual void onSceneUnload() = 0;
+        void onInstanceDestroy();
 
-        virtual void onGameEnd() = 0;
+        void onSceneUnload();
 
-        virtual void setEnabled(bool isEnabled) = 0;
+        void onGameEnd();
 
-        virtual bool isEnabled() const = 0;
+        void setEnabled(bool isEnabled);
 
-        virtual std::shared_ptr<GameObject> getBoundInstance() const = 0;
+        bool isEnabled() const;
+
+        std::shared_ptr<GameObject> getGameObject() const;
     };
 }
 
-#endif //DENGINE_COMPONENT_H
+#endif //DENGINE_DEFAULTCOMPONENT_H

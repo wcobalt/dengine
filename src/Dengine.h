@@ -11,6 +11,7 @@ namespace dengine {
     class ScenesManager;
     class WindowManager;
     class PlatformSet;
+    class EventsState;
 }
 
 #include "Coreutils/ID.h"
@@ -37,6 +38,8 @@ namespace dengine {
         bool isGameStopped;
 
         static std::shared_ptr<Dengine> dengine;
+
+        std::shared_ptr<EventsState> eventsState;
 
         void update();
 
@@ -73,6 +76,8 @@ namespace dengine {
         void stop();
 
         std::string toString() const;
+
+        std::shared_ptr<EventsState> getEventsState();
 
         std::shared_ptr<ScenesManager> getScenesManager() const;
 

@@ -63,13 +63,9 @@ float Dengine::getDeltaTime() const {
 }
 
 void Dengine::update() {
-    std::shared_ptr<WindowManager> windowManager = platformSet->getWindowManager();
+    eventsState = platformSet->getWindowManager()->getEventsState();
 
-    std::shared_ptr<WindowState> windowState = windowManager->getWindowState();
-    std::shared_ptr<MouseState> mouseState = windowManager->getMouseState();
-    std::shared_ptr<KeyboardState> keyboardState = windowManager->getKeyboardState();
-
-    scenesManager->update(windowState, keyboardState, mouseState);
+    scenesManager->update();
 }
 
 void Dengine::setIgnoreInactive(bool doIgnoreInactive) {
@@ -119,4 +115,8 @@ shared_ptr<ScenesManager> Dengine::getScenesManager() const {
 
 std::shared_ptr<PlatformSet> Dengine::getPlatformSet() const {
     return platformSet;
+}
+
+std::shared_ptr<EventsState> Dengine::getEventsState() {
+    return eventsState;
 }
