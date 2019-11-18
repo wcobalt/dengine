@@ -21,6 +21,8 @@ namespace dengine {
     public:
         Component(std::shared_ptr<GameObject> gameObject);
 
+        void onInstanceCreate();
+
         void onComponentLoad();
 
         void onComponentUnload();

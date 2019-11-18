@@ -15,7 +15,7 @@ namespace dengine {
     };
 
     enum class GameObjectMessage {
-        UPDATE, CREATE, DESTROY, GAME_END
+        UPDATE, CREATE, DESTROY, SCENE_UNLOAD, GAME_END
     };
 }
 

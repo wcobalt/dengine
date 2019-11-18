@@ -16,6 +16,8 @@ Component::Component(std::shared_ptr<GameObject> gameObject) {
     this->gameObject = gameObject;
 }
 
+void Component::onInstanceCreate() {}
+
 void Component::onComponentLoad() {}
 
 void Component::onComponentUnload() {}
