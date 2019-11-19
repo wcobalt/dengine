@@ -34,7 +34,7 @@ namespace dengine {
         std::shared_ptr<PlatformSet> platformSet;
         std::shared_ptr<ScenesManager> scenesManager;
 
-        bool mIsPaused;
+        bool mIsIgnoringInactive;
         bool isGameStopped;
 
         static std::shared_ptr<Dengine> dengine;
@@ -45,8 +45,8 @@ namespace dengine {
 
         Dengine(std::shared_ptr<PlatformSet> platformSet, float fps);
     public:
-        static const ID MINIMAL_SAFE_ID = 3;
         static const char VERSION_STRING[];
+
         static constexpr unsigned VERSION_MAJOR = 0;
         static constexpr unsigned VERSION_MINOR = 2;
         static constexpr unsigned VERSION_INDEX = 0;

@@ -10,28 +10,26 @@ void ScenesManager::sendMessage(ScenesManagerMessage message) {
     if (isCurrentSceneExist()) {
         switch (message) {
             case ScenesManagerMessage::UPDATE:
-                currentScene->getScene()->sendMessage(SceneMessage::UPDATE);
+                currentScene->sendMessage(SceneMessage::UPDATE);
 
                 break;
             case ScenesManagerMessage::GAME_END:
-                currentScene->getScene()->sendMessage(SceneMessage::GAME_END);
+                currentScene->sendMessage(SceneMessage::GAME_END);
 
                 break;
         }
     }
 }
 
-ID ScenesManager::addScene(SceneBehavior &sceneBehavior) {
-    return addScene(sceneBehavior, "");
+ID ScenesManager::addScene(std::shared_ptr<SceneBehavior> sceneBehavior) {
+    return addScene(std::move(sceneBehavior), "");
 }
 
-ID ScenesManager::addScene(SceneBehavior &sceneBehavior, const std::string &alias) {
-    std::shared_ptr<Scene> scene(new Scene(sceneBehavior));
+ID ScenesManager::addScene(std::shared_ptr<SceneBehavior> sceneBehavior, const std::string &alias) {
     ID id = takeNextSceneId();
+    std::shared_ptr<Scene> scene(new Scene(id, sceneBehavior, alias));
 
-    std::shared_ptr<SceneEntry> sceneEntry(new SceneEntry(id, alias, scene));
-
-    scenes.emplace_back(sceneEntry);
+    scenes.emplace_back(scene);
 
     return id;
 }
@@ -90,23 +88,9 @@ void ScenesManager::loadFirstScene() {
         throw SceneException("Cannot load first scene, because there are no scenes");
 }
 
-ID ScenesManager::getCurrentSceneID() const {
+std::shared_ptr<Scene> ScenesManager::getCurrentScene() const {
     if (isCurrentSceneExist())
-        return currentScene->getId();
-    else
-        throw SceneException("There is no current scene");
-}
-
-std::string ScenesManager::getCurrentSceneAlias() const {
-    if (isCurrentSceneExist())
-        return currentScene->getAlias();
-    else
-        throw SceneException("There is no current scene");
-}
-
-Scene &ScenesManager::getCurrentScene() const {
-    if (isCurrentSceneExist())
-        return *currentScene->getScene();
+        return currentScene;
     else
         throw SceneException("There is no current scene");
 }
@@ -115,33 +99,25 @@ bool ScenesManager::isCurrentSceneExist() const {
     return currentScene != nullptr;
 }
 
-Scene &ScenesManager::getScene(ID id) const {
-    return *(*findSceneById(id))->getScene();
+std::shared_ptr<Scene> ScenesManager::getScene(ID id) const {
+    return *findSceneById(id);
 }
 
-Scene &ScenesManager::getScene(const std::string &alias) const {
-    return *(*findSceneByAlias(alias))->getScene();
-}
-
-ID ScenesManager::getIdByAlias(const std::string &alias) const {
-    return (*findSceneByAlias(alias))->getId();
-}
-
-std::string ScenesManager::getAliasById(ID id) const {
-    return (*findSceneById(id))->getAlias();
+std::shared_ptr<Scene> ScenesManager::getScene(const std::string &alias) const {
+    return *findSceneByAlias(alias);
 }
 
 ID ScenesManager::takeNextSceneId() {
     return currentId++;
 }
 
-void ScenesManager::removeScene(decltype(scenes)::iterator iterator) {
+void ScenesManager::removeScene(const_iterator iterator) {
     if ((*iterator)->getId() == currentScene->getId()) throw SceneException("Cannot remove current scene");
 
     scenes.erase(iterator);
 }
 
-ScenesManager::scene_iterator ScenesManager::findSceneByAlias(const std::string &alias) const {
+ScenesManager::const_iterator ScenesManager::findSceneByAlias(const std::string &alias) const {
     for (auto it = scenes.begin(); it != scenes.end(); it++)
         if ((*it)->getAlias() == alias)
             return it;
@@ -149,7 +125,7 @@ ScenesManager::scene_iterator ScenesManager::findSceneByAlias(const std::string 
     throw SceneException("There is no scene with such alias");
 }
 
-ScenesManager::scene_iterator ScenesManager::findSceneById(ID id) const {
+ScenesManager::const_iterator ScenesManager::findSceneById(ID id) const {
     for (auto it = scenes.begin(); it != scenes.end(); it++)
         if ((*it)->getId() == id)
             return it;
@@ -157,25 +133,34 @@ ScenesManager::scene_iterator ScenesManager::findSceneById(ID id) const {
     throw SceneException("There is no scene with such id");
 }
 
-void ScenesManager::loadScene(scene_iterator iterator) {
+void ScenesManager::loadScene(const_iterator iterator) {
     if (isCurrentSceneExist())
-        currentScene->getScene()->sendMessage(SceneMessage::UNLOAD);
+        currentScene->sendMessage(SceneMessage::UNLOAD);
 
     currentScene = *iterator;
-    currentScene->getScene()->sendMessage(SceneMessage::LOAD);
+    currentScene->sendMessage(SceneMessage::LOAD);
 }
 
-ScenesManager::SceneEntry::SceneEntry(ID id, const std::string &alias, std::shared_ptr<Scene> scene) : id(id), alias(alias),
-    scene(scene) {}
-
-ID ScenesManager::SceneEntry::getId() {
-    return id;
+ScenesManager::iterator ScenesManager::begin() {
+    return scenes.begin();
 }
 
-std::string ScenesManager::SceneEntry::getAlias() {
-    return alias;
+ScenesManager::iterator ScenesManager::end() {
+    return scenes.end();
 }
 
-std::shared_ptr<Scene> ScenesManager::SceneEntry::getScene() {
-    return scene;
+ScenesManager::const_iterator ScenesManager::begin() const {
+    return scenes.cbegin();
+}
+
+ScenesManager::const_iterator ScenesManager::end() const {
+    return scenes.cend();
+}
+
+ScenesManager::const_iterator ScenesManager::cbegin() const {
+    return scenes.cbegin();
+}
+
+ScenesManager::const_iterator ScenesManager::cend() const {
+    return scenes.cend();
 }

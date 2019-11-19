@@ -24,46 +24,34 @@ namespace dengine {
 namespace dengine {
     class ScenesManager : public DObject {
     private:
-        class SceneEntry {
-        private:
-            ID id;
-            std::string alias;
-            std::shared_ptr<Scene> scene;
-        public:
-            SceneEntry(ID id, const std::string& alias, std::shared_ptr<Scene> scene);
+        std::vector<std::shared_ptr<Scene>> scenes;
 
-            ID getId();
-
-            std::string getAlias();
-
-            std::shared_ptr<Scene> getScene();
-        };
-
-        std::vector<std::shared_ptr<SceneEntry>> scenes;
-
-        std::shared_ptr<SceneEntry> currentScene;
+        std::shared_ptr<Scene> currentScene;
 
         ID currentId;
 
         ID takeNextSceneId();
-
-        using scene_iterator = decltype(scenes)::iterator;
-
-        scene_iterator findSceneByAlias(const std::string& alias) const;
-
-        scene_iterator findSceneById(ID id) const;
-
-        void removeScene(scene_iterator iterator);
-
-        void loadScene(scene_iterator iterator);
     public:
+        using const_iterator = decltype(scenes)::const_iterator;
+
+        using iterator = decltype(scenes)::iterator;
+    private:
+        const_iterator findSceneByAlias(const std::string& alias) const;
+
+        const_iterator findSceneById(ID id) const;
+
+        void removeScene(const_iterator iterator);
+
+        void loadScene(const_iterator iterator);
+    public:
+
         ScenesManager();
 
         void sendMessage(ScenesManagerMessage message);
 
-        ID addScene(SceneBehavior &sceneBehavior);
+        ID addScene(std::shared_ptr<SceneBehavior> sceneBehavior);
 
-        ID addScene(SceneBehavior &sceneBehavior, const std::string &alias);
+        ID addScene(std::shared_ptr<SceneBehavior> sceneBehavior, const std::string &alias);
 
         void removeScene(ID id);
 
@@ -81,21 +69,25 @@ namespace dengine {
 
         void loadFirstScene();
 
-        ID getCurrentSceneID() const;
-
-        std::string getCurrentSceneAlias() const;
-
-        Scene& getCurrentScene() const;
+        std::shared_ptr<Scene> getCurrentScene() const;
 
         bool isCurrentSceneExist() const;
 
-        Scene& getScene(ID id) const;
+        std::shared_ptr<Scene> getScene(ID id) const;
 
-        Scene& getScene(const std::string& alias) const;
+        std::shared_ptr<Scene> getScene(const std::string &alias) const;
 
-        ID getIdByAlias(const std::string &alias) const;
+        iterator begin();
 
-        std::string getAliasById(ID id) const;
+        iterator end();
+
+        const_iterator begin() const;
+
+        const_iterator end() const;
+
+        const_iterator cbegin() const;
+
+        const_iterator cend() const;
     };
 }
 

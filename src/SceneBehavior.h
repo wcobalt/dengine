@@ -13,11 +13,11 @@ namespace dengine {
 namespace dengine {
     class SceneBehavior {
     public:
-        void onSceneLoad(Scene &scene);
+        virtual void onSceneLoad(Scene &scene);
 
-        void onSceneUnload(Scene &scene);
+        virtual void onSceneUnload(Scene &scene);
 
-        void onGameEnd(Scene &scene);
+        virtual void onGameEnd(Scene &scene);
     };
 }
 
