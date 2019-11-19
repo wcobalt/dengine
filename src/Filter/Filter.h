@@ -14,13 +14,13 @@ namespace dengine {
 namespace dengine {
     class Filter {
     private:
-        std::function<void(std::shared_ptr<GameObject>)>& filterAction;
-        std::function<bool(std::shared_ptr<GameObject>)>& filterSelection;
+        std::function<void(std::shared_ptr<GameObject>)> filterAction;
+        std::function<bool(std::shared_ptr<GameObject>)> filterSelection;
 
         std::shared_ptr<GameObject> getRoot() const;
     public:
-        Filter(std::function<void(std::shared_ptr<GameObject>)> &filterAction,
-               std::function<bool(std::shared_ptr<GameObject>)> &filterSelection);
+        Filter(std::function<void(std::shared_ptr<GameObject>)> filterAction,
+               std::function<bool(std::shared_ptr<GameObject>)> filterSelection);
 
         void run() const;
 

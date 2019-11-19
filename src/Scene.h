@@ -6,6 +6,7 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <functional>
 
 #ifndef DENGINE_SCENE_H
 #define DENGINE_SCENE_H
@@ -28,6 +29,8 @@ namespace dengine {
 
         ID currentId, id;
         std::string alias;
+
+        void handle(std::function<void (std::shared_ptr<GameObject>)> handler);
     public:
         Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior);
 

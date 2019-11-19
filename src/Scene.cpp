@@ -1,12 +1,14 @@
-
+#include <unordered_map>
 #include "Scene.h"
 #include "SceneBehavior.h"
+#include "GameObject.h"
+#include "Filter/Filter.h"
 
 using namespace dengine;
 
-Scene::Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior) : Scene(id, std::move(sceneBehavior), "") {}
+Scene::Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior) : Scene(id, sceneBehavior, "") {}
 
-Scene::Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior, const std::string &alias) : sceneBehavior(std::move(sceneBehavior)),
+Scene::Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior, const std::string &alias) : sceneBehavior(sceneBehavior),
                                                                                               id(id), alias(alias) {}
 
 void Scene::sendMessage(SceneMessage message) {
@@ -14,20 +16,28 @@ void Scene::sendMessage(SceneMessage message) {
         case SceneMessage::LOAD:
             sceneBehavior->onSceneLoad(*this);
 
-            //delegate to objects
             break;
         case SceneMessage::UNLOAD:
-            //delegate to objects
+            handle([](auto gameObject) {
+                gameObject->sendMessage(GameObjectMessage::SCENE_UNLOAD);
+            });
+
             sceneBehavior->onSceneUnload(*this);
 
             break;
         case SceneMessage::GAME_END:
-            //delegate to objects
+            handle([](auto gameObject) {
+                gameObject->sendMessage(GameObjectMessage::GAME_END);
+            });
+
             sceneBehavior->onGameEnd(*this);
 
             break;
         case SceneMessage::UPDATE:
-            //delegate to objects
+            handle([](auto gameObject) {
+                gameObject->sendMessage(GameObjectMessage::UPDATE);
+            });
+
             break;
     }
 }
@@ -46,4 +56,17 @@ const std::string &Scene::getAlias() const {
 
 ID Scene::getId() const {
     return id;
+}
+
+void Scene::handle(std::function<void (std::shared_ptr<GameObject>)> handler) {
+    std::unordered_map<ID, bool> hashTable;
+
+    Filter filter(handler, [&hashTable](std::shared_ptr<GameObject> gameObject) -> bool {
+        if (hashTable.find(gameObject->getId()) == hashTable.end()) {
+            hashTable.insert(std::make_pair(gameObject->getId(), true));
+
+            return true;
+        } else
+            return false;
+    });
 }

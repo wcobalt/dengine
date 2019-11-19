@@ -6,7 +6,7 @@ set(CMAKE_PREFIX_PATH lib)
 
 add_executable(App
         src/App/main.cpp
-        src/Coreutils/Messages.h src/Filter/Filter.cpp src/Filter/Filter.h src/Filter/FilterSelection.h)
+        )
 
 add_library(Dengine
         src/Components/Component.cpp
@@ -26,6 +26,7 @@ add_library(Dengine
         src/GameObject.h
         src/Platform/PlatformSet.h
         src/Coreutils/ID.h
+        src/Coreutils/Messages.h
         src/SceneBehavior.h
         src/SceneBehavior.cpp
         src/SceneBehavior.h
@@ -108,6 +109,9 @@ add_library(Dengine
         src/Platform/Network/NetworkManager.h
         src/Platform/Audio/AudioManager.h
         src/Platform/Audio/AudioManager.cpp
+
+        src/Filter/Filter.cpp
+        src/Filter/Filter.h
         )
 
 

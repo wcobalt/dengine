@@ -12,8 +12,8 @@
 
 using namespace dengine;
 
-Filter::Filter(std::function<void(std::shared_ptr<GameObject>)> &filterAction,
-               std::function<bool(std::shared_ptr<GameObject>)> &filterSelection) : filterAction(filterAction),
+Filter::Filter(std::function<void(std::shared_ptr<GameObject>)> filterAction,
+               std::function<bool(std::shared_ptr<GameObject>)> filterSelection) : filterAction(filterAction),
                                                                                     filterSelection(filterSelection) {}
 
 void Filter::run() const {
@@ -83,5 +83,5 @@ void Filter::runDfs(std::shared_ptr<GameObject> gameObject) const {
 }
 
 std::shared_ptr<GameObject> Filter::getRoot() const {
-    return Dengine::get()->getScenesManager()->getCurrentScene().getRoot();
+    return Dengine::get()->getScenesManager()->getCurrentScene()->getRoot();
 }
