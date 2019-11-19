@@ -26,6 +26,10 @@ namespace dengine {
         std::shared_ptr<GameObject> parent;
         std::vector<std::shared_ptr<GameObject>> children;
     public:
+        using iterator = decltype(children)::iterator;
+
+        using const_iterator = decltype(children)::const_iterator;
+
         GameObject();
 
         GameObject(const Initializer& initializer);
@@ -54,6 +58,18 @@ namespace dengine {
         std::shared_ptr<GameObject> getParent() const;
 
         std::vector<std::shared_ptr<GameObject>> getChildren() const;
+
+        iterator begin();
+
+        iterator end();
+
+        const_iterator begin() const;
+
+        const_iterator end() const;
+
+        const_iterator cbegin() const;
+
+        const_iterator cend() const;
 
         template<typename T>
         std::shared_ptr<T> getComponent() const;

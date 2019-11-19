@@ -6,7 +6,7 @@ set(CMAKE_PREFIX_PATH lib)
 
 add_executable(App
         src/App/main.cpp
-        src/Coreutils/Messages.h)
+        src/Coreutils/Messages.h src/Filter/Filter.cpp src/Filter/Filter.h src/Filter/FilterSelection.h)
 
 add_library(Dengine
         src/Components/Component.cpp

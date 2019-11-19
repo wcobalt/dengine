@@ -48,6 +48,21 @@ namespace dengine {
 
         vec3f getScale() const;
 
+        //TransformFilters getFilters();
+        /*
+         * class filters {
+         *      public:
+         *      void filter2d(vec2, vec2, std::func(void(GO));
+         * }
+         * */
+        void filter2d(float x0, float y0, float x1, float y1, FilterAction& filterAction);
+
+        void filter2d(vec2f point0, vec2f point1, FilterAction& filterAction);
+
+        void filter3d(float x0, float y0, float z0, float x1, float y1, float z1, FilterAction& filterAction);
+
+        void filter3d(vec3f point0, vec3f point1, FilterAction& filterAction);
+
         //@todo should they be here??? And what's about calculation distnace to transformcomponent rather than gameobject?
         double getDistanceTo(std::shared_ptr<GameObject> instance) const;
 

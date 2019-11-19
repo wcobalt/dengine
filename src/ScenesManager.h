@@ -47,7 +47,7 @@ namespace dengine {
 
         ID takeNextSceneId();
 
-        using scene_iterator = decltype(scenes)::iterator;
+        using scene_iterator = decltype(scenes)::const_iterator;
 
         scene_iterator findSceneByAlias(const std::string& alias) const;
 

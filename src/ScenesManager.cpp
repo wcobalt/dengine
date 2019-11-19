@@ -135,7 +135,7 @@ ID ScenesManager::takeNextSceneId() {
     return currentId++;
 }
 
-void ScenesManager::removeScene(decltype(scenes)::iterator iterator) {
+void ScenesManager::removeScene(scene_iterator iterator) {
     if ((*iterator)->getId() == currentScene->getId()) throw SceneException("Cannot remove current scene");
 
     scenes.erase(iterator);
