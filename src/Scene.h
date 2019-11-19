@@ -24,20 +24,24 @@ namespace dengine {
     private:
         std::shared_ptr<GameObject> root;
 
-        SceneBehavior& sceneBehavior;
+        std::shared_ptr<SceneBehavior> sceneBehavior;
 
-        ID currentId;
+        ID currentId, id;
+        std::string alias;
     public:
-        Scene(SceneBehavior& sceneBehavior);
+        Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior);
+
+        Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior, const std::string &alias);
 
         void sendMessage(SceneMessage message);
-
-/*        template<typename T>
-        std::vector<std::shared_ptr<GameObject>> getInstances() const; //@todo to filter or something*/
 
         ID takeNextId();
 
         std::shared_ptr<GameObject> getRoot() const;
+
+        const std::string& getAlias() const;
+
+        ID getId() const;
     };
 }
 

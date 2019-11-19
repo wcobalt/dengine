@@ -19,7 +19,7 @@ using namespace dengine;
 
 const char Dengine::VERSION_STRING[] = "0.2.0:0";
 
-Dengine::Dengine(shared_ptr<PlatformSet> platformSet, float fps) : mIsPaused(false), isGameStopped(false), fps(fps) {
+Dengine::Dengine(shared_ptr<PlatformSet> platformSet, float fps) : mIsIgnoringInactive(false), isGameStopped(false), fps(fps) {
     this->platformSet = platformSet;
 
     scenesManager = std::make_shared<ScenesManager>();
@@ -65,15 +65,15 @@ float Dengine::getDeltaTime() const {
 void Dengine::update() {
     eventsState = platformSet->getWindowManager()->getEventsState();
 
-    scenesManager->update();
+    scenesManager->sendMessage(ScenesManagerMessage::UPDATE);
 }
 
 void Dengine::setIgnoreInactive(bool doIgnoreInactive) {
-    mIsPaused = doIgnoreInactive;
+    mIsIgnoringInactive = doIgnoreInactive;
 }
 
 bool Dengine::isIgnoringInactive() const {
-    return mIsPaused;
+    return mIsIgnoringInactive;
 }
 
 void Dengine::run() {
@@ -103,8 +103,11 @@ void Dengine::stop() {
 }
 
 std::string Dengine::toString() const {
+    auto scene = scenesManager->getCurrentScene();
+    const std::string& alias = scene->getAlias();
+
     return "Dengine (v" + std::string(VERSION_STRING) + "):\n" +
-            "Current scene: " + std::to_string(scenesManager->getCurrentSceneID()) + "\n"
+            "Current scene: " + std::to_string(scene->getId()) + " (" + (alias.empty() ? "<no alias>" : alias) + ")\n"
             "Credits: \n" +
             "Author: Wert Cobalt (Artyom Drapun) <cobalt.itech@gmail.com>\n";
 }
