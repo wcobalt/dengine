@@ -145,9 +145,10 @@ void GameObject::sendMessage(GameObjectMessage message) {
 
             break;
         case GameObjectMessage::INSTANCE_DESTROY:
+            destroyAllChildren();
+
             sendMessageToComponents(ComponentMessage::INSTANCE_DESTROY);
 
-            destroyAllChildren();
             detachAllComponents();
 
             break;
@@ -184,6 +185,8 @@ GameObject::const_component_iterator GameObject::findComponent(std::shared_ptr<C
         if (typeid(*it).hash_code() == hash)
             return it;
     }
+
+    return components.end();
 }
 
 void GameObject::initialize() {
@@ -199,7 +202,8 @@ void GameObject::initialize() {
 
 void GameObject::sendMessageToComponents(ComponentMessage message) {
     for (auto& component : components)
-        component->sendMessage(message);
+        if (component->isEnabled())
+            component->sendMessage(message);
 }
 
 void GameObject::destroyChild(const_iterator iterator) {

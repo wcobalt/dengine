@@ -6,7 +6,7 @@ set(CMAKE_PREFIX_PATH lib)
 
 add_executable(App
         src/App/main.cpp
-        src/Exceptions/GameObjectException.h)
+        )
 
 add_library(Dengine
         src/Components/Component.cpp
@@ -70,6 +70,7 @@ add_library(Dengine
         src/Exceptions/DengineException.h
         src/Exceptions/ComponentException.h
         src/Exceptions/SceneException.h
+        src/Exceptions/GameObjectException.h
 
         src/Math/Vector3.h
         src/Math/vectors.h

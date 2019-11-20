@@ -4,6 +4,8 @@
 #include "SceneBehavior.h"
 #include "GameObject.h"
 #include "Filter/Filter.h"
+#include "Dengine.h"
+#include "Components/TransformComponent.h"
 
 using namespace dengine;
 
@@ -64,7 +66,10 @@ void Scene::handle(std::function<void(std::shared_ptr<GameObject>)> handler) {
     std::unordered_map<ID, bool> hashTable;
 
     Filter filter(handler, [&hashTable](std::shared_ptr<GameObject> gameObject) -> bool {
-        if (hashTable.find(gameObject->getId()) == hashTable.end()) {
+        bool isActive = gameObject->getComponent<TransformComponent>()->isActive();
+        bool doIgnoreInactive = Dengine::get()->isIgnoringInactive();
+
+        if (hashTable.find(gameObject->getId()) == hashTable.end() && (!doIgnoreInactive || isActive)) {
             hashTable.insert(std::make_pair(gameObject->getId(), true));
 
             return true;

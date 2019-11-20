@@ -27,12 +27,17 @@ ID ScenesManager::addScene(std::shared_ptr<SceneBehavior> sceneBehavior) {
 }
 
 ID ScenesManager::addScene(std::shared_ptr<SceneBehavior> sceneBehavior, const std::string &alias) {
-    ID id = takeNextSceneId();
-    std::shared_ptr<Scene> scene(new Scene(id, sceneBehavior, alias));
+    auto it = findSceneByAlias(alias);
 
-    scenes.emplace_back(scene);
+    if (it == scenes.end()) {
+        ID id = takeNextSceneId();
+        std::shared_ptr<Scene> scene(new Scene(id, sceneBehavior, alias));
 
-    return id;
+        scenes.emplace_back(scene);
+
+        return id;
+    } else
+        throw SceneException("Cannot create new scene: there is a scene with such alias already");
 }
 
 void ScenesManager::removeScene(ID id) {

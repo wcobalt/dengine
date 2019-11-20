@@ -46,7 +46,6 @@ namespace dengine {
 
         void unloadCurrentScene();
     public:
-
         ScenesManager();
 
         void sendMessage(ScenesManagerMessage message);
