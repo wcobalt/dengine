@@ -22,7 +22,7 @@ void Component::onComponentLoad() {}
 
 void Component::onComponentUnload() {}
 
-void Component::onUpdate(std::shared_ptr<EventsState> eventsState) {}
+void Component::onUpdate() {}
 
 void Component::onInstanceDestroy() {}
 
@@ -32,6 +32,39 @@ void Component::onGameEnd() {}
 
 void Component::setEnabled(bool isEnabled) {
     mIsEnabled = isEnabled;
+}
+
+void Component::sendMessage(ComponentMessage message) {
+    switch (message) {
+        case ComponentMessage::INSTANCE_CREATE:
+            onInstanceCreate();
+
+            break;
+        case ComponentMessage::INSTANCE_DESTROY:
+            onInstanceDestroy();
+
+            break;
+        case ComponentMessage::COMPONENT_LOAD:
+            onComponentLoad();
+
+            break;
+        case ComponentMessage::COMPONENT_UNLOAD:
+            onComponentUnload();
+
+            break;
+        case ComponentMessage::UPDATE:
+            onUpdate();
+
+            break;
+        case ComponentMessage::SCENE_UNLOAD:
+            onSceneUnload();
+
+            break;
+        case ComponentMessage::GAME_END:
+            onGameEnd();
+            
+            break;
+    }
 }
 
 bool Component::isEnabled() const {

@@ -1,4 +1,5 @@
 #include <unordered_map>
+#include <memory>
 #include "Scene.h"
 #include "SceneBehavior.h"
 #include "GameObject.h"
@@ -13,16 +14,17 @@ Scene::Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior, const std::str
 
 void Scene::sendMessage(SceneMessage message) {
     switch (message) {
-        case SceneMessage::LOAD:
-            sceneBehavior->onSceneLoad(*this);
+        case SceneMessage::SCENE_LOAD:
+            sceneBehavior->onSceneLoad(shared_from_this());
 
             break;
-        case SceneMessage::UNLOAD:
+        case SceneMessage::SCENE_UNLOAD:
             handle([](auto gameObject) {
                 gameObject->sendMessage(GameObjectMessage::SCENE_UNLOAD);
             });
 
-            sceneBehavior->onSceneUnload(*this);
+            sceneBehavior->onSceneUnload(shared_from_this());
+            freeScene();
 
             break;
         case SceneMessage::GAME_END:
@@ -30,7 +32,7 @@ void Scene::sendMessage(SceneMessage message) {
                 gameObject->sendMessage(GameObjectMessage::GAME_END);
             });
 
-            sceneBehavior->onGameEnd(*this);
+            sceneBehavior->onGameEnd(shared_from_this());
 
             break;
         case SceneMessage::UPDATE:
@@ -58,7 +60,7 @@ ID Scene::getId() const {
     return id;
 }
 
-void Scene::handle(std::function<void (std::shared_ptr<GameObject>)> handler) {
+void Scene::handle(std::function<void(std::shared_ptr<GameObject>)> handler) {
     std::unordered_map<ID, bool> hashTable;
 
     Filter filter(handler, [&hashTable](std::shared_ptr<GameObject> gameObject) -> bool {
@@ -69,4 +71,8 @@ void Scene::handle(std::function<void (std::shared_ptr<GameObject>)> handler) {
         } else
             return false;
     });
+}
+
+void Scene::freeScene() {
+    root->destroyAllChildren();
 }

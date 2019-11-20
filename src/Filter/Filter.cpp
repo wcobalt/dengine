@@ -13,6 +13,15 @@
 using namespace dengine;
 
 Filter::Filter(std::function<void(std::shared_ptr<GameObject>)> filterAction,
+               std::function<bool(std::shared_ptr<GameObject>)> filterSelection) : filterSelection(filterSelection) {
+    filterAction = [&filterAction](std::shared_ptr<GameObject> gameObject) {
+        filterAction(gameObject);
+
+        return false;
+    };
+}
+
+Filter::Filter(std::function<bool(std::shared_ptr<GameObject>)> filterAction,
                std::function<bool(std::shared_ptr<GameObject>)> filterSelection) : filterAction(filterAction),
                                                                                     filterSelection(filterSelection) {}
 
@@ -50,7 +59,7 @@ void Filter::runBfs(std::shared_ptr<GameObject> gameObject, bool isReverse) cons
         if (isReverse)
             forHandle.emplace_back(current);
         else if (filterSelection(current))
-            filterAction(current);
+            if (filterAction(current)) break;
 
         queue.pop();
 
@@ -64,7 +73,7 @@ void Filter::runBfs(std::shared_ptr<GameObject> gameObject, bool isReverse) cons
 
         for (size_t i = size; i > 0; i--) {
             if (filterSelection(forHandle[i]))
-                filterAction(forHandle[i]);
+                if (filterAction(forHandle[i])) break;
         }
     }
 }
@@ -74,14 +83,21 @@ void Filter::runDfs() const {
 }
 
 void Filter::runDfs(std::shared_ptr<GameObject> gameObject) const {
-    std::for_each(gameObject->begin(), gameObject->end(), [this](std::shared_ptr<GameObject> child) {
-        if (filterSelection(child))
-            filterAction(child);
-
-        runDfs(child);
-    });
+    dfs(gameObject);
 }
 
 std::shared_ptr<GameObject> Filter::getRoot() const {
     return Dengine::get()->getScenesManager()->getCurrentScene()->getRoot();
+}
+
+bool Filter::dfs(std::shared_ptr<GameObject> gameObject) const {
+    std::for_each(gameObject->begin(), gameObject->end(), [this](std::shared_ptr<GameObject> child) {
+        if (filterSelection(child)) {
+            if (filterAction(child)) return true;
+        }
+
+        if (dfs(child)) return true;
+    });
+
+    return false;
 }

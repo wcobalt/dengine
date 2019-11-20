@@ -6,7 +6,7 @@ set(CMAKE_PREFIX_PATH lib)
 
 add_executable(App
         src/App/main.cpp
-        )
+        src/Exceptions/GameObjectException.h)
 
 add_library(Dengine
         src/Components/Component.cpp
@@ -112,7 +112,7 @@ add_library(Dengine
 
         src/Filter/Filter.cpp
         src/Filter/Filter.h
-        )
+        src/Initializer.h)
 
 
 find_package(OpenGL REQUIRED)

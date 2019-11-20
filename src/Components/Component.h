@@ -12,8 +12,11 @@ namespace dengine {
     class EventsState;
 }
 
+#include "../Coreutils/Messages.h"
+#include "../DObject.h"
+
 namespace dengine {
-    class Component {
+    class Component : public DObject, public std::enable_shared_from_this<Component> {
     private:
         bool mIsEnabled;
     protected:
@@ -27,7 +30,7 @@ namespace dengine {
 
         void onComponentUnload();
 
-        void onUpdate(std::shared_ptr<EventsState> eventsState);
+        void onUpdate();
 
         void onInstanceDestroy();
 
@@ -36,6 +39,8 @@ namespace dengine {
         void onGameEnd();
 
         void setEnabled(bool isEnabled);
+
+        void sendMessage(ComponentMessage message);
 
         bool isEnabled() const;
 

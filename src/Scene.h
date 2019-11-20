@@ -21,7 +21,7 @@ namespace dengine {
 #include "SceneBehavior.h"
 
 namespace dengine {
-    class Scene : public DObject {
+    class Scene : public DObject, public std::enable_shared_from_this<Scene> {
     private:
         std::shared_ptr<GameObject> root;
 
@@ -30,7 +30,9 @@ namespace dengine {
         ID currentId, id;
         std::string alias;
 
-        void handle(std::function<void (std::shared_ptr<GameObject>)> handler);
+        void handle(std::function<void(std::shared_ptr<GameObject>)> handler);
+
+        void freeScene();
     public:
         Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior);
 

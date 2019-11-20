@@ -86,6 +86,8 @@ void Dengine::run() {
 
         auto finish = std::chrono::high_resolution_clock::now();
 
+        if (isGameStopped) scenesManager->sendMessage(ScenesManagerMessage::GAME_END);
+
         deltaTime = (finish - start).count();
         float supposedFrameTime = static_cast<float>(10e9 / fps);
         float awaitTime = supposedFrameTime - deltaTime;

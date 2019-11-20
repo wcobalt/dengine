@@ -15,6 +15,7 @@ void ScenesManager::sendMessage(ScenesManagerMessage message) {
                 break;
             case ScenesManagerMessage::GAME_END:
                 currentScene->sendMessage(SceneMessage::GAME_END);
+                unloadCurrentScene();
 
                 break;
         }
@@ -134,11 +135,10 @@ ScenesManager::const_iterator ScenesManager::findSceneById(ID id) const {
 }
 
 void ScenesManager::loadScene(const_iterator iterator) {
-    if (isCurrentSceneExist())
-        currentScene->sendMessage(SceneMessage::UNLOAD);
+    unloadCurrentScene();
 
     currentScene = *iterator;
-    currentScene->sendMessage(SceneMessage::LOAD);
+    currentScene->sendMessage(SceneMessage::SCENE_LOAD);
 }
 
 ScenesManager::iterator ScenesManager::begin() {
@@ -163,4 +163,12 @@ ScenesManager::const_iterator ScenesManager::cbegin() const {
 
 ScenesManager::const_iterator ScenesManager::cend() const {
     return scenes.cend();
+}
+
+void ScenesManager::unloadCurrentScene() {
+    if (currentScene != nullptr) {
+        currentScene->sendMessage(SceneMessage::SCENE_UNLOAD);
+
+        currentScene = nullptr;
+    }
 }

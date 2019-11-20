@@ -43,6 +43,8 @@ namespace dengine {
         void removeScene(const_iterator iterator);
 
         void loadScene(const_iterator iterator);
+
+        void unloadCurrentScene();
     public:
 
         ScenesManager();

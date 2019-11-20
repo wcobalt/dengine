@@ -20,6 +20,11 @@ namespace dengine {
         inline virtual const char* what() const noexcept {
             return message.c_str();
         }
+
+    private:
+        std::string toString() const override {
+            return message;
+        }
     };
 }
 

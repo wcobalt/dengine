@@ -11,11 +11,15 @@ namespace dengine {
     };
 
     enum class SceneMessage {
-        UPDATE, UNLOAD, LOAD, GAME_END
+        UPDATE, SCENE_UNLOAD, SCENE_LOAD, GAME_END
     };
 
     enum class GameObjectMessage {
-        UPDATE, CREATE, DESTROY, SCENE_UNLOAD, GAME_END
+        UPDATE, INSTANCE_CREATE, INSTANCE_DESTROY, SCENE_UNLOAD, GAME_END
+    };
+
+    enum class ComponentMessage {
+        INSTANCE_CREATE, INSTANCE_DESTROY, COMPONENT_LOAD, COMPONENT_UNLOAD, UPDATE, SCENE_UNLOAD, GAME_END
     };
 }
 
