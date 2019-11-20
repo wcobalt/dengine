@@ -43,6 +43,11 @@ void GameObject::detachComponent(std::shared_ptr<Component> component) {
     } else throw GameObjectException("The component is not attached to this game object");
 }
 
+void GameObject::detachAllComponents() {
+    for (auto it = components.begin(); it != components.end(); it++)
+        detachComponent(it);
+}
+
 void GameObject::instantiate(std::shared_ptr<GameObject> instance) {
     std::shared_ptr<GameObject> root = Dengine::get()->getScenesManager()->getCurrentScene()->getRoot();
 
@@ -62,13 +67,13 @@ void GameObject::destroy(std::shared_ptr<GameObject> instance) {
     Filter filter([&destroyed](std::shared_ptr<GameObject> gameObject) {
         gameObject->parent->destroyChild(gameObject);
         destroyed = true;
-
-        return true;
     },
 
     [&instance](std::shared_ptr<GameObject> gameObject) -> bool {
         return instance == gameObject;
-    });
+    }, true);
+
+    filter.run();
 
     if (!destroyed)
         throw GameObjectException("Cannot destroy the game object because there is no such one in scene tree.");
@@ -143,6 +148,7 @@ void GameObject::sendMessage(GameObjectMessage message) {
             sendMessageToComponents(ComponentMessage::INSTANCE_DESTROY);
 
             destroyAllChildren();
+            detachAllComponents();
 
             break;
         case GameObjectMessage::SCENE_UNLOAD:

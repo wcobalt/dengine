@@ -13,11 +13,12 @@
 using namespace dengine;
 
 Filter::Filter(std::function<void(std::shared_ptr<GameObject>)> filterAction,
-               std::function<bool(std::shared_ptr<GameObject>)> filterSelection) : filterSelection(filterSelection) {
-    filterAction = [&filterAction](std::shared_ptr<GameObject> gameObject) {
+               std::function<bool(std::shared_ptr<GameObject>)> filterSelection, bool alwaysReturn)
+               : filterSelection(filterSelection) {
+    filterAction = [&filterAction, &alwaysReturn](std::shared_ptr<GameObject> gameObject) {
         filterAction(gameObject);
 
-        return false;
+        return alwaysReturn;
     };
 }
 

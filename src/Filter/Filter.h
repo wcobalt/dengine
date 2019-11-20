@@ -22,26 +22,26 @@ namespace dengine {
         bool dfs(std::shared_ptr<GameObject> gameObject) const;
     public:
         Filter(std::function<void(std::shared_ptr<GameObject>)> filterAction,
-               std::function<bool(std::shared_ptr<GameObject>)> filterSelection);
+               std::function<bool(std::shared_ptr<GameObject>)> filterSelection, bool alwaysReturn);
 
         Filter(std::function<bool(std::shared_ptr<GameObject>)> filterAction,
                std::function<bool(std::shared_ptr<GameObject>)> filterSelection);
 
-        void run() const;
+        virtual void run() const;
 
-        void run(std::shared_ptr<GameObject> gameObject) const;
+        virtual void run(std::shared_ptr<GameObject> gameObject) const;
 
-        void runBfs() const;
+        virtual void runBfs() const;
 
-        void runBfs(bool isReverse) const;
+        virtual void runBfs(bool isReverse) const;
 
-        void runBfs(std::shared_ptr<GameObject> gameObject) const;
+        virtual void runBfs(std::shared_ptr<GameObject> gameObject) const;
 
-        void runBfs(std::shared_ptr<GameObject> gameObject, bool isReverse) const;
+        virtual void runBfs(std::shared_ptr<GameObject> gameObject, bool isReverse) const;
 
-        void runDfs() const;
+        virtual void runDfs() const;
 
-        void runDfs(std::shared_ptr<GameObject> gameObject) const;
+        virtual void runDfs(std::shared_ptr<GameObject> gameObject) const;
     };
 }
 

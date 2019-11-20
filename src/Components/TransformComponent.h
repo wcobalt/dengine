@@ -13,15 +13,16 @@ namespace dengine {
 
 #include "Component.h"
 #include "../Math/vectors.h"
+#include "../Math/Quaternion.h"
 
 namespace dengine {
     class TransformComponent : public virtual Component {
     private:
         vec3f position;
         vec3f rotation;
-        vec3f scale;
+        Quaternion<float> scale;
     public:
-        TransformComponent();
+        TransformComponent(std::shared_ptr<GameObject> gameObject);
 
         TransformComponent(const vec3f& position);
 
@@ -68,7 +69,7 @@ namespace dengine {
 
         double getDistanceTo(const vec3f& position) const;
 
-        template <class T>
+        template<typename T>
         std::shared_ptr<GameObject> getNearestInstance() const;
     };
 }

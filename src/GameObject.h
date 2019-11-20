@@ -75,6 +75,8 @@ namespace dengine {
 
         void detachComponent(std::shared_ptr<Component> component);
 
+        void detachAllComponents();
+
         static void instantiate(std::shared_ptr<GameObject> instance);
 
         void instantiateChild(std::shared_ptr<GameObject> instance);

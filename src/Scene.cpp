@@ -70,7 +70,9 @@ void Scene::handle(std::function<void(std::shared_ptr<GameObject>)> handler) {
             return true;
         } else
             return false;
-    });
+    }, false);
+
+    filter.run(root);
 }
 
 void Scene::freeScene() {
