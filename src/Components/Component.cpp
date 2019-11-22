@@ -7,6 +7,9 @@
 #include "../GameObject.h"
 #include "../Exceptions/ComponentException.h"
 #include "../Exceptions/IllegalArgumentException.h"
+#include "../Coreutils/Messages/ParentChangeMessage.h"
+#include "../Coreutils/Messages/DirectChildrenChangeMessage.h"
+#include "../Coreutils/Messages/MoveMessage.h"
 
 using namespace dengine;
 
@@ -16,53 +19,71 @@ Component::Component(std::shared_ptr<GameObject> gameObject) {
     this->gameObject = gameObject;
 }
 
-void Component::onInstanceCreate() {}
+void Component::onInstanceCreate(const Message &message) {}
 
-void Component::onComponentLoad() {}
+void Component::onComponentLoad(const Message &message) {}
 
-void Component::onComponentUnload() {}
+void Component::onComponentUnload(const Message &message) {}
 
-void Component::onUpdate() {}
+void Component::onUpdate(const Message &message) {}
 
-void Component::onInstanceDestroy() {}
+void Component::onInstanceDestroy(const Message &message) {}
 
-void Component::onSceneUnload() {}
+void Component::onSceneUnload(const Message &message) {}
 
-void Component::onGameEnd() {}
+void Component::onGameEnd(const Message &message) {}
+
+void Component::onDirectChildrenChange(const DirectChildrenChangeMessage &message) {}
+
+void Component::onParentChange(const ParentChangeMessage &message) {}
+
+void Component::onMove(const MoveMessage &message) {}
 
 void Component::setEnabled(bool isEnabled) {
     mIsEnabled = isEnabled;
 }
 
-void Component::sendMessage(ComponentMessage message) {
-    switch (message) {
-        case ComponentMessage::INSTANCE_CREATE:
-            onInstanceCreate();
+void Component::sendMessage(ComponentMessageType messageType, const Message &message) {
+    switch (messageType) {
+        case ComponentMessageType::INSTANCE_CREATE:
+            onInstanceCreate(message);
 
             break;
-        case ComponentMessage::INSTANCE_DESTROY:
-            onInstanceDestroy();
+        case ComponentMessageType::INSTANCE_DESTROY:
+            onInstanceDestroy(message);
 
             break;
-        case ComponentMessage::COMPONENT_LOAD:
-            onComponentLoad();
+        case ComponentMessageType::COMPONENT_LOAD:
+            onComponentLoad(message);
 
             break;
-        case ComponentMessage::COMPONENT_UNLOAD:
-            onComponentUnload();
+        case ComponentMessageType::COMPONENT_UNLOAD:
+            onComponentUnload(message);
 
             break;
-        case ComponentMessage::UPDATE:
-            onUpdate();
+        case ComponentMessageType::UPDATE:
+            onUpdate(message);
 
             break;
-        case ComponentMessage::SCENE_UNLOAD:
-            onSceneUnload();
+        case ComponentMessageType::SCENE_UNLOAD:
+            onSceneUnload(message);
 
             break;
-        case ComponentMessage::GAME_END:
-            onGameEnd();
-            
+        case ComponentMessageType::GAME_END:
+            onGameEnd(message);
+
+            break;
+        case ComponentMessageType::PARENT_CHANGE:
+            onParentChange(dynamic_cast<const ParentChangeMessage&>(message)); //i'm sure it's not good. may be add some checks?
+
+            break;
+        case ComponentMessageType::DIRECT_CHILDREN_CHANGE:
+            onDirectChildrenChange(dynamic_cast<const DirectChildrenChangeMessage&>(message));
+
+            break;
+        case ComponentMessageType::INSTANCE_MOVE:
+            onMove(dynamic_cast<const MoveMessage&>(message));
+
             break;
     }
 }

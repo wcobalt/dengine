@@ -10,9 +10,9 @@ add_executable(App
 
 add_library(Dengine
         src/Components/Component.cpp
-        src/Components/TransformComponent.cpp
+        src/Components/Transform/TransformComponent.cpp
         src/Components/Component.h
-        src/Components/TransformComponent.h
+        src/Components/Transform/TransformComponent.h
 
         src/Dengine.cpp
         src/Dengine.h
@@ -26,7 +26,7 @@ add_library(Dengine
         src/GameObject.h
         src/Platform/PlatformSet.h
         src/Coreutils/ID.h
-        src/Coreutils/Messages.h
+        src/Coreutils/Messages/MessageType.h
         src/SceneBehavior.h
         src/SceneBehavior.cpp
         src/SceneBehavior.h
@@ -113,7 +113,15 @@ add_library(Dengine
 
         src/Filter/Filter.cpp
         src/Filter/Filter.h
-        src/Initializer.h)
+        src/Initializer.h
+        src/Components/Transform/TransformFilters.cpp
+        src/Components/Transform/TransformFilters.h
+        src/Components/Transform/TransformToolkit.cpp
+        src/Components/Transform/TransformToolkit.h
+        src/Exceptions/LayerException.h
+        src/Layer.cpp
+        src/Layer.h
+        src/Coreutils/Messages/Message.cpp src/Coreutils/Messages/Message.h src/Coreutils/Messages/DirectChildrenChangeMessage.cpp src/Coreutils/Messages/DirectChildrenChangeMessage.h src/Coreutils/Messages/ParentChangeMessage.cpp src/Coreutils/Messages/ParentChangeMessage.h src/Coreutils/Messages/MoveMessage.cpp src/Coreutils/Messages/MoveMessage.h)
 
 
 find_package(OpenGL REQUIRED)

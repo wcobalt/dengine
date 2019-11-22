@@ -65,7 +65,7 @@ float Dengine::getDeltaTime() const {
 void Dengine::update() {
     eventsState = platformSet->getWindowManager()->getEventsState();
 
-    scenesManager->sendMessage(ScenesManagerMessage::UPDATE);
+    scenesManager->sendMessage(ScenesManagerMessageType::UPDATE, {});
 }
 
 void Dengine::setIgnoreInactive(bool doIgnoreInactive) {
@@ -86,7 +86,7 @@ void Dengine::run() {
 
         auto finish = std::chrono::high_resolution_clock::now();
 
-        if (isGameStopped) scenesManager->sendMessage(ScenesManagerMessage::GAME_END);
+        if (isGameStopped) scenesManager->sendMessage(ScenesManagerMessageType::GAME_END, {});
 
         deltaTime = (finish - start).count();
         float supposedFrameTime = static_cast<float>(10e9 / fps);

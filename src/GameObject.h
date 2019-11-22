@@ -16,8 +16,10 @@ namespace dengine {
 
 #include "DObject.h"
 #include "Coreutils/ID.h"
-#include "Coreutils/Messages.h"
+#include "Coreutils/Messages/MessageType.h"
 #include "Exceptions/GameObjectException.h"
+#include "Math/vectors.h"
+#include "Coreutils/Messages/Message.h"
 
 namespace dengine {
     class GameObject : public DObject, public std::enable_shared_from_this<GameObject> {
@@ -44,7 +46,15 @@ namespace dengine {
 
         void initialize();
 
-        void sendMessageToComponents(ComponentMessage message);
+        void sendMessageToComponents(ComponentMessageType messageType, const Message &message);
+
+        std::shared_ptr<GameObject> getRoot() const;
+
+        void instantiateAsChild(std::shared_ptr<GameObject> instance);
+
+        decltype(children)::const_iterator findChild(std::shared_ptr<GameObject> instance) const;
+
+        void addChildWithoutInstantiation(std::shared_ptr<GameObject> instance, bool instantiationOrMovingTo);
     public:
         using iterator = decltype(children)::iterator;
 
@@ -79,7 +89,19 @@ namespace dengine {
 
         static void instantiate(std::shared_ptr<GameObject> instance);
 
+        static void instantiate(std::shared_ptr<GameObject> instance, float x, float y, float z);
+
+        static void instantiate(std::shared_ptr<GameObject> instance, const vec3f &position);
+
         void instantiateChild(std::shared_ptr<GameObject> instance);
+
+        void instantiateChild(std::shared_ptr<GameObject> instance, float x, float y, float z);
+
+        void instantiateChild(std::shared_ptr<GameObject> instance, vec3f position);
+
+        static void move(std::shared_ptr<GameObject> instance);
+
+        void moveToChildren(std::shared_ptr<GameObject> instance);
 
         static void destroy(std::shared_ptr<GameObject> instance);
 
@@ -116,7 +138,7 @@ namespace dengine {
 
         std::vector<std::shared_ptr<Component>> getAllComponents() const;
 
-        void sendMessage(GameObjectMessage message);
+        void sendMessage(GameObjectMessageType messageType, const Message &message);
 
         ID getId() const;
     };

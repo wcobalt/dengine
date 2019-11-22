@@ -5,42 +5,49 @@
 #include "GameObject.h"
 #include "Filter/Filter.h"
 #include "Dengine.h"
-#include "Components/TransformComponent.h"
+#include "Components/Transform/TransformComponent.h"
+#include "Layer.h"
+#include "Exceptions/SceneException.h"
+#include "Coreutils/Messages/Message.h"
 
 using namespace dengine;
+
+const unsigned Scene::BASE_NUMBERED_LAYERS_COUNT;
+const unsigned Scene::DEFAULT_BASE_NUMBERED_LAYER;
+const char Scene::BASE_NUMBERED_LAYER_PREFIX[] = "BaseNumberedLayer_";
 
 Scene::Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior) : Scene(id, sceneBehavior, "") {}
 
 Scene::Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior, const std::string &alias) : sceneBehavior(sceneBehavior),
-                                                                                              id(id), alias(alias) {}
+                                                                                              id(id), alias(alias) {
+    for (unsigned i = 0; i < BASE_NUMBERED_LAYERS_COUNT; i++) {
+        std::shared_ptr<Layer> baseLayer(new Layer(BASE_NUMBERED_LAYER_PREFIX + std::to_string(i)));
 
-void Scene::sendMessage(SceneMessage message) {
-    switch (message) {
-        case SceneMessage::SCENE_LOAD:
-            sceneBehavior->onSceneLoad(shared_from_this());
+        baseLayers.emplace_back(baseLayer);
+    }
+}
+
+void Scene::sendMessage(SceneMessageType messageType, const Message &message) {
+    switch (messageType) {
+        case SceneMessageType::SCENE_LOAD:
+            sceneBehavior->onSceneLoad(message, shared_from_this());
 
             break;
-        case SceneMessage::SCENE_UNLOAD:
-            handle([](auto gameObject) {
-                gameObject->sendMessage(GameObjectMessage::SCENE_UNLOAD);
-            });
+        case SceneMessageType::SCENE_UNLOAD:
+            handle(GameObjectMessageType::UPDATE, message);
 
-            sceneBehavior->onSceneUnload(shared_from_this());
+            sceneBehavior->onSceneUnload(message, shared_from_this());
             freeScene();
 
             break;
-        case SceneMessage::GAME_END:
-            handle([](auto gameObject) {
-                gameObject->sendMessage(GameObjectMessage::GAME_END);
-            });
+        case SceneMessageType::GAME_END:
+            handle(GameObjectMessageType::UPDATE, message);
 
-            sceneBehavior->onGameEnd(shared_from_this());
+            sceneBehavior->onGameEnd(message, shared_from_this());
 
             break;
-        case SceneMessage::UPDATE:
-            handle([](auto gameObject) {
-                gameObject->sendMessage(GameObjectMessage::UPDATE);
-            });
+        case SceneMessageType::UPDATE:
+            handle(GameObjectMessageType::UPDATE, message);
 
             break;
     }
@@ -48,6 +55,23 @@ void Scene::sendMessage(SceneMessage message) {
 
 ID Scene::takeNextId() {
     return currentId++;
+}
+
+std::shared_ptr<Layer> Scene::getBaseLayerByName(const std::string &layerName) const {
+    auto it = findLayer(layerName);
+
+    if (it != baseLayers.end())
+        return *it;
+    else
+        throw SceneException("Unable to find layer with such name: " + layerName);
+}
+
+std::shared_ptr<Layer> Scene::getBaseNumberedLayer(unsigned number) const {
+    return getBaseLayerByName(BASE_NUMBERED_LAYER_PREFIX + std::to_string(number));
+}
+
+std::shared_ptr<Layer> Scene::getDefaultBaseNumberedLayer() const {
+    return baseLayers[DEFAULT_BASE_NUMBERED_LAYER];
 }
 
 std::shared_ptr<GameObject> Scene::getRoot() const {
@@ -62,10 +86,15 @@ ID Scene::getId() const {
     return id;
 }
 
-void Scene::handle(std::function<void(std::shared_ptr<GameObject>)> handler) {
+void Scene::handle(GameObjectMessageType messageType, const Message &message) {
     std::unordered_map<ID, bool> hashTable;
 
-    Filter filter(handler, [&hashTable](std::shared_ptr<GameObject> gameObject) -> bool {
+    Filter filter(
+    [&message, messageType](std::shared_ptr<GameObject> gameObject) {
+        gameObject->sendMessage(messageType, message);
+    },
+
+    [&hashTable](std::shared_ptr<GameObject> gameObject) -> bool {
         bool isActive = gameObject->getComponent<TransformComponent>()->isActive();
         bool doIgnoreInactive = Dengine::get()->isIgnoringInactive();
 
@@ -82,4 +111,12 @@ void Scene::handle(std::function<void(std::shared_ptr<GameObject>)> handler) {
 
 void Scene::freeScene() {
     root->destroyAllChildren();
+}
+
+Scene::const_layer_iterator Scene::findLayer(const std::string &layerName) const {
+    for (auto it = baseLayers.begin(); it != baseLayers.end(); it++) {
+        if ((*it)->toString() == layerName) return it;
+    }
+
+    return baseLayers.end();
 }

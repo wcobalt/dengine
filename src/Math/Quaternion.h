@@ -33,7 +33,7 @@ namespace dengine {
         template<typename FT>
         friend std::ostream& operator<<(std::ostream& stream, const Quaternion<FT>& quaternion);
     public:
-        Quaternion() : vector(), mScalar(0) {}
+        Quaternion() : Quaternion(0, 0, 0) {}
 
         Quaternion(T x, T y, T z, T w) : mScalar(w), vector(x, y, z) {}
 
