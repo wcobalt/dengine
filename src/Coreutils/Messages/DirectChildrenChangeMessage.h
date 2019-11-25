@@ -16,7 +16,7 @@ namespace dengine {
     class DirectChildrenChangeMessage : public Message {
     public:
         enum class ChildChangeType {
-            DESTROY, INSTANCE, MOVE_FROM, MOVE_TO
+            DESTROY, INSTANTIATION, MOVE_FROM, MOVE_TO
         };
     private:
         std::shared_ptr<GameObject> changedChild;

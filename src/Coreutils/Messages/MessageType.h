@@ -2,8 +2,8 @@
 // Created by wcobalt on 11/18/19.
 //
 
-#ifndef DENGINE_DENGINEMESSAGE_H
-#define DENGINE_DENGINEMESSAGE_H
+#ifndef DENGINE_DENGINEMESSAGETYPE_H
+#define DENGINE_DENGINEMESSAGETYPE_H
 
 namespace dengine {
     enum class ScenesManagerMessageType {
@@ -15,7 +15,7 @@ namespace dengine {
     };
 
     enum class GameObjectMessageType {
-        UPDATE, INSTANCE_CREATE, INSTANCE_DESTROY, SCENE_UNLOAD, GAME_END, MOVE
+        UPDATE, INSTANCE_CREATE_PRE, INSTANCE_CREATE_POST, INSTANCE_DESTROY, SCENE_UNLOAD, GAME_END, INSTANCE_MOVE
     };
 
     enum class ComponentMessageType {
@@ -24,4 +24,4 @@ namespace dengine {
     };
 }
 
-#endif //DENGINE_DENGINEMESSAGE_H
+#endif //DENGINE_DENGINEMESSAGETYPE_H

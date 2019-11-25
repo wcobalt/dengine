@@ -48,8 +48,6 @@ namespace dengine {
 
         void sendMessageToComponents(ComponentMessageType messageType, const Message &message);
 
-        std::shared_ptr<GameObject> getRoot() const;
-
         void instantiateAsChild(std::shared_ptr<GameObject> instance);
 
         decltype(children)::const_iterator findChild(std::shared_ptr<GameObject> instance) const;
@@ -105,6 +103,8 @@ namespace dengine {
 
         static void destroy(std::shared_ptr<GameObject> instance);
 
+        void destroy();
+
         void destroyChild(std::shared_ptr<GameObject> instance);
 
         void destroyAllChildren();
@@ -139,6 +139,10 @@ namespace dengine {
         std::vector<std::shared_ptr<Component>> getAllComponents() const;
 
         void sendMessage(GameObjectMessageType messageType, const Message &message);
+
+        static std::shared_ptr<GameObject> getRoot();
+
+        std::shared_ptr<GameObject> clone() const;
 
         ID getId() const;
     };
