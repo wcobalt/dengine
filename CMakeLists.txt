@@ -121,7 +121,7 @@ add_library(Dengine
         src/Exceptions/LayerException.h
         src/Layer.cpp
         src/Layer.h
-        src/Coreutils/Messages/Message.cpp src/Coreutils/Messages/Message.h src/Coreutils/Messages/DirectChildrenChangeMessage.cpp src/Coreutils/Messages/DirectChildrenChangeMessage.h src/Coreutils/Messages/ParentChangeMessage.cpp src/Coreutils/Messages/ParentChangeMessage.h src/Coreutils/Messages/MoveMessage.cpp src/Coreutils/Messages/MoveMessage.h)
+        src/Coreutils/Messages/Message.cpp src/Coreutils/Messages/Message.h src/Coreutils/Messages/DirectChildrenChangeMessage.cpp src/Coreutils/Messages/DirectChildrenChangeMessage.h src/Coreutils/Messages/ParentChangeMessage.cpp src/Coreutils/Messages/ParentChangeMessage.h src/Coreutils/Messages/MoveMessage.cpp src/Coreutils/Messages/MoveMessage.h src/ComponentsManager.cpp src/ComponentsManager.h)
 
 
 find_package(OpenGL REQUIRED)

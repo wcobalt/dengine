@@ -9,6 +9,7 @@
 #include "Layer.h"
 #include "Exceptions/SceneException.h"
 #include "Coreutils/Messages/Message.h"
+#include "ComponentsManager.h"
 
 using namespace dengine;
 
@@ -95,7 +96,7 @@ void Scene::handle(GameObjectMessageType messageType, const Message &message) {
     },
 
     [&hashTable](std::shared_ptr<GameObject> gameObject) -> bool {
-        bool isActive = gameObject->getComponent<TransformComponent>()->isActive();
+        bool isActive = gameObject->getComponentsManager()->getComponent<TransformComponent>()->isActive();
         bool doIgnoreInactive = Dengine::get()->isIgnoringInactive();
 
         if (hashTable.find(gameObject->getId()) == hashTable.end() && (!doIgnoreInactive || isActive)) {

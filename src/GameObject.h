@@ -12,6 +12,7 @@ namespace dengine {
     class Component;
     class TransformComponent;
     class Initializer;
+    class ComponentsManager;
 }
 
 #include "DObject.h"
@@ -24,7 +25,7 @@ namespace dengine {
 namespace dengine {
     class GameObject : public DObject, public std::enable_shared_from_this<GameObject> {
     private:
-        std::vector<std::shared_ptr<Component>> components;
+        std::shared_ptr<ComponentsManager> componentsManager;
 
         std::shared_ptr<GameObject> parent;
         std::vector<std::shared_ptr<GameObject>> children;
@@ -34,19 +35,9 @@ namespace dengine {
 
         ID id;
 
-        using const_component_iterator = decltype(components)::const_iterator;
-
-        void detachComponent(const_component_iterator iterator);
-
         void destroyChild(decltype(children)::const_iterator iterator);
 
-        void checkComponentAttachment(std::shared_ptr<Component> component);
-
-        const_component_iterator findComponent(std::shared_ptr<Component> component) const;
-
         void initialize();
-
-        void sendMessageToComponents(ComponentMessageType messageType, const Message &message);
 
         void instantiateAsChild(std::shared_ptr<GameObject> instance);
 
@@ -65,25 +56,6 @@ namespace dengine {
         GameObject(std::shared_ptr<TransformComponent> transform);
 
         GameObject(std::shared_ptr<Initializer> initializer, std::shared_ptr<TransformComponent> transform);
-
-        void attachComponent(std::shared_ptr<Component> component);
-
-        template<typename T>
-        void detachComponent() {
-            for (auto it = components.begin(); it != components.end(); it++) {
-                if (std::dynamic_pointer_cast<T>(*it)) {
-                    detachComponent(it);
-
-                    return;
-                }
-            }
-
-            throw GameObjectException("Cannot detach component of this type, because it is not attached yet");
-        }
-
-        void detachComponent(std::shared_ptr<Component> component);
-
-        void detachAllComponents();
 
         static void instantiate(std::shared_ptr<GameObject> instance);
 
@@ -125,24 +97,13 @@ namespace dengine {
 
         const_iterator cend() const;
 
-        template<typename T>
-        std::shared_ptr<T> getComponent() {
-            for (auto it = components.begin(); it != components.end(); it++) {
-                if (auto result = std::dynamic_pointer_cast<T>(*it)) {
-                    return result;
-                }
-            }
-
-            throw GameObjectException("Cannot return component of this type, because is is not attached yet.");
-        }
-
-        std::vector<std::shared_ptr<Component>> getAllComponents() const;
-
         void sendMessage(GameObjectMessageType messageType, const Message &message);
 
         static std::shared_ptr<GameObject> getRoot();
 
         std::shared_ptr<GameObject> clone() const;
+
+        std::shared_ptr<ComponentsManager> getComponentsManager() const;
 
         ID getId() const;
     };

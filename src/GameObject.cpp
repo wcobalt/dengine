@@ -9,6 +9,7 @@
 #include "Coreutils/Messages/DirectChildrenChangeMessage.h"
 #include "Coreutils/Messages/ParentChangeMessage.h"
 #include "Coreutils/Messages/MoveMessage.h"
+#include "ComponentsManager.h"
 
 using namespace dengine;
 
@@ -21,36 +22,7 @@ GameObject::GameObject(std::shared_ptr<TransformComponent> transform) : GameObje
 GameObject::GameObject(std::shared_ptr<Initializer> initializer, std::shared_ptr<TransformComponent> transform)
         : initializer(initializer), userDefinedTransform(transform) {
     id = Dengine::get()->getScenesManager()->getCurrentScene()->takeNextId();
-}
-
-void GameObject::attachComponent(std::shared_ptr<Component> component) {
-    checkComponentAttachment(component);
-
-    auto it = findComponent(component);
-
-    if (it == components.end()) {
-        components.emplace_back(component);
-
-        component->sendMessage(ComponentMessageType::COMPONENT_LOAD, {});
-    } else
-        throw GameObjectException("Component of such type: " + std::string(typeid(*component).name())
-                + " already attached to this game object");
-}
-
-void GameObject::detachComponent(std::shared_ptr<Component> component) {
-    checkComponentAttachment(component);
-
-    auto it = findComponent(component);
-
-    if (it != components.end()) {
-        detachComponent(it);
-    } else
-        throw GameObjectException("The component is not attached to this game object");
-}
-
-void GameObject::detachAllComponents() {
-    for (auto it = components.begin(); it != components.end(); it++)
-        detachComponent(it);
+    componentsManager = std::make_shared<ComponentsManager>(shared_from_this());
 }
 
 //instantiates game objecton ITS coordinates
@@ -80,9 +52,9 @@ void GameObject::instantiateChild(std::shared_ptr<GameObject> instance, float x,
 
 //instantiates the child relate TO PARENT
 void GameObject::instantiateChild(std::shared_ptr<GameObject> instance, vec3f position) {
-    vec3f parentPosition = getComponent<TransformComponent>()->getPosition();
+    vec3f parentPosition = componentsManager->getComponent<TransformComponent>()->getPosition();
 
-    instance->getComponent<TransformComponent>()->setPosition(position + parentPosition);
+    instance->getComponentsManager()->getComponent<TransformComponent>()->setPosition(position + parentPosition);
 
     instantiateAsChild(instance);
 }
@@ -96,7 +68,7 @@ void GameObject::moveToChildren(std::shared_ptr<GameObject> instance) {
 
     auto iteratorToChildInThatParent = parent->findChild(instance);
     parent->children.erase(iteratorToChildInThatParent);
-    parent->sendMessageToComponents(ComponentMessageType::DIRECT_CHILDREN_CHANGE,
+    parent->sendMessage(GameObjectMessageType::DIRECT_CHILDREN_CHANGE,
             DirectChildrenChangeMessage(DirectChildrenChangeMessage::ChildChangeType::MOVE_FROM, instance));
 
     addChildWithoutInstantiation(instance, false);
@@ -172,10 +144,6 @@ GameObject::const_iterator GameObject::cend() const {
     return children.cend();
 }
 
-std::vector<std::shared_ptr<Component>> GameObject::getAllComponents() const {
-    return components;
-}
-
 /*
  * So, sendMessage(semantic synonym - notify) is a method which responses on a message in proper way.
  * Actually, this method is called when on higher level, something will happen or was happened with the object.
@@ -195,7 +163,7 @@ std::vector<std::shared_ptr<Component>> GameObject::getAllComponents() const {
 void GameObject::sendMessage(GameObjectMessageType messageType, const Message &message) {
     switch (messageType) {
         case GameObjectMessageType::UPDATE:
-            sendMessageToComponents(ComponentMessageType::UPDATE, message);
+            componentsManager->sendMessage(ComponentsManagerMessageType::UPDATE, message);
 
             break;
         case GameObjectMessageType::INSTANCE_CREATE_PRE:
@@ -203,56 +171,44 @@ void GameObject::sendMessage(GameObjectMessageType messageType, const Message &m
 
             break;
         case GameObjectMessageType::INSTANCE_CREATE_POST:
-            sendMessageToComponents(ComponentMessageType::INSTANCE_CREATE, message);
+            componentsManager->sendMessage(ComponentsManagerMessageType::INSTANCE_CREATE, message);
 
             break;
         case GameObjectMessageType::INSTANCE_DESTROY:
             destroyAllChildren();
 
-            sendMessageToComponents(ComponentMessageType::INSTANCE_DESTROY, message);
-
-            detachAllComponents();
+            componentsManager->sendMessage(ComponentsManagerMessageType::INSTANCE_DESTROY, message);
 
             break;
         case GameObjectMessageType::SCENE_UNLOAD:
-            sendMessageToComponents(ComponentMessageType::SCENE_UNLOAD, message);
+            componentsManager->sendMessage(ComponentsManagerMessageType::SCENE_UNLOAD, message);
 
             break;
         case GameObjectMessageType::GAME_END:
-            sendMessageToComponents(ComponentMessageType::GAME_END, message);
+            componentsManager->sendMessage(ComponentsManagerMessageType::GAME_END, message);
 
             break;
         case GameObjectMessageType::INSTANCE_MOVE:
-            sendMessageToComponents(ComponentMessageType::INSTANCE_MOVE, message);
+            componentsManager->sendMessage(ComponentsManagerMessageType::INSTANCE_MOVE, message);
+
+            break;
+        case GameObjectMessageType::DIRECT_CHILDREN_CHANGE:
+            componentsManager->sendMessage(ComponentsManagerMessageType::DIRECT_CHILDREN_CHANGE, message);
+
+            break;
+        case GameObjectMessageType::PARENT_CHANGE:
+            componentsManager->sendMessage(ComponentsManagerMessageType::PARENT_CHANGE, message);
 
             break;
     }
+}
+
+std::shared_ptr<ComponentsManager> GameObject::getComponentsManager() const {
+    return componentsManager;
 }
 
 ID GameObject::getId() const {
     return id;
-}
-
-void GameObject::checkComponentAttachment(std::shared_ptr<Component> component) {
-    if (component->getGameObject() != shared_from_this())
-        throw GameObjectException("Game object component is bound to and this game object are different.");
-}
-
-void GameObject::detachComponent(GameObject::const_component_iterator iterator) {
-    (*iterator)->sendMessage(ComponentMessageType::COMPONENT_UNLOAD, {});
-
-    components.erase(iterator);
-}
-
-GameObject::const_component_iterator GameObject::findComponent(std::shared_ptr<Component> component) const {
-    size_t hash = typeid(component).hash_code();
-
-    for (auto it = components.begin(); it != components.end(); it++) {
-        if (typeid(*it).hash_code() == hash)
-            return it;
-    }
-
-    return components.end();
 }
 
 void GameObject::initialize() {
@@ -261,15 +217,9 @@ void GameObject::initialize() {
     if (!transform)
         transform = std::make_shared<TransformComponent>(shared_from_this());
 
-    attachComponent(transform);
+    componentsManager->attachComponent(transform);
 
     initializer->initialize(shared_from_this());
-}
-
-void GameObject::sendMessageToComponents(ComponentMessageType messageType, const Message &message) {
-    for (auto& component : components)
-        if (component->isEnabled())
-            component->sendMessage(messageType, message);
 }
 
 std::shared_ptr<GameObject> GameObject::getRoot() {
@@ -290,7 +240,7 @@ void GameObject::destroyChild(const_iterator iterator) {
     child->sendMessage(GameObjectMessageType::INSTANCE_DESTROY, {});
 
     children.erase(iterator);
-    sendMessageToComponents(ComponentMessageType::DIRECT_CHILDREN_CHANGE,
+    sendMessage(GameObjectMessageType::DIRECT_CHILDREN_CHANGE,
             DirectChildrenChangeMessage(DirectChildrenChangeMessage::ChildChangeType::DESTROY, child));
 }
 
@@ -306,12 +256,15 @@ void GameObject::instantiateAsChild(std::shared_ptr<GameObject> instance) {
 
 void GameObject::addChildWithoutInstantiation(std::shared_ptr<GameObject> instance, bool instantiationOrMovingTo) {
     children.emplace_back(instance);
-    sendMessageToComponents(ComponentMessageType::DIRECT_CHILDREN_CHANGE,
-            DirectChildrenChangeMessage(instantiationOrMovingTo ? DirectChildrenChangeMessage::ChildChangeType::INSTANTIATION
-            : DirectChildrenChangeMessage::ChildChangeType::MOVE_TO, instance));
+
+    DirectChildrenChangeMessage message(instantiationOrMovingTo ? DirectChildrenChangeMessage::ChildChangeType::INSTANTIATION
+                                                                : DirectChildrenChangeMessage::ChildChangeType::MOVE_TO, instance);
+
+    sendMessage(GameObjectMessageType::DIRECT_CHILDREN_CHANGE, message);
 
     std::shared_ptr<GameObject> previousParent = instance->parent;
 
     instance->parent = shared_from_this();
-    instance->sendMessageToComponents(ComponentMessageType::PARENT_CHANGE, ParentChangeMessage(previousParent));
+    instance->sendMessage(GameObjectMessageType::PARENT_CHANGE,
+            ParentChangeMessage(previousParent));
 }
