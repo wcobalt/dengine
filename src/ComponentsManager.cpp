@@ -67,10 +67,6 @@ void ComponentsManager::sendMessage(ComponentsManagerMessageType messageType, co
             sendMessageToComponents(ComponentMessageType::GAME_END, message);
 
             break;
-        case ComponentsManagerMessageType::INSTANCE_MOVE:
-            sendMessageToComponents(ComponentMessageType::INSTANCE_MOVE, message);
-
-            break;
         case ComponentsManagerMessageType::DIRECT_CHILDREN_CHANGE:
             sendMessageToComponents(ComponentMessageType::DIRECT_CHILDREN_CHANGE, message);
 

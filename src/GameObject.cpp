@@ -8,7 +8,6 @@
 #include "Filter/Filter.h"
 #include "Coreutils/Messages/DirectChildrenChangeMessage.h"
 #include "Coreutils/Messages/ParentChangeMessage.h"
-#include "Coreutils/Messages/MoveMessage.h"
 #include "ComponentsManager.h"
 
 using namespace dengine;
@@ -64,23 +63,19 @@ void GameObject::move(std::shared_ptr<GameObject> instance) {
 }
 
 void GameObject::moveToChildren(std::shared_ptr<GameObject> instance) {
-    std::shared_ptr<GameObject> parent = instance->parent;
+    std::shared_ptr<GameObject> parent = instance->getParent();
 
-    auto iteratorToChildInThatParent = parent->findChild(instance);
-    parent->children.erase(iteratorToChildInThatParent);
     parent->sendMessage(GameObjectMessageType::DIRECT_CHILDREN_CHANGE,
             DirectChildrenChangeMessage(DirectChildrenChangeMessage::ChildChangeType::MOVE_FROM, instance));
 
     addChildWithoutInstantiation(instance, false);
-
-    instance->sendMessage(GameObjectMessageType::INSTANCE_MOVE, MoveMessage(parent));
 }
 
 void GameObject::destroy(std::shared_ptr<GameObject> instance) {
     bool destroyed = false;
 
     Filter filter([&destroyed](std::shared_ptr<GameObject> gameObject) {
-        gameObject->parent->destroyChild(gameObject);
+        gameObject->destroy();
         destroyed = true;
     },
 
@@ -116,7 +111,7 @@ std::shared_ptr<GameObject> GameObject::getParent() const {
     return parent;
 }
 
-std::vector<std::shared_ptr<GameObject>> GameObject::getChildren() const {
+std::vector<std::shared_ptr<GameObject>> GameObject::getAllChildren() const {
     return children;
 }
 
@@ -151,7 +146,7 @@ GameObject::const_iterator GameObject::cend() const {
  * as on lower one, are executed on lower. So, developer of lower level sendMessage() logic, cannot rely on some actions
  * which could be executed somewhere on higher level. For instance:
  *
- * we have to destroy some GO (GameObject), since each GO is someone's child we must delete it from parent (parent, at this case
+ * we have to destroy some GO (GameObject), since each GO is someone's child, we must delete it from parent (parent, at this case
  * - is higher level, child is lower one). But before that we need to make child GO deleted itself. So, we notify it,
  * that it will be destroyed soon, and it cannot rely that IT's OWN children will be destroyed by someone, so it does it in it's own.
  * Like this, it cannot rely that IT's OWN components will be detached by someone, so it does itself.
@@ -159,6 +154,22 @@ GameObject::const_iterator GameObject::cend() const {
  * TL;DR: lower level must do work about itself, higher one about itself. Lower one cannot rely on higher one. sendMessage
  * is notification about something that was happened or will happen. It can be just notification (delegation of message to lower
  * levels) but can contain some logic as well.
+ *
+ * TL;DR in other words: this method and message system at all work as the following: higher level need to do something
+ * with lower one, it does it on IT's level, then (IMPORTANT) it says to lower level: I did something with myself, and I'm sending
+ * you a message in which it's described what I've done and how. If you need to do something too, ok, go ahead, read message
+ * and do it. If you have lower levels, no problems, send according messages to them.
+ *
+ * Change #1: if there's interaction between objects (not necessary game ones) on the same layer, then the following scheme
+ * works: objectA (one a method was called on) sends message to objectB (on the same layer). ObjectB somehow handles
+ * message.
+ *
+ * Change #2: interaction with itself: if a GO does some stuff with itself and then it need to do some logic (e.g.
+ * send a message too lower levels), it can send a message to itself firstly. The logic is not necessary propagation of
+ * messages to lower levels. It can be any logic. BUT, if this logic is used once in the GO class and it isn't propagation
+ * it is recommended to exclude it logic to methods where it is needed. So, if it's needed e.g. to delete a child and
+ * then propagate according message to lower levels, propagation goes in sendMessage(), but directly deletion goes in
+ * method-invoker.
  * */
 void GameObject::sendMessage(GameObjectMessageType messageType, const Message &message) {
     switch (messageType) {
@@ -188,18 +199,28 @@ void GameObject::sendMessage(GameObjectMessageType messageType, const Message &m
             componentsManager->sendMessage(ComponentsManagerMessageType::GAME_END, message);
 
             break;
-        case GameObjectMessageType::INSTANCE_MOVE:
-            componentsManager->sendMessage(ComponentsManagerMessageType::INSTANCE_MOVE, message);
+        case GameObjectMessageType::DIRECT_CHILDREN_CHANGE: {
+            auto childrenChangeMessage = dynamic_cast<const DirectChildrenChangeMessage &>(message);
 
-            break;
-        case GameObjectMessageType::DIRECT_CHILDREN_CHANGE:
+            switch (childrenChangeMessage.getChildChangeType()) {
+                case DirectChildrenChangeMessage::ChildChangeType::MOVE_FROM:
+                    children.erase(findChild(childrenChangeMessage.getChangedChild()));
+
+                    break;
+            }
+
             componentsManager->sendMessage(ComponentsManagerMessageType::DIRECT_CHILDREN_CHANGE, message);
 
             break;
-        case GameObjectMessageType::PARENT_CHANGE:
+        }
+        case GameObjectMessageType::PARENT_CHANGE: {
+            auto parentChange = dynamic_cast<const ParentChangeMessage &>(message);
+
+            parent = parentChange.getNewParent();
             componentsManager->sendMessage(ComponentsManagerMessageType::PARENT_CHANGE, message);
 
             break;
+        }
     }
 }
 
@@ -262,9 +283,6 @@ void GameObject::addChildWithoutInstantiation(std::shared_ptr<GameObject> instan
 
     sendMessage(GameObjectMessageType::DIRECT_CHILDREN_CHANGE, message);
 
-    std::shared_ptr<GameObject> previousParent = instance->parent;
-
-    instance->parent = shared_from_this();
     instance->sendMessage(GameObjectMessageType::PARENT_CHANGE,
-            ParentChangeMessage(previousParent));
+                          ParentChangeMessage(instance->parent, shared_from_this()));
 }

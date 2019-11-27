@@ -46,8 +46,6 @@ namespace dengine {
 
         void onParentChange(const ParentChangeMessage &message);
 
-        void onMove(const MoveMessage& message);
-
         void setEnabled(bool isEnabled);
 
         void sendMessage(ComponentMessageType messageType, const Message &message);

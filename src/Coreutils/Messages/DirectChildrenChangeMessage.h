@@ -30,6 +30,10 @@ namespace dengine {
         ChildChangeType getChildChangeType() const {
             return childChangeType;
         }
+
+        std::shared_ptr<GameObject> getChangedChild() const {
+            return changedChild;
+        }
     };
 }
 

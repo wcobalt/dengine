@@ -9,7 +9,6 @@
 #include "../Exceptions/IllegalArgumentException.h"
 #include "../Coreutils/Messages/ParentChangeMessage.h"
 #include "../Coreutils/Messages/DirectChildrenChangeMessage.h"
-#include "../Coreutils/Messages/MoveMessage.h"
 
 using namespace dengine;
 
@@ -36,8 +35,6 @@ void Component::onGameEnd(const Message &message) {}
 void Component::onDirectChildrenChange(const DirectChildrenChangeMessage &message) {}
 
 void Component::onParentChange(const ParentChangeMessage &message) {}
-
-void Component::onMove(const MoveMessage &message) {}
 
 void Component::setEnabled(bool isEnabled) {
     mIsEnabled = isEnabled;
@@ -74,15 +71,11 @@ void Component::sendMessage(ComponentMessageType messageType, const Message &mes
 
             break;
         case ComponentMessageType::PARENT_CHANGE:
-            onParentChange(dynamic_cast<const ParentChangeMessage&>(message)); //i'm sure it's not good. may be add some checks?
+            onParentChange(dynamic_cast<const ParentChangeMessage&>(message)); //i'm sure it isn't good. may be add some checks?
 
             break;
         case ComponentMessageType::DIRECT_CHILDREN_CHANGE:
             onDirectChildrenChange(dynamic_cast<const DirectChildrenChangeMessage&>(message));
-
-            break;
-        case ComponentMessageType::INSTANCE_MOVE:
-            onMove(dynamic_cast<const MoveMessage&>(message));
 
             break;
     }

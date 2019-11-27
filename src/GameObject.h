@@ -83,7 +83,7 @@ namespace dengine {
 
         std::shared_ptr<GameObject> getParent() const;
 
-        std::vector<std::shared_ptr<GameObject>> getChildren() const;
+        std::vector<std::shared_ptr<GameObject>> getAllChildren() const;
 
         iterator begin();
 
