@@ -12,15 +12,14 @@
 #define DENGINE_SCENE_H
 
 namespace dengine {
-    class GameObject;
     class Layer;
 }
 
 #include "DObject.h"
 #include "Coreutils/ID.h"
-#include "Coreutils/Messages/MessageType.h"
 #include "SceneBehavior.h"
-#include "Coreutils/Messages/Message.h"
+#include "Coreutils/Messages/ComponentMessage.h"
+#include "GameObject.h"
 
 namespace dengine {
     class Scene : public DObject, public std::enable_shared_from_this<Scene> {
@@ -34,7 +33,7 @@ namespace dengine {
 
         std::vector<std::shared_ptr<Layer>> baseLayers;
 
-        void handle(GameObjectMessageType messageType, const Message &message);
+        void handle(GameObject::EventType messageType);
 
         void freeScene();
 
@@ -42,6 +41,10 @@ namespace dengine {
 
         const_layer_iterator findLayer(const std::string& layerName) const;
     public:
+        enum class EventType {
+            UPDATE, SCENE_UNLOAD, SCENE_LOAD, GAME_END
+        };
+
         static const unsigned BASE_NUMBERED_LAYERS_COUNT = 8;
         static const char BASE_NUMBERED_LAYER_PREFIX[];
         static const unsigned DEFAULT_BASE_NUMBERED_LAYER = 0;
@@ -50,7 +53,7 @@ namespace dengine {
 
         Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior, const std::string &alias);
 
-        void sendMessage(SceneMessageType messageType, const Message &message);
+        void handleExternalEvent(EventType eventType);
 
         ID takeNextId();
 

@@ -6,15 +6,15 @@ using namespace dengine;
 
 ScenesManager::ScenesManager() : currentId(1), currentScene(nullptr) {}
 
-void ScenesManager::sendMessage(ScenesManagerMessageType messageType, const Message &message) {
+void ScenesManager::handleExternalEvent(EventType eventType) {
     if (isCurrentSceneExist()) {
-        switch (messageType) {
-            case ScenesManagerMessageType::UPDATE:
-                currentScene->sendMessage(SceneMessageType::UPDATE, message);
+        switch (eventType) {
+            case EventType::UPDATE:
+                currentScene->handleExternalEvent(Scene::EventType::UPDATE);
 
                 break;
-            case ScenesManagerMessageType::GAME_END:
-                currentScene->sendMessage(SceneMessageType::GAME_END, message);
+            case EventType::GAME_END:
+                currentScene->handleExternalEvent(Scene::EventType::GAME_END);
                 unloadCurrentScene();
 
                 break;
@@ -143,7 +143,7 @@ void ScenesManager::loadScene(const_iterator iterator) {
     unloadCurrentScene();
 
     currentScene = *iterator;
-    currentScene->sendMessage(SceneMessageType::SCENE_LOAD, {});
+    currentScene->handleExternalEvent(Scene::EventType::SCENE_LOAD);
 }
 
 ScenesManager::iterator ScenesManager::begin() {
@@ -172,7 +172,7 @@ ScenesManager::const_iterator ScenesManager::cend() const {
 
 void ScenesManager::unloadCurrentScene() {
     if (currentScene != nullptr) {
-        currentScene->sendMessage(SceneMessageType::SCENE_UNLOAD, {});
+        currentScene->handleExternalEvent(Scene::EventType::SCENE_UNLOAD);
 
         currentScene = nullptr;
     }

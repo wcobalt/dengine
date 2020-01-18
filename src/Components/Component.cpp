@@ -18,19 +18,19 @@ Component::Component(std::shared_ptr<GameObject> gameObject) {
     this->gameObject = gameObject;
 }
 
-void Component::onInstanceCreate(const Message &message) {}
+void Component::onInstanceCreate(const ComponentMessage &message) {}
 
-void Component::onComponentLoad(const Message &message) {}
+void Component::onComponentLoad(const ComponentMessage &message) {}
 
-void Component::onComponentUnload(const Message &message) {}
+void Component::onComponentUnload(const ComponentMessage &message) {}
 
-void Component::onUpdate(const Message &message) {}
+void Component::onUpdate(const ComponentMessage &message) {}
 
-void Component::onInstanceDestroy(const Message &message) {}
+void Component::onInstanceDestroy(const ComponentMessage &message) {}
 
-void Component::onSceneUnload(const Message &message) {}
+void Component::onSceneUnload(const ComponentMessage &message) {}
 
-void Component::onGameEnd(const Message &message) {}
+void Component::onGameEnd(const ComponentMessage &message) {}
 
 void Component::onDirectChildrenChange(const DirectChildrenChangeMessage &message) {}
 
@@ -40,41 +40,42 @@ void Component::setEnabled(bool isEnabled) {
     mIsEnabled = isEnabled;
 }
 
-void Component::sendMessage(ComponentMessageType messageType, const Message &message) {
-    switch (messageType) {
-        case ComponentMessageType::INSTANCE_CREATE:
+void Component::sendMessage(const ComponentMessage &message) {
+    //looks like shit
+    switch (message.getMessageType()) {
+        case MessageType::INSTANCE_CREATE:
             onInstanceCreate(message);
 
             break;
-        case ComponentMessageType::INSTANCE_DESTROY:
+        case MessageType::INSTANCE_DESTROY:
             onInstanceDestroy(message);
 
             break;
-        case ComponentMessageType::COMPONENT_LOAD:
+        case MessageType::COMPONENT_LOAD:
             onComponentLoad(message);
 
             break;
-        case ComponentMessageType::COMPONENT_UNLOAD:
+        case MessageType::COMPONENT_UNLOAD:
             onComponentUnload(message);
 
             break;
-        case ComponentMessageType::UPDATE:
+        case MessageType::UPDATE:
             onUpdate(message);
 
             break;
-        case ComponentMessageType::SCENE_UNLOAD:
+        case MessageType::SCENE_UNLOAD:
             onSceneUnload(message);
 
             break;
-        case ComponentMessageType::GAME_END:
+        case MessageType::GAME_END:
             onGameEnd(message);
 
             break;
-        case ComponentMessageType::PARENT_CHANGE:
+        case MessageType::PARENT_CHANGE:
             onParentChange(dynamic_cast<const ParentChangeMessage&>(message)); //i'm sure it isn't good. may be add some checks?
 
             break;
-        case ComponentMessageType::DIRECT_CHILDREN_CHANGE:
+        case MessageType::DIRECT_CHILDREN_CHANGE:
             onDirectChildrenChange(dynamic_cast<const DirectChildrenChangeMessage&>(message));
 
             break;

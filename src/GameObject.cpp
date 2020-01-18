@@ -24,7 +24,7 @@ GameObject::GameObject(std::shared_ptr<Initializer> initializer, std::shared_ptr
     componentsManager = std::make_shared<ComponentsManager>(shared_from_this());
 }
 
-//instantiates game objecton ITS coordinates
+//instantiates game object on ITS coordinates
 void GameObject::instantiate(std::shared_ptr<GameObject> instance) {
     instance->getRoot()->instantiateAsChild(instance);
 }
@@ -62,13 +62,24 @@ void GameObject::move(std::shared_ptr<GameObject> instance) {
     instance->getRoot()->moveToChildren(instance);
 }
 
+/*
+ * MOVED_FROM
+ * MOVED_TO
+ * PARENT_CHANGED
+ * */
+
 void GameObject::moveToChildren(std::shared_ptr<GameObject> instance) {
     std::shared_ptr<GameObject> parent = instance->getParent();
 
-    parent->sendMessage(GameObjectMessageType::DIRECT_CHILDREN_CHANGE,
-            DirectChildrenChangeMessage(DirectChildrenChangeMessage::ChildChangeType::MOVE_FROM, instance));
+    parent->children.erase(parent->findChild(instance));
+    addChildWithoutInstantiation(instance);
 
-    addChildWithoutInstantiation(instance, false);
+    DirectChildrenChangeMessage moveFromMessage(DirectChildrenChangeMessage::ChildChangeType::MOVE_FROM, instance);
+    parent->componentsManager->spreadMessage(moveFromMessage);
+
+    noticeAboutAddingWithoutInstantiation(instance,
+            DirectChildrenChangeMessage::ChildChangeType::MOVE_TO,
+            parent);
 }
 
 void GameObject::destroy(std::shared_ptr<GameObject> instance) {
@@ -139,88 +150,21 @@ GameObject::const_iterator GameObject::cend() const {
     return children.cend();
 }
 
-/*
- * So, sendMessage(semantic synonym - notify) is a method which responses on a message in proper way.
- * Actually, this method is called when on higher level, something will happen or was happened with the object.
- * Actions which necessary must be executed on higher level are executed there, but actions which COULD be executed as on higher
- * as on lower one, are executed on lower. So, developer of lower level sendMessage() logic, cannot rely on some actions
- * which could be executed somewhere on higher level. For instance:
- *
- * we have to destroy some GO (GameObject), since each GO is someone's child, we must delete it from parent (parent, at this case
- * - is higher level, child is lower one). But before that we need to make child GO deleted itself. So, we notify it,
- * that it will be destroyed soon, and it cannot rely that IT's OWN children will be destroyed by someone, so it does it in it's own.
- * Like this, it cannot rely that IT's OWN components will be detached by someone, so it does itself.
- *
- * TL;DR: lower level must do work about itself, higher one about itself. Lower one cannot rely on higher one. sendMessage
- * is notification about something that was happened or will happen. It can be just notification (delegation of message to lower
- * levels) but can contain some logic as well.
- *
- * TL;DR in other words: this method and message system at all work as the following: higher level need to do something
- * with lower one, it does it on IT's level, then (IMPORTANT) it says to lower level: I did something with myself, and I'm sending
- * you a message in which it's described what I've done and how. If you need to do something too, ok, go ahead, read message
- * and do it. If you have lower levels, no problems, send according messages to them.
- *
- * Change #1: if there's interaction between objects (not necessary game ones) on the same layer, then the following scheme
- * works: objectA (one a method was called on) sends message to objectB (on the same layer). ObjectB somehow handles
- * message.
- *
- * Change #2: interaction with itself: if a GO does some stuff with itself and then it need to do some logic (e.g.
- * send a message too lower levels), it can send a message to itself firstly. The logic is not necessary propagation of
- * messages to lower levels. It can be any logic. BUT, if this logic is used once in the GO class and it isn't propagation
- * it is recommended to exclude it logic to methods where it is needed. So, if it's needed e.g. to delete a child and
- * then propagate according message to lower levels, propagation goes in sendMessage(), but directly deletion goes in
- * method-invoker.
- * */
-void GameObject::sendMessage(GameObjectMessageType messageType, const Message &message) {
-    switch (messageType) {
-        case GameObjectMessageType::UPDATE:
-            componentsManager->sendMessage(ComponentsManagerMessageType::UPDATE, message);
+//reacts only for external events
+void GameObject::handleExternalEvent(EventType eventType) {
+    switch (eventType) {
+        case EventType::UPDATE:
+            componentsManager->spreadMessage({Component::MessageType::UPDATE});
 
             break;
-        case GameObjectMessageType::INSTANCE_CREATE_PRE:
-            initialize();
+        case EventType::SCENE_UNLOAD:
+            componentsManager->spreadMessage({Component::MessageType::SCENE_UNLOAD});
 
             break;
-        case GameObjectMessageType::INSTANCE_CREATE_POST:
-            componentsManager->sendMessage(ComponentsManagerMessageType::INSTANCE_CREATE, message);
+        case EventType::GAME_END:
+            componentsManager->spreadMessage({Component::MessageType::GAME_END});
 
             break;
-        case GameObjectMessageType::INSTANCE_DESTROY:
-            destroyAllChildren();
-
-            componentsManager->sendMessage(ComponentsManagerMessageType::INSTANCE_DESTROY, message);
-
-            break;
-        case GameObjectMessageType::SCENE_UNLOAD:
-            componentsManager->sendMessage(ComponentsManagerMessageType::SCENE_UNLOAD, message);
-
-            break;
-        case GameObjectMessageType::GAME_END:
-            componentsManager->sendMessage(ComponentsManagerMessageType::GAME_END, message);
-
-            break;
-        case GameObjectMessageType::DIRECT_CHILDREN_CHANGE: {
-            auto childrenChangeMessage = dynamic_cast<const DirectChildrenChangeMessage &>(message);
-
-            switch (childrenChangeMessage.getChildChangeType()) {
-                case DirectChildrenChangeMessage::ChildChangeType::MOVE_FROM:
-                    children.erase(findChild(childrenChangeMessage.getChangedChild()));
-
-                    break;
-            }
-
-            componentsManager->sendMessage(ComponentsManagerMessageType::DIRECT_CHILDREN_CHANGE, message);
-
-            break;
-        }
-        case GameObjectMessageType::PARENT_CHANGE: {
-            auto parentChange = dynamic_cast<const ParentChangeMessage &>(message);
-
-            parent = parentChange.getNewParent();
-            componentsManager->sendMessage(ComponentsManagerMessageType::PARENT_CHANGE, message);
-
-            break;
-        }
     }
 }
 
@@ -255,34 +199,57 @@ GameObject::const_iterator GameObject::findChild(std::shared_ptr<GameObject> ins
     return children.end();
 }
 
+/*
+ * DESTROY ALL CHILDREN
+ * DESTRUCTION
+ * INSTANCE_DESTROY
+ * */
+
 void GameObject::destroyChild(const_iterator iterator) {
     std::shared_ptr<GameObject> child = *iterator;
 
-    child->sendMessage(GameObjectMessageType::INSTANCE_DESTROY, {});
+    child->destroyAllChildren();
+
+    DirectChildrenChangeMessage destructionMessage(DirectChildrenChangeMessage::ChildChangeType::DESTRUCTION,
+                                                   child);
+
+    componentsManager->spreadMessage(destructionMessage);
+    child->componentsManager->spreadMessage({Component::MessageType::INSTANCE_DESTROY});
 
     children.erase(iterator);
-    sendMessage(GameObjectMessageType::DIRECT_CHILDREN_CHANGE,
-            DirectChildrenChangeMessage(DirectChildrenChangeMessage::ChildChangeType::DESTROY, child));
 }
+
+/*
+ * INSTANCE_CREATE
+ * INSTANTIATION
+ * PARENT_CHANGED
+ * */
 
 void GameObject::instantiateAsChild(std::shared_ptr<GameObject> instance) {
     std::shared_ptr<GameObject> clone = instance->clone();
 
-    clone->sendMessage(GameObjectMessageType::INSTANCE_CREATE_PRE, {});
+    //child is not initialized yet
+    addChildWithoutInstantiation(clone);
 
-    addChildWithoutInstantiation(clone, true);
+    clone->initialize();
 
-    clone->sendMessage(GameObjectMessageType::INSTANCE_CREATE_POST, {});
+    clone->componentsManager->spreadMessage({Component::MessageType::INSTANCE_CREATE});
+
+    noticeAboutAddingWithoutInstantiation(clone,
+            DirectChildrenChangeMessage::ChildChangeType::INSTANTIATION,
+            nullptr);
 }
 
-void GameObject::addChildWithoutInstantiation(std::shared_ptr<GameObject> instance, bool instantiationOrMovingTo) {
+void GameObject::addChildWithoutInstantiation(std::shared_ptr<GameObject> instance) {
     children.emplace_back(instance);
+    instance->parent = shared_from_this();
+}
 
-    DirectChildrenChangeMessage message(instantiationOrMovingTo ? DirectChildrenChangeMessage::ChildChangeType::INSTANTIATION
-                                                                : DirectChildrenChangeMessage::ChildChangeType::MOVE_TO, instance);
+void GameObject::noticeAboutAddingWithoutInstantiation(std::shared_ptr<GameObject> instance,
+                                                       const DirectChildrenChangeMessage::ChildChangeType &childrenChangeType,
+                                                       std::shared_ptr<GameObject> previousParent) {
+    DirectChildrenChangeMessage moveToMessage(childrenChangeType, instance);
+    componentsManager->spreadMessage(moveToMessage);
 
-    sendMessage(GameObjectMessageType::DIRECT_CHILDREN_CHANGE, message);
-
-    instance->sendMessage(GameObjectMessageType::PARENT_CHANGE,
-                          ParentChangeMessage(instance->parent, shared_from_this()));
+    instance->componentsManager->spreadMessage(ParentChangeMessage{previousParent, shared_from_this()});
 }

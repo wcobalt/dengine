@@ -10,5 +10,6 @@ ParentChangeMessage::ParentChangeMessage(std::shared_ptr<GameObject> previousPar
     : ParentChangeMessage(previousParent, newParent, std::chrono::system_clock::now()) {}
 
 ParentChangeMessage::ParentChangeMessage(std::shared_ptr<GameObject> previousParent, std::shared_ptr<GameObject> newParent,
-                                         time_type sendingTime)
-    : Message(sendingTime), previousParent(previousParent), newParent(newParent) {}
+                                         time_type sendingTime) :
+      ComponentMessage(Component::MessageType::PARENT_CHANGE, sendingTime),
+      previousParent(previousParent), newParent(newParent) {}

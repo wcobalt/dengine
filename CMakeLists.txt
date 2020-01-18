@@ -26,7 +26,6 @@ add_library(Dengine
         src/GameObject.h
         src/Platform/PlatformSet.h
         src/Coreutils/ID.h
-        src/Coreutils/Messages/MessageType.h
         src/SceneBehavior.h
         src/SceneBehavior.cpp
         src/SceneBehavior.h
@@ -121,7 +120,7 @@ add_library(Dengine
         src/Exceptions/LayerException.h
         src/Layer.cpp
         src/Layer.h
-        src/Coreutils/Messages/Message.cpp src/Coreutils/Messages/Message.h src/Coreutils/Messages/DirectChildrenChangeMessage.cpp src/Coreutils/Messages/DirectChildrenChangeMessage.h src/Coreutils/Messages/ParentChangeMessage.cpp src/Coreutils/Messages/ParentChangeMessage.h src/ComponentsManager.cpp src/ComponentsManager.h)
+        src/Coreutils/Messages/ComponentMessage.cpp src/Coreutils/Messages/ComponentMessage.h src/Coreutils/Messages/DirectChildrenChangeMessage.cpp src/Coreutils/Messages/DirectChildrenChangeMessage.h src/Coreutils/Messages/ParentChangeMessage.cpp src/Coreutils/Messages/ParentChangeMessage.h src/ComponentsManager.cpp src/ComponentsManager.h)
 
 
 find_package(OpenGL REQUIRED)

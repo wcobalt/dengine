@@ -12,12 +12,10 @@ namespace dengine {
     class EventsState;
     class DirectChildrenChangeMessage;
     class ParentChangeMessage;
-    class MoveMessage;
+    class ComponentMessage;
 }
 
-#include "../Coreutils/Messages/MessageType.h"
 #include "../DObject.h"
-#include "../Coreutils/Messages/Message.h"
 
 namespace dengine {
     class Component : public DObject, public std::enable_shared_from_this<Component> {
@@ -26,21 +24,26 @@ namespace dengine {
     protected:
         std::shared_ptr<GameObject> gameObject;
     public:
+        enum class MessageType {
+            INSTANCE_CREATE, INSTANCE_DESTROY, COMPONENT_LOAD, COMPONENT_UNLOAD, UPDATE, SCENE_UNLOAD, GAME_END,
+            DIRECT_CHILDREN_CHANGE, PARENT_CHANGE
+        };
+
         Component(std::shared_ptr<GameObject> gameObject);
 
-        void onInstanceCreate(const Message &message);
+        void onInstanceCreate(const ComponentMessage &message);
 
-        void onComponentLoad(const Message &message);
+        void onComponentLoad(const ComponentMessage &message);
 
-        void onComponentUnload(const Message &message);
+        void onComponentUnload(const ComponentMessage &message);
 
-        void onUpdate(const Message &message);
+        void onUpdate(const ComponentMessage &message);
 
-        void onInstanceDestroy(const Message &message);
+        void onInstanceDestroy(const ComponentMessage &message);
 
-        void onSceneUnload(const Message &message);
+        void onSceneUnload(const ComponentMessage &message);
 
-        void onGameEnd(const Message &message);
+        void onGameEnd(const ComponentMessage &message);
 
         void onDirectChildrenChange(const DirectChildrenChangeMessage &message);
 
@@ -48,7 +51,7 @@ namespace dengine {
 
         void setEnabled(bool isEnabled);
 
-        void sendMessage(ComponentMessageType messageType, const Message &message);
+        void sendMessage(const ComponentMessage &message);
 
         bool isEnabled() const;
 

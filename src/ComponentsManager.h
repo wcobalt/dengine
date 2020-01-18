@@ -8,14 +8,13 @@
 #define DENGINE_COMPONENTSMANAGER_H
 
 namespace dengine {
-    class Component;
-    class Message;
+    class ComponentMessage;
     class GameObject;
 }
 
 #include "DObject.h"
 #include "Exceptions/ComponentException.h"
-#include "Coreutils/Messages/MessageType.h"
+#include "Components/Component.h"
 
 namespace dengine {
     class ComponentsManager : public DObject {
@@ -31,7 +30,6 @@ namespace dengine {
 
         const_component_iterator findComponent(std::shared_ptr<Component> component) const;
 
-        void sendMessageToComponents(ComponentMessageType messageType, const Message &message);
     public:
         ComponentsManager(std::shared_ptr<GameObject> gameObject);
 
@@ -67,7 +65,7 @@ namespace dengine {
 
         std::vector<std::shared_ptr<Component>> getAllComponents() const;
 
-        void sendMessage(ComponentsManagerMessageType messageType, const Message& message);
+        void spreadMessage(const ComponentMessage &message);
     };
 }
 

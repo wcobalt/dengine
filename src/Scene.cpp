@@ -8,7 +8,7 @@
 #include "Components/Transform/TransformComponent.h"
 #include "Layer.h"
 #include "Exceptions/SceneException.h"
-#include "Coreutils/Messages/Message.h"
+#include "Coreutils/Messages/ComponentMessage.h"
 #include "ComponentsManager.h"
 
 using namespace dengine;
@@ -28,27 +28,25 @@ Scene::Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior, const std::str
     }
 }
 
-void Scene::sendMessage(SceneMessageType messageType, const Message &message) {
-    switch (messageType) {
-        case SceneMessageType::SCENE_LOAD:
-            sceneBehavior->onSceneLoad(message, shared_from_this());
+void Scene::handleExternalEvent(EventType eventType) {
+    switch (eventType) {
+        case EventType::SCENE_LOAD:
+            sceneBehavior->onSceneLoad(shared_from_this());
 
             break;
-        case SceneMessageType::SCENE_UNLOAD:
-            handle(GameObjectMessageType::UPDATE, message);
+        case EventType::SCENE_UNLOAD:
+            handle(GameObject::EventType::UPDATE);
 
-            sceneBehavior->onSceneUnload(message, shared_from_this());
+            sceneBehavior->onSceneUnload(shared_from_this());
             freeScene();
 
             break;
-        case SceneMessageType::GAME_END:
-            handle(GameObjectMessageType::UPDATE, message);
-
-            sceneBehavior->onGameEnd(message, shared_from_this());
+        case EventType::GAME_END:
+            sceneBehavior->onGameEnd(shared_from_this());
 
             break;
-        case SceneMessageType::UPDATE:
-            handle(GameObjectMessageType::UPDATE, message);
+        case EventType::UPDATE:
+            handle(GameObject::EventType::UPDATE);
 
             break;
     }
@@ -87,12 +85,12 @@ ID Scene::getId() const {
     return id;
 }
 
-void Scene::handle(GameObjectMessageType messageType, const Message &message) {
+void Scene::handle(GameObject::EventType messageType) {
     std::unordered_map<ID, bool> hashTable;
 
     Filter filter(
-    [&message, messageType](std::shared_ptr<GameObject> gameObject) {
-        gameObject->sendMessage(messageType, message);
+    [messageType](std::shared_ptr<GameObject> gameObject) {
+        gameObject->handleExternalEvent(messageType);
     },
 
     [&hashTable](std::shared_ptr<GameObject> gameObject) -> bool {
