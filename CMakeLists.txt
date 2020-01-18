@@ -24,7 +24,7 @@ add_library(Dengine
         src/ScenesManager.h
         src/GameObject.cpp
         src/GameObject.h
-        src/Platform/PlatformSet.h
+        src/Platform/Platform.h
         src/Coreutils/ID.h
         src/SceneBehavior.h
         src/SceneBehavior.cpp

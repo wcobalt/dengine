@@ -15,7 +15,7 @@ namespace dengine {
 }
 
 namespace dengine {
-    class PlatformSet {
+    class Platform {
     public:
         virtual std::shared_ptr<WindowManager> getWindowManager() const = 0;
 
