@@ -40,8 +40,9 @@ void Component::setEnabled(bool isEnabled) {
     mIsEnabled = isEnabled;
 }
 
-void Component::sendMessage(MessageType messageType, const ComponentMessage &message) {
-    switch (messageType) {
+void Component::sendMessage(const ComponentMessage &message) {
+    //looks like shit
+    switch (message.getMessageType()) {
         case MessageType::INSTANCE_CREATE:
             onInstanceCreate(message);
 

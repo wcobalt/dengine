@@ -6,6 +6,8 @@
 
 using namespace dengine;
 
-ComponentMessage::ComponentMessage() : ComponentMessage(std::chrono::system_clock::now()) {}
+ComponentMessage::ComponentMessage(Component::MessageType messageType) : ComponentMessage(messageType,
+                                                                                          std::chrono::system_clock::now()) {}
 
-ComponentMessage::ComponentMessage(ComponentMessage::time_type sendingTime) : sendingTime(sendingTime) {}
+ComponentMessage::ComponentMessage(Component::MessageType messageType, time_type sendingTime) :
+    sendingTime(sendingTime), messageType(messageType) {}

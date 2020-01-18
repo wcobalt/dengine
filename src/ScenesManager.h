@@ -46,13 +46,13 @@ namespace dengine {
 
         void unloadCurrentScene();
     public:
-        enum class MessageType {
+        enum class EventType {
             UPDATE, GAME_END
         };
 
         ScenesManager();
 
-        void sendMessage(MessageType messageType);
+        void handleExternalEvent(EventType eventType);
 
         ID addScene(std::shared_ptr<SceneBehavior> sceneBehavior);
 

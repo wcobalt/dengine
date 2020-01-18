@@ -12,11 +12,10 @@ namespace dengine {
     class EventsState;
     class DirectChildrenChangeMessage;
     class ParentChangeMessage;
-    class MoveMessage;
+    class ComponentMessage;
 }
 
 #include "../DObject.h"
-#include "../Coreutils/Messages/ComponentMessage.h"
 
 namespace dengine {
     class Component : public DObject, public std::enable_shared_from_this<Component> {
@@ -52,7 +51,7 @@ namespace dengine {
 
         void setEnabled(bool isEnabled);
 
-        void sendMessage(MessageType messageType, const ComponentMessage &message);
+        void sendMessage(const ComponentMessage &message);
 
         bool isEnabled() const;
 

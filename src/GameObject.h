@@ -49,7 +49,7 @@ namespace dengine {
                                                    const DirectChildrenChangeMessage::ChildChangeType &childrenChangeType,
                                                    std::shared_ptr<GameObject> previousParent);
     public:
-        enum class MessageType {
+        enum class EventType {
             UPDATE, SCENE_UNLOAD, GAME_END
         };
 
@@ -105,7 +105,7 @@ namespace dengine {
 
         const_iterator cend() const;
 
-        void sendMessage(MessageType messageType);
+        void handleExternalEvent(EventType eventType);
 
         static std::shared_ptr<GameObject> getRoot();
 

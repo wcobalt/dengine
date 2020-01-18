@@ -75,7 +75,7 @@ void GameObject::moveToChildren(std::shared_ptr<GameObject> instance) {
     addChildWithoutInstantiation(instance);
 
     DirectChildrenChangeMessage moveFromMessage(DirectChildrenChangeMessage::ChildChangeType::MOVE_FROM, instance);
-    parent->componentsManager->sendMessage(ComponentsManager::MessageType::DIRECT_CHILDREN_CHANGE, moveFromMessage);
+    parent->componentsManager->spreadMessage(moveFromMessage);
 
     noticeAboutAddingWithoutInstantiation(instance,
             DirectChildrenChangeMessage::ChildChangeType::MOVE_TO,
@@ -150,19 +150,19 @@ GameObject::const_iterator GameObject::cend() const {
     return children.cend();
 }
 
-//reacts only for extern events
-void GameObject::sendMessage(MessageType messageType) {
-    switch (messageType) {
-        case MessageType::UPDATE:
-            componentsManager->sendMessage(ComponentsManager::MessageType::UPDATE, {});
+//reacts only for external events
+void GameObject::handleExternalEvent(EventType eventType) {
+    switch (eventType) {
+        case EventType::UPDATE:
+            componentsManager->spreadMessage({Component::MessageType::UPDATE});
 
             break;
-        case MessageType::SCENE_UNLOAD:
-            componentsManager->sendMessage(ComponentsManager::MessageType::SCENE_UNLOAD, {});
+        case EventType::SCENE_UNLOAD:
+            componentsManager->spreadMessage({Component::MessageType::SCENE_UNLOAD});
 
             break;
-        case MessageType::GAME_END:
-            componentsManager->sendMessage(ComponentsManager::MessageType::GAME_END, {});
+        case EventType::GAME_END:
+            componentsManager->spreadMessage({Component::MessageType::GAME_END});
 
             break;
     }
@@ -213,8 +213,8 @@ void GameObject::destroyChild(const_iterator iterator) {
     DirectChildrenChangeMessage destructionMessage(DirectChildrenChangeMessage::ChildChangeType::DESTRUCTION,
                                                    child);
 
-    componentsManager->sendMessage(ComponentsManager::MessageType::DIRECT_CHILDREN_CHANGE, destructionMessage);
-    child->componentsManager->sendMessage(ComponentsManager::MessageType::INSTANCE_DESTROY, {});
+    componentsManager->spreadMessage(destructionMessage);
+    child->componentsManager->spreadMessage({Component::MessageType::INSTANCE_DESTROY});
 
     children.erase(iterator);
 }
@@ -233,7 +233,7 @@ void GameObject::instantiateAsChild(std::shared_ptr<GameObject> instance) {
 
     clone->initialize();
 
-    clone->componentsManager->sendMessage(ComponentsManager::MessageType::INSTANCE_CREATE, {});
+    clone->componentsManager->spreadMessage({Component::MessageType::INSTANCE_CREATE});
 
     noticeAboutAddingWithoutInstantiation(clone,
             DirectChildrenChangeMessage::ChildChangeType::INSTANTIATION,
@@ -249,9 +249,7 @@ void GameObject::noticeAboutAddingWithoutInstantiation(std::shared_ptr<GameObjec
                                                        const DirectChildrenChangeMessage::ChildChangeType &childrenChangeType,
                                                        std::shared_ptr<GameObject> previousParent) {
     DirectChildrenChangeMessage moveToMessage(childrenChangeType, instance);
-    componentsManager->sendMessage(ComponentsManager::MessageType::DIRECT_CHILDREN_CHANGE, moveToMessage);
+    componentsManager->spreadMessage(moveToMessage);
 
-    instance->componentsManager->sendMessage(
-            ComponentsManager::MessageType::PARENT_CHANGE,
-            ParentChangeMessage{previousParent, shared_from_this()});
+    instance->componentsManager->spreadMessage(ParentChangeMessage{previousParent, shared_from_this()});
 }

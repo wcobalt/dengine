@@ -6,15 +6,15 @@ using namespace dengine;
 
 ScenesManager::ScenesManager() : currentId(1), currentScene(nullptr) {}
 
-void ScenesManager::sendMessage(MessageType messageType) {
+void ScenesManager::handleExternalEvent(EventType eventType) {
     if (isCurrentSceneExist()) {
-        switch (messageType) {
-            case MessageType::UPDATE:
-                currentScene->sendMessage(Scene::MessageType::UPDATE);
+        switch (eventType) {
+            case EventType::UPDATE:
+                currentScene->handleExternalEvent(Scene::EventType::UPDATE);
 
                 break;
-            case MessageType::GAME_END:
-                currentScene->sendMessage(Scene::MessageType::GAME_END);
+            case EventType::GAME_END:
+                currentScene->handleExternalEvent(Scene::EventType::GAME_END);
                 unloadCurrentScene();
 
                 break;
@@ -143,7 +143,7 @@ void ScenesManager::loadScene(const_iterator iterator) {
     unloadCurrentScene();
 
     currentScene = *iterator;
-    currentScene->sendMessage(Scene::MessageType::SCENE_LOAD);
+    currentScene->handleExternalEvent(Scene::EventType::SCENE_LOAD);
 }
 
 ScenesManager::iterator ScenesManager::begin() {
@@ -172,7 +172,7 @@ ScenesManager::const_iterator ScenesManager::cend() const {
 
 void ScenesManager::unloadCurrentScene() {
     if (currentScene != nullptr) {
-        currentScene->sendMessage(Scene::MessageType::SCENE_UNLOAD);
+        currentScene->handleExternalEvent(Scene::EventType::SCENE_UNLOAD);
 
         currentScene = nullptr;
     }

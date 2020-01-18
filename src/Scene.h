@@ -33,7 +33,7 @@ namespace dengine {
 
         std::vector<std::shared_ptr<Layer>> baseLayers;
 
-        void handle(GameObject::MessageType messageType);
+        void handle(GameObject::EventType messageType);
 
         void freeScene();
 
@@ -41,7 +41,7 @@ namespace dengine {
 
         const_layer_iterator findLayer(const std::string& layerName) const;
     public:
-        enum class MessageType {
+        enum class EventType {
             UPDATE, SCENE_UNLOAD, SCENE_LOAD, GAME_END
         };
 
@@ -53,7 +53,7 @@ namespace dengine {
 
         Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior, const std::string &alias);
 
-        void sendMessage(MessageType messageType);
+        void handleExternalEvent(EventType eventType);
 
         ID takeNextId();
 

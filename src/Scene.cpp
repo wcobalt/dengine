@@ -28,25 +28,25 @@ Scene::Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior, const std::str
     }
 }
 
-void Scene::sendMessage(MessageType messageType) {
-    switch (messageType) {
-        case MessageType::SCENE_LOAD:
+void Scene::handleExternalEvent(EventType eventType) {
+    switch (eventType) {
+        case EventType::SCENE_LOAD:
             sceneBehavior->onSceneLoad(shared_from_this());
 
             break;
-        case MessageType::SCENE_UNLOAD:
-            handle(GameObject::MessageType::UPDATE);
+        case EventType::SCENE_UNLOAD:
+            handle(GameObject::EventType::UPDATE);
 
             sceneBehavior->onSceneUnload(shared_from_this());
             freeScene();
 
             break;
-        case MessageType::GAME_END:
+        case EventType::GAME_END:
             sceneBehavior->onGameEnd(shared_from_this());
 
             break;
-        case MessageType::UPDATE:
-            handle(GameObject::MessageType::UPDATE);
+        case EventType::UPDATE:
+            handle(GameObject::EventType::UPDATE);
 
             break;
     }
@@ -85,12 +85,12 @@ ID Scene::getId() const {
     return id;
 }
 
-void Scene::handle(GameObject::MessageType messageType) {
+void Scene::handle(GameObject::EventType messageType) {
     std::unordered_map<ID, bool> hashTable;
 
     Filter filter(
     [messageType](std::shared_ptr<GameObject> gameObject) {
-        gameObject->sendMessage(messageType);
+        gameObject->handleExternalEvent(messageType);
     },
 
     [&hashTable](std::shared_ptr<GameObject> gameObject) -> bool {

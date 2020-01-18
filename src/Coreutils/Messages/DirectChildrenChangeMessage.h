@@ -23,9 +23,11 @@ namespace dengine {
 
         ChildChangeType childChangeType;
     public:
-        DirectChildrenChangeMessage(ChildChangeType childChangeType, std::shared_ptr<GameObject> changedChild);
+        DirectChildrenChangeMessage(ChildChangeType childChangeType,
+                                    std::shared_ptr<GameObject> changedChild);
 
-        DirectChildrenChangeMessage(ChildChangeType childChangeType, std::shared_ptr<GameObject> changedChild, time_type sendingTime);
+        DirectChildrenChangeMessage(ChildChangeType childChangeType,
+                                    std::shared_ptr<GameObject> changedChild, time_type sendingTime);
 
         ChildChangeType getChildChangeType() const {
             return childChangeType;

@@ -6,19 +6,26 @@
 #ifndef DENGINE_MESSAGE_H
 #define DENGINE_MESSAGE_H
 
+#include "../../Components/Component.h"
+
 namespace dengine {
-    class ComponentMessage {
+    class ComponentMessage : public DObject {
     protected:
         using time_type = std::chrono::system_clock::time_point;
     private:
         time_type sendingTime;
+        Component::MessageType messageType;
     public:
-        ComponentMessage();
+        ComponentMessage(Component::MessageType messageType);
 
-        ComponentMessage(time_type sendingTime);
+        ComponentMessage(Component::MessageType messageType, time_type sendingTime);
 
         virtual time_type getSendingTime() const {
             return sendingTime;
+        }
+
+        virtual Component::MessageType getMessageType() const {
+            return messageType;
         }
     };
 }
