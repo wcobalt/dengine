@@ -6,15 +6,15 @@ using namespace dengine;
 
 ScenesManager::ScenesManager() : currentId(1), currentScene(nullptr) {}
 
-void ScenesManager::sendMessage(ScenesManagerMessageType messageType, const Message &message) {
+void ScenesManager::sendMessage(MessageType messageType) {
     if (isCurrentSceneExist()) {
         switch (messageType) {
-            case ScenesManagerMessageType::UPDATE:
-                currentScene->sendMessage(SceneMessageType::UPDATE, message);
+            case MessageType::UPDATE:
+                currentScene->sendMessage(Scene::MessageType::UPDATE);
 
                 break;
-            case ScenesManagerMessageType::GAME_END:
-                currentScene->sendMessage(SceneMessageType::GAME_END, message);
+            case MessageType::GAME_END:
+                currentScene->sendMessage(Scene::MessageType::GAME_END);
                 unloadCurrentScene();
 
                 break;
@@ -143,7 +143,7 @@ void ScenesManager::loadScene(const_iterator iterator) {
     unloadCurrentScene();
 
     currentScene = *iterator;
-    currentScene->sendMessage(SceneMessageType::SCENE_LOAD, {});
+    currentScene->sendMessage(Scene::MessageType::SCENE_LOAD);
 }
 
 ScenesManager::iterator ScenesManager::begin() {
@@ -172,7 +172,7 @@ ScenesManager::const_iterator ScenesManager::cend() const {
 
 void ScenesManager::unloadCurrentScene() {
     if (currentScene != nullptr) {
-        currentScene->sendMessage(SceneMessageType::SCENE_UNLOAD, {});
+        currentScene->sendMessage(Scene::MessageType::SCENE_UNLOAD);
 
         currentScene = nullptr;
     }

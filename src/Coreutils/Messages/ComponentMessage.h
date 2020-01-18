@@ -7,15 +7,15 @@
 #define DENGINE_MESSAGE_H
 
 namespace dengine {
-    class Message {
+    class ComponentMessage {
     protected:
         using time_type = std::chrono::system_clock::time_point;
     private:
         time_type sendingTime;
     public:
-        Message();
+        ComponentMessage();
 
-        Message(time_type sendingTime);
+        ComponentMessage(time_type sendingTime);
 
         virtual time_type getSendingTime() const {
             return sendingTime;

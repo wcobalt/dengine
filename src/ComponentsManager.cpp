@@ -17,7 +17,7 @@ void ComponentsManager::attachComponent(std::shared_ptr<Component> component) {
     if (it == components.end()) {
         components.emplace_back(component);
 
-        component->sendMessage(ComponentMessageType::COMPONENT_LOAD, {});
+        component->sendMessage(Component::MessageType::COMPONENT_LOAD, {});
     } else
         throw ComponentException("Component of such type: " + std::string(typeid(*component).name())
                                   + " already attached to this game object");
@@ -43,43 +43,43 @@ std::vector<std::shared_ptr<Component>> ComponentsManager::getAllComponents() co
     return components;
 }
 
-void ComponentsManager::sendMessage(ComponentsManagerMessageType messageType, const Message &message) {
+void ComponentsManager::sendMessage(MessageType messageType, const ComponentMessage &message) {
     switch (messageType) {
-        case ComponentsManagerMessageType::UPDATE:
-            sendMessageToComponents(ComponentMessageType::UPDATE, message);
+        case MessageType::UPDATE:
+            sendMessageToComponents(Component::MessageType::UPDATE, message);
 
             break;
-        case ComponentsManagerMessageType::INSTANCE_CREATE:
-            sendMessageToComponents(ComponentMessageType::INSTANCE_CREATE, message);
+        case MessageType::INSTANCE_CREATE:
+            sendMessageToComponents(Component::MessageType::INSTANCE_CREATE, message);
 
             break;
-        case ComponentsManagerMessageType::INSTANCE_DESTROY:
-            sendMessageToComponents(ComponentMessageType::INSTANCE_DESTROY, message);
+        case MessageType::INSTANCE_DESTROY:
+            sendMessageToComponents(Component::MessageType::INSTANCE_DESTROY, message);
 
             detachAllComponents();
 
             break;
-        case ComponentsManagerMessageType::SCENE_UNLOAD:
-            sendMessageToComponents(ComponentMessageType::SCENE_UNLOAD, message);
+        case MessageType::SCENE_UNLOAD:
+            sendMessageToComponents(Component::MessageType::SCENE_UNLOAD, message);
 
             break;
-        case ComponentsManagerMessageType::GAME_END:
-            sendMessageToComponents(ComponentMessageType::GAME_END, message);
+        case MessageType::GAME_END:
+            sendMessageToComponents(Component::MessageType::GAME_END, message);
 
             break;
-        case ComponentsManagerMessageType::DIRECT_CHILDREN_CHANGE:
-            sendMessageToComponents(ComponentMessageType::DIRECT_CHILDREN_CHANGE, message);
+        case MessageType::DIRECT_CHILDREN_CHANGE:
+            sendMessageToComponents(Component::MessageType::DIRECT_CHILDREN_CHANGE, message);
 
             break;
-        case ComponentsManagerMessageType::PARENT_CHANGE:
-            sendMessageToComponents(ComponentMessageType::PARENT_CHANGE, message);
+        case MessageType::PARENT_CHANGE:
+            sendMessageToComponents(Component::MessageType::PARENT_CHANGE, message);
 
             break;
     }
 }
 
 void ComponentsManager::detachComponent(ComponentsManager::const_component_iterator iterator) {
-    (*iterator)->sendMessage(ComponentMessageType::COMPONENT_UNLOAD, {});
+    (*iterator)->sendMessage(Component::MessageType::COMPONENT_UNLOAD, {});
 
     components.erase(iterator);
 }
@@ -100,7 +100,7 @@ ComponentsManager::const_component_iterator ComponentsManager::findComponent(std
     return components.end();
 }
 
-void ComponentsManager::sendMessageToComponents(ComponentMessageType messageType, const Message &message) {
+void ComponentsManager::sendMessageToComponents(Component::MessageType messageType, const ComponentMessage &message) {
     for (auto& component : components)
         if (component->isEnabled())
             component->sendMessage(messageType, message);

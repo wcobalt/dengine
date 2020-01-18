@@ -3,12 +3,12 @@
 //
 
 #include "SceneBehavior.h"
-#include "Coreutils/Messages/Message.h"
+#include "Coreutils/Messages/ComponentMessage.h"
 
 using namespace dengine;
 
-void SceneBehavior::onSceneLoad(const Message &message, std::shared_ptr<Scene> scene) {}
+void SceneBehavior::onSceneLoad(std::shared_ptr<Scene> scene) {}
 
-void SceneBehavior::onSceneUnload(const Message &message, std::shared_ptr<Scene> scene) {}
+void SceneBehavior::onSceneUnload(std::shared_ptr<Scene> scene) {}
 
-void SceneBehavior::onGameEnd(const Message &message, std::shared_ptr<Scene> scene) {}
+void SceneBehavior::onGameEnd(std::shared_ptr<Scene> scene) {}

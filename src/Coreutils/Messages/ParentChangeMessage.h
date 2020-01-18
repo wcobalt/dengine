@@ -10,10 +10,10 @@ namespace dengine {
     class GameObject;
 }
 
-#include "Message.h"
+#include "ComponentMessage.h"
 
 namespace dengine {
-    class ParentChangeMessage : public Message {
+    class ParentChangeMessage : public ComponentMessage {
     private:
         std::shared_ptr<GameObject> previousParent, newParent;
     public:

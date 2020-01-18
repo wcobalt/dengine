@@ -12,5 +12,5 @@ DirectChildrenChangeMessage::DirectChildrenChangeMessage(ChildChangeType childCh
 
 DirectChildrenChangeMessage::DirectChildrenChangeMessage(DirectChildrenChangeMessage::ChildChangeType childChangeType,
                                              std::shared_ptr<GameObject> changedChild, time_type sendingTime)
-                                             : Message(sendingTime), childChangeType(childChangeType),
-                                             changedChild(changedChild) {}
+                                             : ComponentMessage(sendingTime), childChangeType(childChangeType),
+                                               changedChild(changedChild) {}

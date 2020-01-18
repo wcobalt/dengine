@@ -10,13 +10,13 @@ namespace dengine {
     class GameObject;
 }
 
-#include "Message.h"
+#include "ComponentMessage.h"
 
 namespace dengine {
-    class DirectChildrenChangeMessage : public Message {
+    class DirectChildrenChangeMessage : public ComponentMessage {
     public:
         enum class ChildChangeType {
-            DESTROY, INSTANTIATION, MOVE_FROM, MOVE_TO
+            DESTRUCTION, INSTANTIATION, MOVE_FROM, MOVE_TO
         };
     private:
         std::shared_ptr<GameObject> changedChild;

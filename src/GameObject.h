@@ -17,10 +17,10 @@ namespace dengine {
 
 #include "DObject.h"
 #include "Coreutils/ID.h"
-#include "Coreutils/Messages/MessageType.h"
 #include "Exceptions/GameObjectException.h"
 #include "Math/vectors.h"
-#include "Coreutils/Messages/Message.h"
+#include "Coreutils/Messages/ComponentMessage.h"
+#include "Coreutils/Messages/DirectChildrenChangeMessage.h"
 
 namespace dengine {
     class GameObject : public DObject, public std::enable_shared_from_this<GameObject> {
@@ -43,8 +43,16 @@ namespace dengine {
 
         decltype(children)::const_iterator findChild(std::shared_ptr<GameObject> instance) const;
 
-        void addChildWithoutInstantiation(std::shared_ptr<GameObject> instance, bool instantiationOrMovingTo);
+        void addChildWithoutInstantiation(std::shared_ptr<GameObject> instance);
+
+        void noticeAboutAddingWithoutInstantiation(std::shared_ptr<GameObject> instance,
+                                                   const DirectChildrenChangeMessage::ChildChangeType &childrenChangeType,
+                                                   std::shared_ptr<GameObject> previousParent);
     public:
+        enum class MessageType {
+            UPDATE, SCENE_UNLOAD, GAME_END
+        };
+
         using iterator = decltype(children)::iterator;
 
         using const_iterator = decltype(children)::const_iterator;
@@ -97,7 +105,7 @@ namespace dengine {
 
         const_iterator cend() const;
 
-        void sendMessage(GameObjectMessageType messageType, const Message &message);
+        void sendMessage(MessageType messageType);
 
         static std::shared_ptr<GameObject> getRoot();
 

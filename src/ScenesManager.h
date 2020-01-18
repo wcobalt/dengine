@@ -19,8 +19,7 @@ namespace dengine {
 
 #include "Coreutils/ID.h"
 #include "DObject.h"
-#include "Coreutils/Messages/MessageType.h"
-#include "Coreutils/Messages/Message.h"
+#include "Coreutils/Messages/ComponentMessage.h"
 
 namespace dengine {
     class ScenesManager : public DObject {
@@ -47,9 +46,13 @@ namespace dengine {
 
         void unloadCurrentScene();
     public:
+        enum class MessageType {
+            UPDATE, GAME_END
+        };
+
         ScenesManager();
 
-        void sendMessage(ScenesManagerMessageType messageType, const Message &message);
+        void sendMessage(MessageType messageType);
 
         ID addScene(std::shared_ptr<SceneBehavior> sceneBehavior);
 
