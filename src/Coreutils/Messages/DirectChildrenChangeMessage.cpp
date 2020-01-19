@@ -7,11 +7,11 @@
 using namespace dengine;
 
 DirectChildrenChangeMessage::DirectChildrenChangeMessage(ChildChangeType childChangeType,
-                                                         std::shared_ptr<GameObject> changedChild)
+                                                         GameObject &changedChild)
     : DirectChildrenChangeMessage(childChangeType, changedChild, std::chrono::system_clock::now()) {}
 
 DirectChildrenChangeMessage::DirectChildrenChangeMessage(ChildChangeType childChangeType,
-                                                         std::shared_ptr<GameObject> changedChild,
+                                                         GameObject &changedChild,
                                                          time_type sendingTime) :
     ComponentMessage(Component::MessageType::DIRECT_CHILDREN_CHANGE, sendingTime),
     childChangeType(childChangeType), changedChild(changedChild) {}
