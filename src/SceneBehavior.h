@@ -14,11 +14,11 @@ namespace dengine {
 namespace dengine {
     class SceneBehavior {
     public:
-        virtual void onSceneLoad(std::shared_ptr<Scene> scene);
+        virtual void onSceneLoad(Scene &scene);
 
-        virtual void onSceneUnload(std::shared_ptr<Scene> scene);
+        virtual void onSceneUnload(Scene &scene);
 
-        virtual void onGameEnd(std::shared_ptr<Scene> scene);
+        virtual void onGameEnd(Scene &scene);
     };
 }
 

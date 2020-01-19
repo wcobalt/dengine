@@ -7,8 +7,8 @@
 
 using namespace dengine;
 
-void SceneBehavior::onSceneLoad(std::shared_ptr<Scene> scene) {}
+void SceneBehavior::onSceneLoad(Scene &scene) {}
 
-void SceneBehavior::onSceneUnload(std::shared_ptr<Scene> scene) {}
+void SceneBehavior::onSceneUnload(Scene &scene) {}
 
-void SceneBehavior::onGameEnd(std::shared_ptr<Scene> scene) {}
+void SceneBehavior::onGameEnd(Scene &scene) {}
