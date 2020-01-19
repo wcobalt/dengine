@@ -22,14 +22,14 @@ namespace dengine {
     private:
         bool mIsEnabled;
     protected:
-        std::shared_ptr<GameObject> gameObject;
+        GameObject& gameObject;
     public:
         enum class MessageType {
             INSTANCE_CREATE, INSTANCE_DESTROY, COMPONENT_LOAD, COMPONENT_UNLOAD, UPDATE, SCENE_UNLOAD, GAME_END,
             DIRECT_CHILDREN_CHANGE, PARENT_CHANGE
         };
 
-        Component(std::shared_ptr<GameObject> gameObject);
+        Component(GameObject &gameObject);
 
         void onInstanceCreate(const ComponentMessage &message);
 
@@ -55,7 +55,7 @@ namespace dengine {
 
         bool isEnabled() const;
 
-        std::shared_ptr<GameObject> getGameObject() const;
+        GameObject & getGameObject() const;
     };
 }
 

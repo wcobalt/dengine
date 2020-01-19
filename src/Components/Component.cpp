@@ -12,11 +12,7 @@
 
 using namespace dengine;
 
-Component::Component(std::shared_ptr<GameObject> gameObject) {
-    if (gameObject == nullptr) throw IllegalArgumentException("Game object cannot be null");
-
-    this->gameObject = gameObject;
-}
+Component::Component(GameObject &gameObject) : gameObject(gameObject) {}
 
 void Component::onInstanceCreate(const ComponentMessage &message) {}
 
@@ -86,6 +82,6 @@ bool Component::isEnabled() const {
     return mIsEnabled;
 }
 
-std::shared_ptr<GameObject> Component::getGameObject() const {
+GameObject & Component::getGameObject() const {
     return gameObject;
 }
