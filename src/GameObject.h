@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <optional>
 
 #ifndef DENGINE_GAMEOBJECT_H
 #define DENGINE_GAMEOBJECT_H
@@ -17,81 +18,94 @@ namespace dengine {
 
 #include "DObject.h"
 #include "Coreutils/ID.h"
-#include "Exceptions/GameObjectException.h"
 #include "Math/vectors.h"
-#include "Coreutils/Messages/ComponentMessage.h"
 #include "Coreutils/Messages/DirectChildrenChangeMessage.h"
 
 namespace dengine {
-    class GameObject : public DObject, public std::enable_shared_from_this<GameObject> {
+    class GameObject final : public DObject, public std::enable_shared_from_this<GameObject> {
     private:
-        std::shared_ptr<ComponentsManager> componentsManager;
+        std::unique_ptr<ComponentsManager> componentsManager;
 
-        std::shared_ptr<GameObject> parent;
-        std::vector<std::shared_ptr<GameObject>> children;
+        GameObject* parent;
 
-        std::shared_ptr<Initializer> initializer;
-        std::shared_ptr<TransformComponent> userDefinedTransform;
+        //it is guaranteed that the Nth element in children will be the Nth element in childrenFrontend
+        std::vector<std::unique_ptr<GameObject>> children;
+        std::vector<GameObject*> childrenFrontend;//@todo is it good?
 
-        ID id;
+        std::unique_ptr<TransformComponent> userDefinedTransform;
 
+        ID id = IDUtils::NO_ID;
+    public:
+        using iterator = decltype(childrenFrontend)::iterator;
+
+        using const_iterator = decltype(childrenFrontend)::const_iterator;
+    private:
         void destroyChild(decltype(children)::const_iterator iterator);
 
         void initialize();
 
-        void instantiateAsChild(std::shared_ptr<GameObject> instance);
+        void instantiateAsChild(std::unique_ptr<GameObject> instance, const Initializer &initializer,
+                                std::optional<vec3f> position);
 
-        decltype(children)::const_iterator findChild(std::shared_ptr<GameObject> instance) const;
+        decltype(children)::const_iterator findChild(GameObject &instance) const;
 
-        void addChildWithoutInstantiation(std::shared_ptr<GameObject> instance);
+        void addChildWithoutInstantiation(std::unique_ptr<GameObject> instance);
 
-        void noticeAboutAddingWithoutInstantiation(std::shared_ptr<GameObject> instance,
+        void noticeAboutAddingWithoutInstantiation(GameObject &instance,
                                                    const DirectChildrenChangeMessage::ChildChangeType &childrenChangeType,
-                                                   std::shared_ptr<GameObject> previousParent);
+                                                   GameObject *previousParent);
+
+        void instantiateNew(const Initializer& initializer, std::optional<vec3f> position);
+
+        void instantiateByCloning(GameObject& instance, std::optional<vec3f> position);
     public:
         enum class EventType {
             UPDATE, SCENE_UNLOAD, GAME_END
         };
 
-        using iterator = decltype(children)::iterator;
-
-        using const_iterator = decltype(children)::const_iterator;
-
         GameObject();
 
-        GameObject(std::shared_ptr<Initializer> initializer);
+        explicit GameObject(std::unique_ptr<TransformComponent> transform);
 
-        GameObject(std::shared_ptr<TransformComponent> transform);
+        static void instantiate(const Initializer& initializer);
 
-        GameObject(std::shared_ptr<Initializer> initializer, std::shared_ptr<TransformComponent> transform);
+        static void instantiate(const Initializer& initializer, float x, float y, float z);
 
-        static void instantiate(std::shared_ptr<GameObject> instance);
+        static void instantiate(const Initializer& initializer, const vec3f& position);
 
-        static void instantiate(std::shared_ptr<GameObject> instance, float x, float y, float z);
+        static void instantiate(GameObject &instance);
 
-        static void instantiate(std::shared_ptr<GameObject> instance, const vec3f &position);
+        static void instantiate(GameObject &instance, float x, float y, float z);
 
-        void instantiateChild(std::shared_ptr<GameObject> instance);
+        static void instantiate(GameObject &instance, const vec3f &position);
 
-        void instantiateChild(std::shared_ptr<GameObject> instance, float x, float y, float z);
+        void instantiateChild(const Initializer& initializer);
 
-        void instantiateChild(std::shared_ptr<GameObject> instance, vec3f position);
+        void instantiateChild(const Initializer& initializer, float x, float y, float z);
 
-        static void move(std::shared_ptr<GameObject> instance);
+        void instantiateChild(const Initializer& initializer, const vec3f &position);
 
-        void moveToChildren(std::shared_ptr<GameObject> instance);
+        void instantiateChild(GameObject &instance);
 
-        static void destroy(std::shared_ptr<GameObject> instance);
+        void instantiateChild(GameObject &instance, float x, float y, float z);
+
+        void instantiateChild(GameObject &instance, const vec3f &position);
+
+        static void move(GameObject &instance);
+
+        void moveToChildren(GameObject &instance);
+
+        static void destroy(GameObject &instance);
 
         void destroy();
 
-        void destroyChild(std::shared_ptr<GameObject> instance);
+        void destroyChild(GameObject &instance);
 
         void destroyAllChildren();
 
-        std::shared_ptr<GameObject> getParent() const;
+        GameObject & getParent() const;
 
-        std::vector<std::shared_ptr<GameObject>> getAllChildren() const;
+        std::vector<GameObject*> getAllChildren() const;
 
         iterator begin();
 
@@ -107,13 +121,17 @@ namespace dengine {
 
         void handleExternalEvent(EventType eventType);
 
-        static std::shared_ptr<GameObject> getRoot();
+        static GameObject & getRoot();
 
-        std::shared_ptr<GameObject> clone() const;
+        std::unique_ptr<GameObject> clone() const;
 
-        std::shared_ptr<ComponentsManager> getComponentsManager() const;
+        ComponentsManager & getComponentsManager() const;
 
         ID getId() const;
+
+        bool operator==(const GameObject& gameObject) const;
+
+        bool operator!=(const GameObject& gameObject) const;
     };
 }
 

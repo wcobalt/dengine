@@ -6,7 +6,12 @@
 #define DENGINE_ID_H
 
 namespace dengine {
-    typedef unsigned long ID;
+    typedef long ID;
+
+    class IDUtils {
+    public:
+        static const ID NO_ID = -1;
+    };
 }
 
 #endif //DENGINE_ID_H

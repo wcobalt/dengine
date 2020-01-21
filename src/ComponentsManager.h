@@ -19,26 +19,30 @@ namespace dengine {
 namespace dengine {
     class ComponentsManager : public DObject {
     private:
-        std::vector<std::shared_ptr<Component>> components;
-        std::shared_ptr<GameObject> gameObject;
+        std::vector<std::unique_ptr<Component>> components;
+        std::vector<Component*> componentsFrontend;//@fixme that's not cool
 
-        using const_component_iterator = decltype(components)::const_iterator;
+        GameObject& gameObject;
+    public:
+        using const_iterator = decltype(componentsFrontend)::const_iterator;
+        using iterator = decltype(componentsFrontend)::iterator;
+    private:
+        void detachComponent(decltype(components)::const_iterator iterator);
 
-        void detachComponent(const_component_iterator iterator);
+        void checkComponentAttachment(const Component &component);
 
-        void checkComponentAttachment(std::shared_ptr<Component> component);
-
-        const_component_iterator findComponent(std::shared_ptr<Component> component) const;
+        decltype(components)::const_iterator findComponent(const Component &component) const;
 
     public:
-        ComponentsManager(std::shared_ptr<GameObject> gameObject);
+        ComponentsManager(GameObject &gameObject);
 
-        void attachComponent(std::shared_ptr<Component> component);
+        void attachComponent(std::unique_ptr<Component> component);
 
         template<typename T>
         void detachComponent() {
             for (auto it = components.begin(); it != components.end(); it++) {
-                if (std::dynamic_pointer_cast<T>(*it)) {
+                Component& component = **it;
+                if (typeid(component).hash_code() == typeid(T).hash_code()) {
                     detachComponent(it);
 
                     return;
@@ -48,22 +52,34 @@ namespace dengine {
             throw ComponentException("Cannot detach component of this type, because it is not attached yet");
         }
 
-        void detachComponent(std::shared_ptr<Component> component);
+        void detachComponent(const Component &component);
 
         void detachAllComponents();
 
         template<typename T>
-        std::shared_ptr<T> getComponent() {
-            for (auto it = components.begin(); it != components.end(); it++) {
-                if (auto result = std::dynamic_pointer_cast<T>(*it)) {
-                    return result;
+        T & getComponent() {
+            for (auto & component : components) {
+                if (auto result = std::dynamic_pointer_cast<T>(component)) {
+                    return *result;
                 }
             }
 
             throw ComponentException("Cannot return component of this type, because is is not attached yet.");
         }
 
-        std::vector<std::shared_ptr<Component>> getAllComponents() const;
+        iterator begin();
+
+        iterator end();
+
+        const_iterator begin() const;
+
+        const_iterator end() const;
+
+        const_iterator cbegin() const;
+
+        const_iterator cend() const;
+
+        std::vector<Component*> getAllComponents() const;
 
         void spreadMessage(const ComponentMessage &message);
     };

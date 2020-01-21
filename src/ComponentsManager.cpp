@@ -4,27 +4,31 @@
 
 #include "ComponentsManager.h"
 #include "Components/Component.h"
+#include "GameObject.h"
 #include "Coreutils/Messages/ComponentMessage.h"
 
 using namespace dengine;
 
-ComponentsManager::ComponentsManager(std::shared_ptr<GameObject> gameObject) : gameObject(gameObject) {}
+ComponentsManager::ComponentsManager(GameObject &gameObject) : gameObject(gameObject) {}
 
-void ComponentsManager::attachComponent(std::shared_ptr<Component> component) {
-    checkComponentAttachment(component);
+void ComponentsManager::attachComponent(std::unique_ptr<Component> component) {
+    checkComponentAttachment(*component);
 
-    auto it = findComponent(component);
+    auto it = findComponent(*component);
 
     if (it == components.end()) {
-        components.emplace_back(component);
+        Component& componentReference = *component;
 
-        component->sendMessage({Component::MessageType::COMPONENT_LOAD});
+        components.emplace_back(std::move(component));
+        componentsFrontend.emplace_back(&componentReference);
+
+        componentReference.sendMessage({Component::MessageType::COMPONENT_LOAD});
     } else
         throw ComponentException("Component of such type: " + std::string(typeid(*component).name())
                                   + " already attached to this game object");
 }
 
-void ComponentsManager::detachComponent(std::shared_ptr<Component> component) {
+void ComponentsManager::detachComponent(const Component &component) {
     checkComponentAttachment(component);
 
     auto it = findComponent(component);
@@ -40,28 +44,25 @@ void ComponentsManager::detachAllComponents() {
         detachComponent(it);
 }
 
-std::vector<std::shared_ptr<Component>> ComponentsManager::getAllComponents() const {
-    return components;
-}
-
 void ComponentsManager::spreadMessage(const ComponentMessage &message) {
     for (auto& component : components)
         if (component->isEnabled())
             component->sendMessage(message);
 }
 
-void ComponentsManager::detachComponent(ComponentsManager::const_component_iterator iterator) {
+void ComponentsManager::detachComponent(decltype(components)::const_iterator iterator) {
     (*iterator)->sendMessage({Component::MessageType::COMPONENT_UNLOAD});
 
     components.erase(iterator);
+    componentsFrontend.erase(componentsFrontend.begin() + (iterator - components.begin()));
 }
 
-void ComponentsManager::checkComponentAttachment(std::shared_ptr<Component> component) {
-    if (component->getGameObject() != gameObject)
+void ComponentsManager::checkComponentAttachment(const Component &component) {
+    if (component.getGameObject() != gameObject)
         throw ComponentException("Game object that component is bound to and this game object are different.");
 }
 
-ComponentsManager::const_component_iterator ComponentsManager::findComponent(std::shared_ptr<Component> component) const {
+decltype(ComponentsManager::components)::const_iterator ComponentsManager::findComponent(const Component &component) const {
     size_t hash = typeid(component).hash_code();
 
     for (auto it = components.begin(); it != components.end(); it++) {
@@ -70,4 +71,32 @@ ComponentsManager::const_component_iterator ComponentsManager::findComponent(std
     }
 
     return components.end();
+}
+
+ComponentsManager::iterator ComponentsManager::begin() {
+    return componentsFrontend.begin();
+}
+
+ComponentsManager::iterator ComponentsManager::end() {
+    return componentsFrontend.end();
+}
+
+ComponentsManager::const_iterator ComponentsManager::begin() const {
+    return componentsFrontend.begin();
+}
+
+ComponentsManager::const_iterator ComponentsManager::end() const {
+    return componentsFrontend.end();
+}
+
+ComponentsManager::const_iterator ComponentsManager::cbegin() const {
+    return componentsFrontend.cbegin();
+}
+
+ComponentsManager::const_iterator ComponentsManager::cend() const {
+    return componentsFrontend.cend();
+}
+
+std::vector<Component *> ComponentsManager::getAllComponents() const {
+    return componentsFrontend;
 }
