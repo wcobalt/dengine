@@ -29,6 +29,8 @@ namespace dengine {
         GameObject & getNewParent() const {
             return newParent;
         }
+
+        void handle(Component &component) const override;
     };
 }
 

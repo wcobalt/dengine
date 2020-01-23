@@ -36,6 +36,8 @@ namespace dengine {
         GameObject & getChangedChild() const {
             return changedChild;
         }
+
+        void handle(Component &component) const override;
     };
 }
 

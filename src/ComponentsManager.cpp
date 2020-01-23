@@ -6,6 +6,7 @@
 #include "Components/Component.h"
 #include "GameObject.h"
 #include "Coreutils/Messages/ComponentMessage.h"
+#include "Coreutils/Messages/ComponentMessages.h"
 
 using namespace dengine;
 
@@ -22,7 +23,7 @@ void ComponentsManager::attachComponent(std::unique_ptr<Component> component) {
         components.emplace_back(std::move(component));
         componentsFrontend.emplace_back(&componentReference);
 
-        componentReference.sendMessage({Component::MessageType::COMPONENT_LOAD});
+        componentReference.sendMessage(ComponentLoadMessage());
     } else
         throw ComponentException("Component of such type: " + std::string(typeid(*component).name())
                                   + " already attached to this game object");
@@ -51,7 +52,7 @@ void ComponentsManager::spreadMessage(const ComponentMessage &message) {
 }
 
 void ComponentsManager::detachComponent(decltype(components)::const_iterator iterator) {
-    (*iterator)->sendMessage({Component::MessageType::COMPONENT_UNLOAD});
+    (*iterator)->sendMessage(ComponentUnloadMessage());
 
     components.erase(iterator);
     componentsFrontend.erase(componentsFrontend.begin() + (iterator - components.begin()));

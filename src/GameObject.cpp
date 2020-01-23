@@ -1,3 +1,5 @@
+#include <optional>
+
 #include "GameObject.h"
 #include "Dengine.h"
 #include "ScenesManager.h"
@@ -9,7 +11,8 @@
 #include "Coreutils/Messages/DirectChildrenChangeMessage.h"
 #include "Coreutils/Messages/ParentChangeMessage.h"
 #include "ComponentsManager.h"
-#include <optional>
+#include "Coreutils/Messages/ComponentMessages.h"
+#include "Coreutils/Messages/ComponentMessage.h"
 
 using namespace dengine;
 
@@ -196,15 +199,15 @@ GameObject::const_iterator GameObject::cend() const {
 void GameObject::handleExternalEvent(EventType eventType) {
     switch (eventType) {
         case EventType::UPDATE:
-            componentsManager->spreadMessage({Component::MessageType::UPDATE});
+            componentsManager->spreadMessage(UpdateMessage());
 
             break;
         case EventType::SCENE_UNLOAD:
-            componentsManager->spreadMessage({Component::MessageType::SCENE_UNLOAD});
+            componentsManager->spreadMessage(SceneUnloadMessage());
 
             break;
         case EventType::GAME_END:
-            componentsManager->spreadMessage({Component::MessageType::GAME_END});
+            componentsManager->spreadMessage(GameEndMessage());
 
             break;
     }
@@ -258,7 +261,7 @@ void GameObject::destroyChild(decltype(children)::const_iterator iterator) {
                                                    child);
 
     componentsManager->spreadMessage(destructionMessage);
-    child.componentsManager->spreadMessage({Component::MessageType::INSTANCE_DESTROY});
+    child.componentsManager->spreadMessage(InstanceDestroyMessage());
 
     //not very graceful too
     childrenFrontend.erase(childrenFrontend.begin() + (iterator - children.begin()));
@@ -286,7 +289,7 @@ void GameObject::instantiateAsChild(std::unique_ptr<GameObject> instance, const 
     addChildWithoutInstantiation(std::move(instance));
 
     gameObject.initialize();
-    gameObject.componentsManager->spreadMessage({Component::MessageType::INSTANCE_CREATE});
+    gameObject.componentsManager->spreadMessage(InstanceCreateMessage());
 
     noticeAboutAddingWithoutInstantiation(gameObject,
             DirectChildrenChangeMessage::ChildChangeType::INSTANTIATION,

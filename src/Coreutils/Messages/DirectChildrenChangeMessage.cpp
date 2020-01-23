@@ -13,5 +13,9 @@ DirectChildrenChangeMessage::DirectChildrenChangeMessage(ChildChangeType childCh
 DirectChildrenChangeMessage::DirectChildrenChangeMessage(ChildChangeType childChangeType,
                                                          GameObject &changedChild,
                                                          time_type sendingTime) :
-    ComponentMessage(Component::MessageType::DIRECT_CHILDREN_CHANGE, sendingTime),
+    ComponentMessage(ComponentMessage::Type::DIRECT_CHILDREN_CHANGE, sendingTime),
     childChangeType(childChangeType), changedChild(changedChild) {}
+
+void DirectChildrenChangeMessage::handle(Component &component) const {
+    component.onDirectChildrenChange(*this);
+}
