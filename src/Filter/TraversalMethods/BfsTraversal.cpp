@@ -8,10 +8,8 @@
 
 using namespace dengine;
 
-BfsTraversal::BfsTraversal(const Filter &filter) : BaseTraversal(filter) {}
-
-void BfsTraversal::run(GameObject &gameObject) {
-    mIsStopped = false;
+void BfsTraversal::run(Filter &filter, GameObject &gameObject) {
+    setStopped(false);
 
     std::queue<GameObject*> queue;
 
@@ -23,7 +21,7 @@ void BfsTraversal::run(GameObject &gameObject) {
         if (filter.check(*go))
             filter.execute(*go, *this);
 
-        if (mIsStopped) break;
+        if (isStopped()) break;
 
         queue.pop();
 

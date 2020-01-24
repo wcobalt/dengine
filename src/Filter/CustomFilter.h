@@ -17,17 +17,17 @@ namespace dengine {
         using action_type = std::function<void(GameObject&, TraversalMethod&)>;
         using selection_type = std::function<bool(const GameObject&)>;
 
-        const TraversalMethod& traversalMethod;
+        TraversalMethod& traversalMethod;
 
         action_type action;
         selection_type selection;
     public:
-        explicit CustomFilter(action_type action, selection_type selection,
-                              const TraversalMethod& traversalMethod);
+        CustomFilter(action_type action, selection_type selection,
+                     TraversalMethod &traversalMethod);
 
-        void run() const override;
+        void run() override;
 
-        void run(GameObject &gameObject) const override;
+        void run(GameObject &gameObject) override;
 
         bool check(const GameObject &gameObject) const override;
 

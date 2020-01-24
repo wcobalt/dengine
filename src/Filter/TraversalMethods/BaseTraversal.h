@@ -10,18 +10,13 @@
 namespace dengine {
     class BaseTraversal : public TraversalMethod {
     protected:
-        const Filter& filter;
         bool mIsStopped;
     public:
-        explicit BaseTraversal(const Filter& filter);
+        BaseTraversal();
 
-        void stop() override;
+        void setStopped(bool isStopped) override;
 
         bool isStopped() const override;
-
-        const Filter& getFilter() const {
-            return filter;
-        }
     };
 }
 

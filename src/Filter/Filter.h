@@ -15,9 +15,9 @@ namespace dengine {
 namespace dengine {
     class Filter {
     public:
-        virtual void run() const = 0;
+        virtual void run() = 0;
 
-        virtual void run(GameObject &gameObject) const = 0;
+        virtual void run(GameObject &gameObject) = 0;
 
         virtual bool check(const GameObject& gameObject) const = 0;
 

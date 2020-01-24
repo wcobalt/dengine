@@ -6,10 +6,10 @@
 
 using namespace dengine;
 
-BaseTraversal::BaseTraversal(const Filter &filter) : filter(filter), mIsStopped(false) {}
+BaseTraversal::BaseTraversal() : mIsStopped(false) {}
 
-void BaseTraversal::stop() {
-    mIsStopped = true;
+void BaseTraversal::setStopped(bool isStopped) {
+    mIsStopped = isStopped;
 }
 
 bool BaseTraversal::isStopped() const {

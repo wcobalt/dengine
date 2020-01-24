@@ -12,13 +12,13 @@ namespace dengine {
     private:
         bool afterChildren;
 
-        void dfs(GameObject &gameObject);
+        void dfs(Filter &filter, GameObject &gameObject);
     public:
-        explicit DfsTraversal(const Filter &filter);
+        DfsTraversal();
 
-        DfsTraversal(const Filter &filter, bool afterChildren);
+        explicit DfsTraversal(bool afterChildren);
 
-        void run(GameObject &gameObject) override;
+        void run(Filter &filter, GameObject &gameObject) override;
     };
 }
 

@@ -13,13 +13,12 @@ namespace dengine {
 namespace dengine {
     class TraversalMethod {
     public:
-        virtual void run(GameObject &gameObject) = 0;
+        virtual void run(Filter &filter, GameObject &gameObject) = 0;
 
-        virtual void stop() = 0;
+        virtual void setStopped(bool isStopped) = 0;
 
         virtual bool isStopped() const = 0;
 
-        virtual const Filter& getFilter() const = 0;
     };
 }
 

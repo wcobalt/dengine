@@ -10,15 +10,15 @@ using namespace dengine;
 
 //@fixme i don't know how to pass functions properly
 CustomFilter::CustomFilter(action_type action, selection_type selection,
-                           const TraversalMethod &traversalMethod)
+                           TraversalMethod &traversalMethod)
                            : traversalMethod(traversalMethod), action(action), selection(selection) {}
 
-void CustomFilter::run() const {
+void CustomFilter::run() {
     run(Dengine::get().getScenesManager().getCurrentScene().getRoot());
 }
 
-void CustomFilter::run(GameObject &gameObject) const {
-    traversalMethod.run(gameObject);
+void CustomFilter::run(GameObject &gameObject) {
+    traversalMethod.run(*this, gameObject);
 }
 
 bool CustomFilter::check(const GameObject &gameObject) const {

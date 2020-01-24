@@ -13,6 +13,8 @@
 #include "ComponentsManager.h"
 #include "Coreutils/Messages/ComponentMessages.h"
 #include "Coreutils/Messages/ComponentMessage.h"
+#include "Filter/CustomFilter.h"
+#include "Filter/TraversalMethods/BfsTraversal.h"
 
 using namespace dengine;
 
@@ -125,24 +127,6 @@ void GameObject::moveToChildren(GameObject &instance) {
     noticeAboutAddingWithoutInstantiation(instance,
                                           DirectChildrenChangeMessage::ChildChangeType::MOVE_TO,
                                           &instanceParent);
-}
-
-void GameObject::destroy(GameObject &instance) {
-    bool destroyed = false;
-
-    Filter filter([&destroyed](std::shared_ptr<GameObject> gameObject) {
-        gameObject->destroy();
-        destroyed = true;
-    },
-
-    [&instance](std::shared_ptr<GameObject> gameObject) -> bool {
-        return instance == gameObject;
-    }, true);
-
-    filter.run();
-
-    if (!destroyed)
-        throw GameObjectException("Cannot destroy the game object because there is no such one in scene tree.");
 }
 
 void GameObject::destroyChild(GameObject &instance) {
@@ -288,6 +272,7 @@ void GameObject::instantiateAsChild(std::unique_ptr<GameObject> instance, const 
     //child is not initialized yet
     addChildWithoutInstantiation(std::move(instance));
 
+    gameObject.id = Dengine::get().getScenesManager().getCurrentScene()->takeNextId();
     gameObject.initialize();
     gameObject.componentsManager->spreadMessage(InstanceCreateMessage());
 

@@ -95,8 +95,6 @@ namespace dengine {
 
         void moveToChildren(GameObject &instance);
 
-        static void destroy(GameObject &instance);
-
         void destroy();
 
         void destroyChild(GameObject &instance);

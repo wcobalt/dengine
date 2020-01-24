@@ -14,9 +14,7 @@ namespace dengine {
 namespace dengine {
     class BfsTraversal : public BaseTraversal {
     public:
-        explicit BfsTraversal(const Filter &filter);
-
-        void run(GameObject &gameObject) override;
+        void run(Filter &filter, GameObject &gameObject) override;
     };
 }
 

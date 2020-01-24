@@ -8,28 +8,27 @@
 
 using namespace dengine;
 
-DfsTraversal::DfsTraversal(const Filter &filter) : BaseTraversal(filter), afterChildren(false) {}
+DfsTraversal::DfsTraversal() : afterChildren(false) {}
 
-DfsTraversal::DfsTraversal(const Filter &filter, bool afterChildren) : BaseTraversal(filter),
-                                                                       afterChildren(afterChildren) {}
+DfsTraversal::DfsTraversal(bool afterChildren) : afterChildren(afterChildren) {}
 
-void DfsTraversal::run(GameObject &gameObject) {
-    mIsStopped = false;
+void DfsTraversal::run(Filter &filter, GameObject &gameObject) {
+    setStopped(false);
 
-    dfs(gameObject);
+    dfs(filter, gameObject);
 }
 
-void DfsTraversal::dfs(GameObject &gameObject) {
+void DfsTraversal::dfs(Filter &filter, GameObject &gameObject) {
     if (!afterChildren) {
         filter.execute(gameObject, *this);
 
-        if (mIsStopped) return; //stop initialization
+        if (isStopped()) return; //stop initialization
     }
 
     for (GameObject* child : gameObject) {
-        dfs(*child);
+        dfs(filter, *child);
 
-        if (mIsStopped) return; //stop propagation
+        if (isStopped()) return; //stop propagation
     }
 
     if (afterChildren)
