@@ -6,7 +6,7 @@ set(CMAKE_PREFIX_PATH lib)
 
 add_executable(App
         src/App/main.cpp
-        )
+        src/Filter/TraversalMethods/BfsTraversal.cpp src/Filter/TraversalMethods/BfsTraversal.h src/Filter/TraversalMethods/BaseTraversal.cpp src/Filter/TraversalMethods/BaseTraversal.h src/Filter/TraversalMethods/DfsTraversal.cpp src/Filter/TraversalMethods/DfsTraversal.h)
 
 add_library(Dengine
         src/Components/Component.cpp
@@ -110,7 +110,7 @@ add_library(Dengine
         src/Platform/Audio/AudioManager.h
         src/Platform/Audio/AudioManager.cpp
 
-        src/Filter/Filter.cpp
+        src/Filter/CustomFilter.cpp
         src/Filter/Filter.h
         src/Initializer.h
         src/Components/Transform/TransformFilters.cpp
@@ -120,7 +120,7 @@ add_library(Dengine
         src/Exceptions/LayerException.h
         src/Layer.cpp
         src/Layer.h
-        src/Coreutils/Messages/ComponentMessage.cpp src/Coreutils/Messages/ComponentMessage.h src/Coreutils/Messages/DirectChildrenChangeMessage.cpp src/Coreutils/Messages/DirectChildrenChangeMessage.h src/Coreutils/Messages/ParentChangeMessage.cpp src/Coreutils/Messages/ParentChangeMessage.h src/ComponentsManager.cpp src/ComponentsManager.h src/Coreutils/Messages/ComponentMessages.cpp src/Coreutils/Messages/ComponentMessages.h)
+        src/Coreutils/Messages/ComponentMessage.cpp src/Coreutils/Messages/ComponentMessage.h src/Coreutils/Messages/DirectChildrenChangeMessage.cpp src/Coreutils/Messages/DirectChildrenChangeMessage.h src/Coreutils/Messages/ParentChangeMessage.cpp src/Coreutils/Messages/ParentChangeMessage.h src/ComponentsManager.cpp src/ComponentsManager.h src/Coreutils/Messages/ComponentMessages.cpp src/Coreutils/Messages/ComponentMessages.h src/Filter/CustomFilter.h src/Filter/TraversalMethod.h)
 
 
 find_package(OpenGL REQUIRED)
