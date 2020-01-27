@@ -24,9 +24,9 @@ namespace dengine {
 namespace dengine {
     class Scene : public DObject, public std::enable_shared_from_this<Scene> {
     private:
-        std::shared_ptr<GameObject> root;
+        std::unique_ptr<GameObject> root;
 
-        std::shared_ptr<SceneBehavior> sceneBehavior;
+        SceneBehavior& sceneBehavior;
 
         ID currentId, id;
         std::string alias;
@@ -49,9 +49,9 @@ namespace dengine {
         static const char BASE_NUMBERED_LAYER_PREFIX[];
         static const unsigned DEFAULT_BASE_NUMBERED_LAYER = 0;
 
-        Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior);
+        Scene(ID id, SceneBehavior &sceneBehavior);
 
-        Scene(ID id, std::shared_ptr<SceneBehavior> sceneBehavior, const std::string &alias);
+        Scene(ID id, SceneBehavior &sceneBehavior, const std::string &alias);
 
         void handleExternalEvent(EventType eventType);
 
@@ -63,7 +63,7 @@ namespace dengine {
 
         std::shared_ptr<Layer> getDefaultBaseNumberedLayer() const;
 
-        std::shared_ptr<GameObject> getRoot() const;
+        GameObject & getRoot() const;
 
         const std::string& getAlias() const;
 

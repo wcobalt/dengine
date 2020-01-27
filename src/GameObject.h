@@ -22,7 +22,7 @@ namespace dengine {
 #include "Coreutils/Messages/DirectChildrenChangeMessage.h"
 
 namespace dengine {
-    class GameObject final : public DObject, public std::enable_shared_from_this<GameObject> {
+    class GameObject final : public DObject {
     private:
         std::unique_ptr<ComponentsManager> componentsManager;
 
