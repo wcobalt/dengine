@@ -43,9 +43,9 @@ namespace dengine {
         void removeScene(const_iterator iterator);
 
         void loadScene(const_iterator iterator);
-
         void unloadCurrentScene();
     public:
+
         enum class EventType {
             UPDATE, GAME_END
         };

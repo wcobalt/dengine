@@ -20,6 +20,7 @@ namespace dengine {
     class UpdateMessage;
     class SceneUnloadMessage;
     class GameEndMessage;
+    class Scene;
 }
 
 #include "../DObject.h"
@@ -28,9 +29,12 @@ namespace dengine {
     class Component : public DObject, public std::enable_shared_from_this<Component> {
     private:
         bool mIsEnabled;
+        Component& operator=(const Component& component) {};
     protected:
         GameObject& gameObject;
     public:
+        //safe component has to be non-copyable (because of gameObject reference)
+
         Component(GameObject &gameObject);
 
         void onInstanceCreate(const InstanceCreateMessage &message);
@@ -58,6 +62,8 @@ namespace dengine {
         bool isEnabled() const;
 
         GameObject & getGameObject() const;
+
+        Scene& getCurrentScene();///for clarity and simplicity's sake
     };
 }
 

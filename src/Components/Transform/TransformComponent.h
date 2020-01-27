@@ -4,13 +4,14 @@
 
 #include <memory>
 #include <unordered_map>
+#include <set>
 
 #ifndef DENGINE_TRANSFORMCOMPONENT_H
 #define DENGINE_TRANSFORMCOMPONENT_H
 
 namespace dengine {
     class GameObject;
-    class Layer;
+    class Space;
 }
 
 #include "../Component.h"
@@ -19,18 +20,51 @@ namespace dengine {
 
 namespace dengine {
     class TransformComponent : public virtual Component {
+    public:
+        class SpacesManager : public DObject {
+        private:
+            std::set<Space*> spaces;
+        public:
+            class Spaces : public DObject {
+            private:
+                using spaces_type = std::set<Space*>;
+
+                spaces_type & spaces;
+            public:
+                Spaces(spaces_type& spaces);
+
+                using iterator = spaces_type::iterator;
+                using const_iterator = spaces_type::const_iterator;
+
+                iterator begin();
+
+                iterator end();
+
+                const_iterator begin() const;
+
+                const_iterator end() const;
+
+                const_iterator cbegin() const;
+
+                const_iterator cend() const;
+            };
+        public:
+            SpacesManager& operator=(SpacesManager& spacesManager) = delete;
+
+            void addSpace(Space& space);
+
+            void removeSpace(Space& space);
+
+            Spaces buildSpaces() const;
+        };
     private:
         bool mIsActive;
-        std::string tagName; //@todo i don't know is it worth to exclude tag in a separate class
-        std::unordered_map<std::shared_ptr<Layer>, bool> layers;
-
-        using const_layers_iterator = decltype(layers)::const_iterator;
-
-        const_layers_iterator findLayer(std::shared_ptr<Layer> layer) const;
 
         vec3f position;
         Quaternion<float> rotation;
         vec3f scale;
+
+        SpacesManager spacesManager;
     public:
         TransformComponent(std::shared_ptr<GameObject> gameObject);
 
@@ -59,30 +93,25 @@ namespace dengine {
 
         Quaternion<float> up() const;
 
-        Quaternion<float> forward() const;
+        Quaternion<float> front() const;
 
         Quaternion<float> left() const;
 
-        void addToLayer(std::shared_ptr<Layer> layer);
+        void onAdditionToSpace(Space& space);//add to spacesmanager
 
-        bool isOnLayer(std::shared_ptr<Layer> layer) const;
+        void onRemovalFromSpace(Space& space);//remove from spacesmanager
 
-        std::vector<std::shared_ptr<Layer>> getAllLayers() const {
-            std::vector<std::shared_ptr<Layer>> result;
+        void addToSpace(Space& space);//just delegation
 
-            for (auto& pair : layers)
-                result.emplace_back(pair.first);
+        void removeFromSpace(Space& space);//just delegation
 
-            return result;
-        }
-
-        void setTagName(const std::string& tagName);
-
-        const std::string& getTagName() const {
-            return tagName;
-        }
+        bool isInSpace(Space& space) const;//just delegation
 
         void setActive(bool isActive);
+
+        SpacesManager::Spaces getSpaces() const {
+            return std::move(spacesManager.buildSpaces());//RVO?
+        }
 
         bool isActive() const {
             return mIsActive;

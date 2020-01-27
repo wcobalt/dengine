@@ -1,6 +1,7 @@
 #include "ScenesManager.h"
 #include "Exceptions/SceneException.h"
 #include "Scene.h"
+#include "Space.h"
 
 using namespace dengine;
 

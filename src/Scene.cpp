@@ -6,34 +6,25 @@
 #include "Filter/Filter.h"
 #include "Dengine.h"
 #include "Components/Transform/TransformComponent.h"
-#include "Layer.h"
 #include "Exceptions/SceneException.h"
 #include "Coreutils/Messages/ComponentMessage.h"
 #include "ComponentsManager.h"
 #include "Filter/CustomFilter.h"
 #include "Filter/TraversalMethods/BfsTraversal.h"
+#include "Space.h"
 
 using namespace dengine;
-
-const unsigned Scene::BASE_NUMBERED_LAYERS_COUNT;
-const unsigned Scene::DEFAULT_BASE_NUMBERED_LAYER;
-const char Scene::BASE_NUMBERED_LAYER_PREFIX[] = "BaseNumberedLayer_";
 
 Scene::Scene(ID id, SceneBehavior &sceneBehavior) : Scene(id, sceneBehavior, "") {}
 
 Scene::Scene(ID id, SceneBehavior &sceneBehavior, const std::string &alias) : sceneBehavior(sceneBehavior),
-                                                                              id(id), alias(alias) {
-    for (unsigned i = 0; i < BASE_NUMBERED_LAYERS_COUNT; i++) {
-        //@todo add layer manager
-//        std::shared_ptr<Layer> baseLayer(new Layer(BASE_NUMBERED_LAYER_PREFIX + std::to_string(i)));
-//
-//        baseLayers.emplace_back(baseLayer);
-    }
-}
+                                                                              id(id), alias(alias) {}
 
 void Scene::handleExternalEvent(EventType eventType) {
     switch (eventType) {
         case EventType::SCENE_LOAD:
+            initializeSpaces();
+
             sceneBehavior.onSceneLoad(*this);
 
             break;
@@ -59,23 +50,6 @@ ID Scene::takeNextId() {
     return currentId++;
 }
 
-std::shared_ptr<Layer> Scene::getBaseLayerByName(const std::string &layerName) const {
-    auto it = findLayer(layerName);
-
-    if (it != baseLayers.end())
-        return *it;
-    else
-        throw SceneException("Unable to find layer with such name: " + layerName);
-}
-
-std::shared_ptr<Layer> Scene::getBaseNumberedLayer(unsigned number) const {
-    return getBaseLayerByName(BASE_NUMBERED_LAYER_PREFIX + std::to_string(number));
-}
-
-std::shared_ptr<Layer> Scene::getDefaultBaseNumberedLayer() const {
-    return baseLayers[DEFAULT_BASE_NUMBERED_LAYER];
-}
-
 GameObject & Scene::getRoot() const {
     return *root;
 }
@@ -98,7 +72,7 @@ void Scene::handle(GameObject::EventType messageType) {
     },
 
     [&hashTable](const GameObject& gameObject) -> bool {
-        bool isActive = gameObject.getComponentsManager().getComponent<TransformComponent>().isActive();
+        bool isActive = gameObject.getTransformComponent().isActive();
         bool doIgnoreInactive = Dengine::get().isIgnoringInactive();
 
         if (hashTable.find(gameObject.getId()) == hashTable.end() && (!doIgnoreInactive || isActive)) {
@@ -116,10 +90,13 @@ void Scene::freeScene() {
     root->destroyAllChildren();
 }
 
-Scene::const_layer_iterator Scene::findLayer(const std::string &layerName) const {
-    for (auto it = baseLayers.begin(); it != baseLayers.end(); it++) {
-        if ((*it)->toString() == layerName) return it;
-    }
+void Scene::initializeSpaces() {
+    Space::reset();
 
-    return baseLayers.end();
+    //WARNING & ATTENTION: YOU HAVE TO ADD
+    standardSpaces.insert(std::make_pair(StandardSpace::SOME_SPACE, &Space::create("some_space")));
+}
+
+Space &Scene::getSpace(StandardSpace standardSpace) {
+    return *standardSpaces.at(standardSpace);
 }

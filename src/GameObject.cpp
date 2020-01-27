@@ -264,9 +264,9 @@ void GameObject::instantiateAsChild(std::unique_ptr<GameObject> instance, const 
     GameObject& gameObject = *instance;
 
     if (position) {
-        vec3f parentPosition = componentsManager->getComponent<TransformComponent>().getPosition();
+        vec3f parentPosition = getTransformComponent().getPosition();
 
-        gameObject.getComponentsManager().getComponent<TransformComponent>().setPosition(*position + parentPosition);
+        gameObject.getTransformComponent().setPosition(*position + parentPosition);
     }
 
     //child is not initialized yet

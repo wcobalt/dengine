@@ -32,12 +32,14 @@ namespace dengine {
         void checkComponentAttachment(const Component &component);
 
         decltype(components)::const_iterator findComponent(const Component &component) const;
-
     public:
         ComponentsManager(GameObject &gameObject);
 
+        ComponentsManager& operator=(const ComponentsManager& componentsManager) = delete;
+
         void attachComponent(std::unique_ptr<Component> component);
 
+        //@todo exclude TransformComponent by SFINAE
         template<typename T>
         void detachComponent() {
             for (auto it = components.begin(); it != components.end(); it++) {
@@ -59,6 +61,7 @@ namespace dengine {
         template<typename T>
         T & getComponent() {
             for (auto & component : components) {
+                //@fixme use hashtable when hash is typeid().hash_code() (but how to get Transform and keep compsFrontend?)
                 if (auto result = std::dynamic_pointer_cast<T>(component)) {
                     return *result;
                 }

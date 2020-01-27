@@ -4,7 +4,9 @@
 #include <memory>
 
 #include "Component.h"
+#include "../Dengine.h"
 #include "../GameObject.h"
+#include "../ScenesManager.h"
 #include "../Exceptions/ComponentException.h"
 #include "../Exceptions/IllegalArgumentException.h"
 #include "../Coreutils/Messages/ParentChangeMessage.h"
@@ -47,4 +49,8 @@ bool Component::isEnabled() const {
 
 GameObject & Component::getGameObject() const {
     return gameObject;
+}
+
+Scene &Component::getCurrentScene() {
+    return Dengine::get().getScenesManager().getCurrentScene();
 }
