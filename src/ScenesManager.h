@@ -19,14 +19,13 @@ namespace dengine {
 
 #include "Coreutils/ID.h"
 #include "DObject.h"
-#include "Coreutils/Messages/ComponentMessage.h"
 
 namespace dengine {
     class ScenesManager : public DObject {
     private:
-        std::vector<std::shared_ptr<Scene>> scenes;
+        std::vector<std::unique_ptr<Scene>> scenes;
 
-        std::shared_ptr<Scene> currentScene;
+        Scene* currentScene;
 
         ID currentId;
 
@@ -43,9 +42,9 @@ namespace dengine {
         void removeScene(const_iterator iterator);
 
         void loadScene(const_iterator iterator);
+
         void unloadCurrentScene();
     public:
-
         enum class EventType {
             UPDATE, GAME_END
         };

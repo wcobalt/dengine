@@ -11,32 +11,6 @@ using namespace dengine;
 
 Space::Space(ID id, const std::string &name) : id(id), name(name) {}
 
-Space &Space::create(const std::string &name) {
-    class for_make_unique : public Space {
-    public:
-        for_make_unique(ID id, const std::string& name) : Space(id, name) {}
-    };
-
-    std::unique_ptr<Space> space = std::make_unique<for_make_unique>(takeNextId(), name);
-    Space& spaceReference = *space;
-
-    spaces->emplace(std::move(space));
-
-    return spaceReference;
-}
-
-Space &Space::get(const std::string &name) {
-    return **std::find_if(spaces->begin(), spaces->end(), [&name](const std::unique_ptr<Space>& space) {
-        return space->getName() == name;
-    });
-}
-
-Space &Space::get(ID id) {
-    return **std::find_if(spaces->begin(), spaces->end(), [id](const std::unique_ptr<Space>& space) {
-        return space->getId() == id;
-    });
-}
-
 Space::iterator Space::begin() {
     return gameObjects.begin();
 }
@@ -93,14 +67,4 @@ bool Space::has(GameObject &gameObject) const {
 
 Space::iterator Space::findGameObject(GameObject &gameObject) {
     return gameObjects.find(&gameObject);
-}
-
-ID Space::takeNextId() {
-    return ++currentId;
-}
-
-void Space::reset() {
-    currentId = IDUtils::NO_ID;
-
-    spaces = std::make_unique<spaces_type>();
 }

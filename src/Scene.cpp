@@ -12,13 +12,15 @@
 #include "Filter/CustomFilter.h"
 #include "Filter/TraversalMethods/BfsTraversal.h"
 #include "Space.h"
+#include "SpacesManager.h"
 
 using namespace dengine;
 
 Scene::Scene(ID id, SceneBehavior &sceneBehavior) : Scene(id, sceneBehavior, "") {}
 
 Scene::Scene(ID id, SceneBehavior &sceneBehavior, const std::string &alias) : sceneBehavior(sceneBehavior),
-                                                                              id(id), alias(alias) {}
+                                                                              id(id), alias(alias),
+                                                                              spacesManager(std::make_unique<SpacesManager>()) {}
 
 void Scene::handleExternalEvent(EventType eventType) {
     switch (eventType) {
@@ -85,14 +87,17 @@ void Scene::handle(GameObject::EventType messageType) {
 
 void Scene::freeScene() {
     root->destroyAllChildren();
+    spacesManager->clear();
 }
 
 void Scene::initializeSpaces() {
-    Space::reset();
-
-    standardSpaces.insert(std::make_pair(StandardSpace::SOME_SPACE, &Space::create("some_space")));
+    standardSpaces.insert(std::make_pair(StandardSpace::SOME_SPACE, &spacesManager->create("some_space")));
 }
 
-Space &Scene::getSpace(StandardSpace standardSpace) {
+SpacesManager &Scene::getSpaces() const {
+    return *spacesManager;
+}
+
+Space &Scene::getSpace(StandardSpace standardSpace) const {
     return *standardSpaces.at(standardSpace);
 }

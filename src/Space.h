@@ -22,27 +22,12 @@ namespace dengine {
         using iterator = decltype(gameObjects)::iterator;
         using const_iterator = decltype(gameObjects)::const_iterator;
     private:
-        using spaces_type = std::set<std::unique_ptr<Space>>;
-        static std::unique_ptr<spaces_type> spaces;
-
         iterator findGameObject(GameObject &gameObject);
-
-        static ID takeNextId();
-
-        static ID currentId;
-
-        Space(ID id, const std::string& name);
 
         ID id;
         std::string name;
     public:
-        static void reset();
-
-        static Space& create(const std::string& name);
-
-        static Space& get(const std::string& name);
-
-        static Space& get(ID id);
+        Space(ID id, const std::string& name);
 
         iterator begin();
 

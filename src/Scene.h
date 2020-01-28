@@ -14,6 +14,7 @@
 namespace dengine {
     class Space;
     class SceneBehavior;
+    class SpacesManager;
 }
 
 #include "DObject.h"
@@ -40,7 +41,9 @@ namespace dengine {
             SOME_SPACE
         };
     private:
-        std::unordered_map<StandardSpace, Space*> standardSpaces;
+        std::unique_ptr<SpacesManager> spacesManager;
+
+        mutable std::unordered_map<StandardSpace, Space*> standardSpaces;
     public:
         enum class EventType {
             UPDATE, SCENE_UNLOAD, SCENE_LOAD, GAME_END
@@ -60,7 +63,10 @@ namespace dengine {
 
         ID getId() const;
 
-        Space& getSpace(StandardSpace standardSpace);
+        //tell me if this violates SRP
+        Space& getSpace(StandardSpace standardSpace) const;
+
+        SpacesManager& getSpaces() const;
     };
 }
 
