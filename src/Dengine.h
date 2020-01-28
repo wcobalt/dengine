@@ -67,10 +67,6 @@ namespace dengine {
 
         float getDeltaTime() const;
 
-        void setIgnoreInactive(bool doIgnoreInactive);
-
-        bool isIgnoringInactive() const;
-
         void run();
 
         void stop();

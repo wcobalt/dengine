@@ -117,7 +117,6 @@ add_library(Dengine
         src/Components/Transform/TransformFilters.h
         src/Components/Transform/TransformToolkit.cpp
         src/Components/Transform/TransformToolkit.h
-        src/Exceptions/LayerException.h
         src/Coreutils/Messages/ComponentMessage.cpp src/Coreutils/Messages/ComponentMessage.h src/Coreutils/Messages/DirectChildrenChangeMessage.cpp src/Coreutils/Messages/DirectChildrenChangeMessage.h src/Coreutils/Messages/ParentChangeMessage.cpp src/Coreutils/Messages/ParentChangeMessage.h src/ComponentsManager.cpp src/ComponentsManager.h src/Coreutils/Messages/ComponentMessages.cpp src/Coreutils/Messages/ComponentMessages.h src/Filter/CustomFilter.h src/Filter/TraversalMethod.h src/Space.cpp src/Space.h)
 
 

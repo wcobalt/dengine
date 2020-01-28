@@ -107,6 +107,8 @@ namespace dengine {
 
         bool isInSpace(Space& space) const;//just delegation
 
+
+        //inactive objects ignore incoming events, but can still be used other ways
         void setActive(bool isActive);
 
         SpacesManager::Spaces getSpaces() const {

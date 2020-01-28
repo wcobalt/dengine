@@ -127,7 +127,7 @@ namespace dengine {
 
         ID getId() const;
 
-        //@todo things which are returned by reference can be reassigned (copy can be made). consider this
+        //@todo things which are returned by reference can be reassigned (copy can be made). consider this (CompMan&TrComp are fixed)
         TransformComponent & getTransformComponent() const;
 
         bool operator==(const GameObject& gameObject) const;

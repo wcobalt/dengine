@@ -26,14 +26,14 @@ namespace dengine {
 #include "../DObject.h"
 
 namespace dengine {
-    class Component : public DObject, public std::enable_shared_from_this<Component> {
+    class Component : public DObject {
     private:
         bool mIsEnabled;
-        Component& operator=(const Component& component) {};
     protected:
         GameObject& gameObject;
     public:
         //safe component has to be non-copyable (because of gameObject reference)
+        Component& operator=(const Component& component) = delete;
 
         Component(GameObject &gameObject);
 
@@ -63,6 +63,7 @@ namespace dengine {
 
         GameObject & getGameObject() const;
 
+        //@todo maybe exclude to a kind of toolkit?
         Scene& getCurrentScene();///for clarity and simplicity's sake
     };
 }

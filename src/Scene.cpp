@@ -29,7 +29,7 @@ void Scene::handleExternalEvent(EventType eventType) {
 
             break;
         case EventType::SCENE_UNLOAD:
-            handle(GameObject::EventType::UPDATE);
+            handle(GameObject::EventType::SCENE_UNLOAD);
 
             sceneBehavior.onSceneUnload(*this);
             freeScene();
@@ -37,6 +37,7 @@ void Scene::handleExternalEvent(EventType eventType) {
             break;
         case EventType::GAME_END:
             sceneBehavior.onGameEnd(*this);
+            handle(GameObject::EventType::GAME_END);
 
             break;
         case EventType::UPDATE:
@@ -63,7 +64,7 @@ ID Scene::getId() const {
 }
 
 void Scene::handle(GameObject::EventType messageType) {
-    std::set<ID> hashTable;
+    std::set<ID> hashTable;//it's not a hashtable
 
     BfsTraversal traversal;
     CustomFilter filter(
@@ -73,14 +74,10 @@ void Scene::handle(GameObject::EventType messageType) {
 
     [&hashTable](const GameObject& gameObject) -> bool {
         bool isActive = gameObject.getTransformComponent().isActive();
-        bool doIgnoreInactive = Dengine::get().isIgnoringInactive();
 
-        if (hashTable.find(gameObject.getId()) == hashTable.end() && (!doIgnoreInactive || isActive)) {
-            hashTable.emplace(gameObject.getId());
+        hashTable.emplace(gameObject.getId());
 
-            return true;
-        } else
-            return false;
+        return hashTable.find(gameObject.getId()) == hashTable.end() && isActive;
     }, traversal);
 
     filter.run(*root);
@@ -93,7 +90,6 @@ void Scene::freeScene() {
 void Scene::initializeSpaces() {
     Space::reset();
 
-    //WARNING & ATTENTION: YOU HAVE TO ADD
     standardSpaces.insert(std::make_pair(StandardSpace::SOME_SPACE, &Space::create("some_space")));
 }
 

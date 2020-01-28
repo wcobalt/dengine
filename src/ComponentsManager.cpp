@@ -7,6 +7,8 @@
 #include "GameObject.h"
 #include "Coreutils/Messages/ComponentMessage.h"
 #include "Coreutils/Messages/ComponentMessages.h"
+#include "Dengine.h"
+#include "Components/Transform/TransformComponent.h"
 
 using namespace dengine;
 
@@ -46,9 +48,11 @@ void ComponentsManager::detachAllComponents() {
 }
 
 void ComponentsManager::spreadMessage(const ComponentMessage &message) {
-    for (auto& component : components)
-        if (component->isEnabled())
-            component->sendMessage(message);
+    if (gameObject.getTransformComponent().isActive()) {
+        for (auto &component : components)
+            if (component->isEnabled())
+                component->sendMessage(message);
+    }
 }
 
 void ComponentsManager::detachComponent(decltype(components)::const_iterator iterator) {

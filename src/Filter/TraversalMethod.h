@@ -18,7 +18,6 @@ namespace dengine {
         virtual void setStopped(bool isStopped) = 0;
 
         virtual bool isStopped() const = 0;
-
     };
 }
 

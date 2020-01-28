@@ -1,6 +1,5 @@
 #include "TransformComponent.h"
 #include "../../Exceptions/ComponentException.h"
-#include "../../Exceptions/LayerException.h"
 
 using namespace dengine;
 

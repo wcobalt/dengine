@@ -63,14 +63,6 @@ void Dengine::update() {
     scenesManager->handleExternalEvent(ScenesManager::EventType::UPDATE);
 }
 
-void Dengine::setIgnoreInactive(bool doIgnoreInactive) {
-    mIsIgnoringInactive = doIgnoreInactive;
-}
-
-bool Dengine::isIgnoringInactive() const {
-    return mIsIgnoringInactive;
-}
-
 void Dengine::run() {
     if (fps == 0) throw DengineException("Fps cannot be zero. Use setFps()");
 
