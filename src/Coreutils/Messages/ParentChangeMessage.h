@@ -15,14 +15,15 @@ namespace dengine {
 namespace dengine {
     class ParentChangeMessage : public ComponentMessage {
     private:
-        GameObject& previousParent, &newParent;
+        GameObject& newParent;
+        GameObject* previousParent;
     public:
-        ParentChangeMessage(GameObject &previousParent, GameObject &newParent);
+        ParentChangeMessage(GameObject *previousParent, GameObject &newParent);
 
-        ParentChangeMessage(GameObject &previousParent, GameObject &newParent,
+        ParentChangeMessage(GameObject *previousParent, GameObject &newParent,
                             time_type sendingTime);
 
-        GameObject & getPreviousParent() const {
+        GameObject * getPreviousParent() const {
             return previousParent;
         }
 

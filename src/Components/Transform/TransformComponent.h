@@ -66,14 +66,14 @@ namespace dengine {
 
         SpacesManager spacesManager;
     public:
-        TransformComponent(std::shared_ptr<GameObject> gameObject);
+        TransformComponent(GameObject &gameObject);
 
-        TransformComponent(std::shared_ptr<GameObject> gameObject, const vec3f& position);
+        TransformComponent(GameObject &gameObject, const vec3f& position);
 
-        TransformComponent(std::shared_ptr<GameObject> gameObject, float x, float y, float z);
+        TransformComponent(GameObject &gameObject, float x, float y, float z);
 
-        TransformComponent(std::shared_ptr<GameObject> gameObject, const vec3f& position,
-                const Quaternion<float>& rotation, const vec3f& scale);
+        TransformComponent(GameObject &gameObject, const vec3f& position,
+                           const Quaternion<float>& rotation, const vec3f& scale);
 
         void setPosition(const vec3f& position);
 

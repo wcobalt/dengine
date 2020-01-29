@@ -6,10 +6,10 @@
 
 using namespace dengine;
 
-ParentChangeMessage::ParentChangeMessage(GameObject &previousParent, GameObject &newParent)
+ParentChangeMessage::ParentChangeMessage(GameObject *previousParent, GameObject &newParent)
     : ParentChangeMessage(previousParent, newParent, std::chrono::system_clock::now()) {}
 
-ParentChangeMessage::ParentChangeMessage(GameObject &previousParent, GameObject &newParent,
+ParentChangeMessage::ParentChangeMessage(GameObject *previousParent, GameObject &newParent,
                                          time_type sendingTime) :
       ComponentMessage(ComponentMessage::Type::PARENT_CHANGE, sendingTime),
       previousParent(previousParent), newParent(newParent) {}

@@ -1,19 +1,19 @@
 #include "TransformComponent.h"
-#include "../../Exceptions/ComponentException.h"
 
 using namespace dengine;
 
-TransformComponent::TransformComponent(std::shared_ptr<GameObject> gameObject) : TransformComponent(gameObject, {}) {}
+TransformComponent::TransformComponent(GameObject &gameObject) : TransformComponent(gameObject, {}) {}
 
-TransformComponent::TransformComponent(std::shared_ptr<GameObject> gameObject, const vec3f &position)
+TransformComponent::TransformComponent(GameObject &gameObject, const vec3f &position)
     : TransformComponent(gameObject, position, {}, {1, 1, 1}) {}
 
-TransformComponent::TransformComponent(std::shared_ptr<GameObject> gameObject, float x, float y, float z)
+TransformComponent::TransformComponent(GameObject &gameObject, float x, float y, float z)
     : TransformComponent(gameObject, {x, y, z}) {}
 
-TransformComponent::TransformComponent(std::shared_ptr<GameObject> gameObject, const vec3f &position,
+TransformComponent::TransformComponent(GameObject &gameObject, const vec3f &position,
                                        const Quaternion<float> &rotation, const vec3f &scale)
-                                       : Component(gameObject), position(position), rotation(rotation), scale(scale) {}
+                                       : Component(gameObject), position(position), rotation(rotation), scale(scale),
+                                       mIsActive(true) {}
 
 
 void TransformComponent::setActive(bool isActive) {

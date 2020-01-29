@@ -32,40 +32,37 @@ namespace dengine {
         std::vector<std::unique_ptr<GameObject>> children;
         std::vector<GameObject*> childrenFrontend;//@todo is it good?
 
-        std::unique_ptr<TransformComponent> userDefinedTransform;
-
         ID id = IDUtils::NO_ID;
     public:
         using iterator = decltype(childrenFrontend)::iterator;
-
         using const_iterator = decltype(childrenFrontend)::const_iterator;
     private:
         void destroyChild(decltype(children)::const_iterator iterator);
 
-        void initialize();
+        void initialize(bool doAddTransform);
 
-        GameObject & instantiateAsChild(std::unique_ptr<GameObject> instance, const Initializer &initializer,
-                                        std::optional<vec3f> position);
+        GameObject &instantiateAsChild(std::unique_ptr<GameObject> instance, const Initializer &initializer,
+                                       std::optional<vec3f> position, bool haveTransforms);
 
         decltype(children)::const_iterator findChild(GameObject &instance) const;
 
         void addChildWithoutInstantiation(std::unique_ptr<GameObject> instance);
 
-        void noticeAboutAddingWithoutInstantiation(GameObject &instance,
-                                                   const DirectChildrenChangeMessage::ChildChangeType &childrenChangeType,
-                                                   GameObject *previousParent);
+        void notifyAboutAdditionWithoutInstantiation(GameObject &instance,
+                                                     const DirectChildrenChangeMessage::ChildChangeType &childrenChangeType,
+                                                     GameObject *previousParent);
 
         GameObject & instantiateNew(const Initializer& initializer, std::optional<vec3f> position);
 
         GameObject & instantiateByCloning(GameObject& instance, std::optional<vec3f> position);
+
+        void propagateInstantiation(const Initializer &initializer, bool haveTransforms);
+
+        void propagateInstantiationNotification();
     public:
         enum class EventType {
             UPDATE, SCENE_UNLOAD, GAME_END
         };
-
-        GameObject();
-
-        explicit GameObject(std::unique_ptr<TransformComponent> transform);
 
         static GameObject & instantiate(const Initializer& initializer);
 
