@@ -25,8 +25,7 @@ namespace dengine {
     class Scene : public DObject {
     private:
         std::unique_ptr<GameObject> root;
-
-        SceneBehavior& sceneBehavior;
+        std::unique_ptr<SceneBehavior> sceneBehavior;
 
         ID currentId, id;
         std::string alias;
@@ -49,9 +48,9 @@ namespace dengine {
             UPDATE, SCENE_UNLOAD, SCENE_LOAD, GAME_END
         };
 
-        Scene(ID id, SceneBehavior &sceneBehavior);
+        Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior);
 
-        Scene(ID id, SceneBehavior &sceneBehavior, const std::string &alias);
+        Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior, const std::string &alias);
 
         void handleExternalEvent(EventType eventType);
 
@@ -67,6 +66,8 @@ namespace dengine {
         Space& getSpace(StandardSpace standardSpace) const;
 
         SpacesManager& getSpaces() const;
+
+        SceneBehavior& getBehavior() const;
     };
 }
 

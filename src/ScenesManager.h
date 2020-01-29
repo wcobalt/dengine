@@ -23,21 +23,20 @@ namespace dengine {
 namespace dengine {
     class ScenesManager : public DObject {
     private:
-        std::vector<std::unique_ptr<Scene>> scenes;
+        mutable std::vector<std::unique_ptr<Scene>> scenes;
 
-        Scene* currentScene;
+        Scene* currentScene = nullptr;
 
-        ID currentId;
+        ID currentId = IDUtils::NO_ID;
 
         ID takeNextSceneId();
     public:
         using const_iterator = decltype(scenes)::const_iterator;
-
         using iterator = decltype(scenes)::iterator;
     private:
-        const_iterator findSceneByAlias(const std::string& alias) const;
+        iterator findSceneByAlias(const std::string& alias) const;
 
-        const_iterator findSceneById(ID id) const;
+        iterator findSceneById(ID id) const;
 
         void removeScene(const_iterator iterator);
 
@@ -49,13 +48,12 @@ namespace dengine {
             UPDATE, GAME_END
         };
 
-        ScenesManager();
-
         void handleExternalEvent(EventType eventType);
 
-        ID addScene(std::shared_ptr<SceneBehavior> sceneBehavior);
+        //depends on how to reset behaviours when scene reloading - nohow just call onSceneLoad()
+        Scene & addScene(std::unique_ptr<SceneBehavior> sceneBehavior);
 
-        ID addScene(std::shared_ptr<SceneBehavior> sceneBehavior, const std::string &alias);
+        Scene & addScene(std::unique_ptr<SceneBehavior> sceneBehavior, const std::string &alias);
 
         void removeScene(ID id);
 
@@ -73,13 +71,13 @@ namespace dengine {
 
         void loadFirstScene();
 
-        std::shared_ptr<Scene> getCurrentScene() const;
+        Scene & getCurrentScene() const;
 
-        bool isCurrentSceneExist() const;
+        bool isAnySceneLoaded() const;
 
-        std::shared_ptr<Scene> getScene(ID id) const;
+        Scene & getScene(ID id) const;
 
-        std::shared_ptr<Scene> getScene(const std::string &alias) const;
+        Scene & getScene(const std::string &alias) const;
 
         iterator begin();
 

@@ -44,8 +44,8 @@ namespace dengine {
 
         void initialize();
 
-        void instantiateAsChild(std::unique_ptr<GameObject> instance, const Initializer &initializer,
-                                std::optional<vec3f> position);
+        GameObject & instantiateAsChild(std::unique_ptr<GameObject> instance, const Initializer &initializer,
+                                        std::optional<vec3f> position);
 
         decltype(children)::const_iterator findChild(GameObject &instance) const;
 
@@ -55,9 +55,9 @@ namespace dengine {
                                                    const DirectChildrenChangeMessage::ChildChangeType &childrenChangeType,
                                                    GameObject *previousParent);
 
-        void instantiateNew(const Initializer& initializer, std::optional<vec3f> position);
+        GameObject & instantiateNew(const Initializer& initializer, std::optional<vec3f> position);
 
-        void instantiateByCloning(GameObject& instance, std::optional<vec3f> position);
+        GameObject & instantiateByCloning(GameObject& instance, std::optional<vec3f> position);
     public:
         enum class EventType {
             UPDATE, SCENE_UNLOAD, GAME_END
@@ -67,29 +67,29 @@ namespace dengine {
 
         explicit GameObject(std::unique_ptr<TransformComponent> transform);
 
-        static void instantiate(const Initializer& initializer);
+        static GameObject & instantiate(const Initializer& initializer);
 
-        static void instantiate(const Initializer& initializer, float x, float y, float z);
+        static GameObject & instantiate(const Initializer& initializer, float x, float y, float z);
 
-        static void instantiate(const Initializer& initializer, const vec3f& position);
+        static GameObject & instantiate(const Initializer& initializer, const vec3f& position);
 
-        static void instantiate(GameObject &instance);
+        static GameObject & instantiate(GameObject &instance);
 
-        static void instantiate(GameObject &instance, float x, float y, float z);
+        static GameObject & instantiate(GameObject &instance, float x, float y, float z);
 
-        static void instantiate(GameObject &instance, const vec3f &position);
+        static GameObject & instantiate(GameObject &instance, const vec3f &position);
 
-        void instantiateChild(const Initializer& initializer);
+        GameObject & instantiateChild(const Initializer& initializer);
 
-        void instantiateChild(const Initializer& initializer, float x, float y, float z);
+        GameObject & instantiateChild(const Initializer& initializer, float x, float y, float z);
 
-        void instantiateChild(const Initializer& initializer, const vec3f &position);
+        GameObject & instantiateChild(const Initializer& initializer, const vec3f &position);
 
-        void instantiateChild(GameObject &instance);
+        GameObject & instantiateChild(GameObject &instance);
 
-        void instantiateChild(GameObject &instance, float x, float y, float z);
+        GameObject & instantiateChild(GameObject &instance, float x, float y, float z);
 
-        void instantiateChild(GameObject &instance, const vec3f &position);
+        GameObject & instantiateChild(GameObject &instance, const vec3f &position);
 
         static void move(GameObject &instance);
 

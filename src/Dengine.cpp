@@ -92,11 +92,11 @@ void Dengine::stop() {
 }
 
 std::string Dengine::toString() const {
-    auto scene = scenesManager->getCurrentScene();
-    const std::string& alias = scene->getAlias();
+    auto& scene = scenesManager->getCurrentScene();
+    const std::string& alias = scene.getAlias();
 
     return "Dengine (v" + std::string(VERSION_STRING) + "):\n" +
-           "Current scene: " + std::to_string(scene->getId()) + " (" + (alias.empty() ? "<no alias>" : alias) + ")";
+           "Current scene: " + std::to_string(scene.getId()) + " (" + (alias.empty() ? "<no alias>" : alias) + ")";
 }
 
 ScenesManager & Dengine::getScenesManager() const {

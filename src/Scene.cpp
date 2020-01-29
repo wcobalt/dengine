@@ -16,29 +16,29 @@
 
 using namespace dengine;
 
-Scene::Scene(ID id, SceneBehavior &sceneBehavior) : Scene(id, sceneBehavior, "") {}
+Scene::Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior) : Scene(id, std::move(sceneBehavior), "") {}
 
-Scene::Scene(ID id, SceneBehavior &sceneBehavior, const std::string &alias) : sceneBehavior(sceneBehavior),
-                                                                              id(id), alias(alias),
-                                                                              spacesManager(std::make_unique<SpacesManager>()) {}
+Scene::Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior, const std::string &alias) : sceneBehavior(std::move(sceneBehavior)),
+                                                                                              id(id), alias(alias),
+                                                                                              spacesManager(std::make_unique<SpacesManager>()) {}
 
 void Scene::handleExternalEvent(EventType eventType) {
     switch (eventType) {
         case EventType::SCENE_LOAD:
             initializeSpaces();
 
-            sceneBehavior.onSceneLoad(*this);
+            sceneBehavior->onSceneLoad(*this);
 
             break;
         case EventType::SCENE_UNLOAD:
             handle(GameObject::EventType::SCENE_UNLOAD);
 
-            sceneBehavior.onSceneUnload(*this);
+            sceneBehavior->onSceneUnload(*this);
             freeScene();
 
             break;
         case EventType::GAME_END:
-            sceneBehavior.onGameEnd(*this);
+            sceneBehavior->onGameEnd(*this);
             handle(GameObject::EventType::GAME_END);
 
             break;
@@ -100,4 +100,8 @@ SpacesManager &Scene::getSpaces() const {
 
 Space &Scene::getSpace(StandardSpace standardSpace) const {
     return *standardSpaces.at(standardSpace);
+}
+
+SceneBehavior &Scene::getBehavior() const {
+    return *sceneBehavior;
 }

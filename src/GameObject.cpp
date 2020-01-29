@@ -25,73 +25,73 @@ GameObject::GameObject(std::unique_ptr<TransformComponent> transform) : userDefi
 //STATIC METHODS INSTANTIATE RELATIVE TO ROOT (AND AS ROOT'S CHILD)
 
 //instantiates game object on ITS coordinates
-void GameObject::instantiate(const Initializer &initializer) {
-    getRoot().instantiateChild(initializer);
+GameObject & GameObject::instantiate(const Initializer &initializer) {
+    return getRoot().instantiateChild(initializer);
 }
 
 //instantiates the child relative TO PARENT
-void GameObject::instantiate(const Initializer &initializer, float x, float y, float z) {
-    instantiate(initializer, {x, y, z});
+GameObject & GameObject::instantiate(const Initializer &initializer, float x, float y, float z) {
+    return instantiate(initializer, {x, y, z});
 }
 
 //instantiates the child relative TO PARENT
-void GameObject::instantiate(const Initializer &initializer, const vec3f &position) {
-    getRoot().instantiateChild(initializer, position);
+GameObject & GameObject::instantiate(const Initializer &initializer, const vec3f &position) {
+    return getRoot().instantiateChild(initializer, position);
 }
 
 //instantiates game object on ITS coordinates
-void GameObject::instantiate(GameObject &instance) {
-    getRoot().instantiateChild(instance);
+GameObject & GameObject::instantiate(GameObject &instance) {
+    return getRoot().instantiateChild(instance);
 }
 
 //instantiates the child relative TO PARENT
-void GameObject::instantiate(GameObject &instance, float x, float y, float z) {
-    instantiate(instance, {x, y, z});
+GameObject & GameObject::instantiate(GameObject &instance, float x, float y, float z) {
+    return instantiate(instance, {x, y, z});
 }
 
 //instantiates the child relative TO PARENT
-void GameObject::instantiate(GameObject &instance, const vec3f &position) {
-    getRoot().instantiateChild(instance, position);
+GameObject & GameObject::instantiate(GameObject &instance, const vec3f &position) {
+    return getRoot().instantiateChild(instance, position);
 }
 
 //NON-STATIC METHODS INSTANTIATE RELATIVE TO PARENT
 
 //instantiates game object on ITS coordinates
-void GameObject::instantiateChild(const Initializer &initializer) {
-    instantiateAsChild({}, initializer, {});
+GameObject & GameObject::instantiateChild(const Initializer &initializer) {
+    return instantiateAsChild({}, initializer, {});
 }
 
 //instantiates the child relative TO PARENT
-void GameObject::instantiateChild(const Initializer &initializer, float x, float y, float z) {
-    instantiateChild(initializer, {x, y, z});
+GameObject & GameObject::instantiateChild(const Initializer &initializer, float x, float y, float z) {
+    return instantiateChild(initializer, {x, y, z});
 }
 
 //instantiates the child relative TO PARENT
-void GameObject::instantiateChild(const Initializer &initializer, const vec3f &position) {
-    instantiateAsChild({}, initializer, position);
+GameObject & GameObject::instantiateChild(const Initializer &initializer, const vec3f &position) {
+    return instantiateAsChild({}, initializer, position);
 }
 
-void GameObject::instantiateNew(const Initializer& initializer, std::optional<vec3f> position) {
-    instantiateAsChild(std::make_unique<GameObject>(), initializer, position);
+GameObject & GameObject::instantiateNew(const Initializer& initializer, std::optional<vec3f> position) {
+    return instantiateAsChild(std::make_unique<GameObject>(), initializer, position);
 }
 
 //instantiates game object on ITS coordinates
-void GameObject::instantiateChild(GameObject &instance) {
-    instantiateByCloning(instance, {});
+GameObject & GameObject::instantiateChild(GameObject &instance) {
+    return instantiateByCloning(instance, {});
 }
 
 //instantiates the child relative TO PARENT
-void GameObject::instantiateChild(GameObject &instance, float x, float y, float z) {
-    instantiateChild(instance, {x, y, z});
+GameObject & GameObject::instantiateChild(GameObject &instance, float x, float y, float z) {
+    return instantiateChild(instance, {x, y, z});
 }
 
 //instantiates the child relative TO PARENT
-void GameObject::instantiateChild(GameObject &instance, const vec3f &position) {
-    instantiateByCloning(instance, position);
+GameObject & GameObject::instantiateChild(GameObject &instance, const vec3f &position) {
+    return instantiateByCloning(instance, position);
 }
 
-void GameObject::instantiateByCloning(GameObject& instance, std::optional<vec3f> position) {
-    instantiateAsChild(instance.clone(), {}, position);
+GameObject & GameObject::instantiateByCloning(GameObject& instance, std::optional<vec3f> position) {
+    return instantiateAsChild(instance.clone(), {}, position);
 }
 
 void GameObject::move(GameObject &instance) {
@@ -259,7 +259,7 @@ void GameObject::destroyChild(decltype(children)::const_iterator iterator) {
  * */
 
 //instance - non-nullptr
-void GameObject::instantiateAsChild(std::unique_ptr<GameObject> instance, const Initializer &initializer,
+GameObject & GameObject::instantiateAsChild(std::unique_ptr<GameObject> instance, const Initializer &initializer,
                                     std::optional<vec3f> position) {
     GameObject& gameObject = *instance;
 
@@ -272,13 +272,17 @@ void GameObject::instantiateAsChild(std::unique_ptr<GameObject> instance, const 
     //child is not initialized yet
     addChildWithoutInstantiation(std::move(instance));
 
-    gameObject.id = Dengine::get().getScenesManager().getCurrentScene()->takeNextId();
+    gameObject.id = Dengine::get().getScenesManager().getCurrentScene().takeNextId();
     gameObject.initialize();
     gameObject.componentsManager->spreadMessage(InstanceCreateMessage());
 
     noticeAboutAddingWithoutInstantiation(gameObject,
             DirectChildrenChangeMessage::ChildChangeType::INSTANTIATION,
             nullptr);
+
+    //@todo propagate notification to children
+
+    return gameObject;
 }
 
 void GameObject::addChildWithoutInstantiation(std::unique_ptr<GameObject> instance) {
