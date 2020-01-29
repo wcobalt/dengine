@@ -33,7 +33,7 @@ Space &SpacesManager::get(ID id) const {
     });
 }
 
-void SpacesManager::clear() {
+void SpacesManager::reset() {
     spaces.clear();
 
     currentId = INIT_ID;

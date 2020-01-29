@@ -30,7 +30,7 @@ void ComponentsManager::attachComponent(std::unique_ptr<Component> component) {
         componentReference.sendMessage(ComponentLoadMessage());
     } else
         throw ComponentException("Component of such type: " + std::string(typeid(*component).name())
-                                  + " already attached to this game object");
+                                 + " already attached to this game object");
 }
 
 void ComponentsManager::attachComponentWithoutNotification(std::unique_ptr<Component> component) {
@@ -41,19 +41,24 @@ void ComponentsManager::attachComponentWithoutNotification(std::unique_ptr<Compo
 }
 
 void ComponentsManager::detachComponent(const Component &component) {
-    checkComponentAttachment(component);
+    if (&component != transformComponent) {
+        checkComponentAttachment(component);
 
-    auto it = findComponent(component);
+        auto it = findComponent(component);
 
-    if (it != components.end()) {
-        detachComponent(it);
+        if (it != components.end()) {
+            detachComponent(it);
+        } else
+            throw ComponentException("The component is not attached to this game object");
     } else
-        throw ComponentException("The component is not attached to this game object");
+        throw ComponentException("It's impossible to detach TransformComponent");
 }
 
 void ComponentsManager::detachAllComponents() {
-    for (auto it = components.begin(); it != components.end(); it++)
-        detachComponent(it);
+    for (auto it = components.begin(); it != components.end(); ++it) {
+        if (&**it != transformComponent)
+            detachComponent(it);
+    }
 }
 
 void ComponentsManager::spreadMessage(const ComponentMessage &message) {
@@ -79,7 +84,7 @@ void ComponentsManager::checkComponentAttachment(const Component &component) {
 decltype(ComponentsManager::components)::const_iterator ComponentsManager::findComponent(const Component &component) const {
     size_t hash = typeid(component).hash_code();
 
-    for (auto it = components.begin(); it != components.end(); it++) {
+    for (auto it = components.begin(); it != components.end(); ++it) {
         if (typeid(*it).hash_code() == hash)
             return it;
     }

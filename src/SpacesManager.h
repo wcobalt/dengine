@@ -45,7 +45,7 @@ namespace dengine {
 
         const_iterator cend();
 
-        void clear();
+        void reset();
     };
 }
 

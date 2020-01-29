@@ -25,6 +25,7 @@ Scene::Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior, const std::str
 void Scene::handleExternalEvent(EventType eventType) {
     switch (eventType) {
         case EventType::SCENE_LOAD:
+            currentId = INIT_ID;
             initializeSpaces();
 
             sceneBehavior->onSceneLoad(*this);
@@ -87,7 +88,7 @@ void Scene::handle(GameObject::EventType messageType) {
 
 void Scene::freeScene() {
     root->destroyAllChildren();
-    spacesManager->clear();
+    spacesManager->reset();
 }
 
 void Scene::initializeSpaces() {

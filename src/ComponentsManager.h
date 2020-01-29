@@ -38,14 +38,13 @@ namespace dengine {
 
         void attachComponentWithoutNotification(std::unique_ptr<Component> component);
     public:
-        ComponentsManager(GameObject &gameObject);
+        explicit ComponentsManager(GameObject &gameObject);
 
         ComponentsManager& operator=(const ComponentsManager& componentsManager) = delete;
 
         void attachComponent(std::unique_ptr<Component> component);
 
-        //@todo exclude TransformComponent by SFINAE
-        template<typename T>
+        template<typename T, typename std::enable_if<!std::is_same<T, TransformComponent>::value, std::nullptr_t>::type = nullptr>
         void detachComponent() {
             for (auto it = components.begin(); it != components.end(); it++) {
                 Component& component = **it;

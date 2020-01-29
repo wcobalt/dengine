@@ -27,7 +27,9 @@ namespace dengine {
         std::unique_ptr<GameObject> root;
         std::unique_ptr<SceneBehavior> sceneBehavior;
 
-        ID currentId, id;
+        const ID INIT_ID = IDUtils::NO_ID;
+
+        ID currentId = INIT_ID, id;
         std::string alias;
 
         void handle(GameObject::EventType messageType);
