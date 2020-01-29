@@ -6,7 +6,7 @@ set(CMAKE_PREFIX_PATH lib)
 
 add_executable(App
         src/App/main.cpp
-        src/Filter/TraversalMethods/BfsTraversal.cpp src/Filter/TraversalMethods/BfsTraversal.h src/Filter/TraversalMethods/BaseTraversal.cpp src/Filter/TraversalMethods/BaseTraversal.h src/Filter/TraversalMethods/DfsTraversal.cpp src/Filter/TraversalMethods/DfsTraversal.h)
+        src/Filter/TraversalMethods/BfsTraversal.cpp src/Filter/TraversalMethods/BfsTraversal.h src/Filter/TraversalMethods/BaseTraversal.cpp src/Filter/TraversalMethods/BaseTraversal.h src/Filter/TraversalMethods/DfsTraversal.cpp src/Filter/TraversalMethods/DfsTraversal.h src/Platform/XPlatform.cpp src/Platform/XPlatform.h src/Platform/Platform.cpp)
 
 add_library(Dengine
         src/Components/Component.cpp

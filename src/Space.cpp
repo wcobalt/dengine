@@ -6,6 +6,7 @@
 #include "Space.h"
 #include "GameObject.h"
 #include "Components/Transform/TransformComponent.h"
+#include "ComponentsManager.h"
 
 using namespace dengine;
 
@@ -47,7 +48,7 @@ void Space::add(GameObject &gameObject) {
     if (findGameObject(gameObject) == gameObjects.end()) {
         gameObjects.emplace(&gameObject);
 
-        gameObject.getTransformComponent().onAdditionToSpace(*this);
+        gameObject.getComponentsManager().getTransformComponent().onAdditionToSpace(*this);
     }
 }
 
@@ -57,7 +58,7 @@ void Space::remove(GameObject &gameObject) {
     if (it != gameObjects.end()) {
         gameObjects.erase(it);
 
-        gameObject.getTransformComponent().onRemovalFromSpace(*this);
+        gameObject.getComponentsManager().getTransformComponent().onRemovalFromSpace(*this);
     }
 }
 

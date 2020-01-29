@@ -41,9 +41,6 @@ namespace dengine {
 
         void initialize(bool doAddTransform);
 
-        GameObject &instantiateAsChild(std::unique_ptr<GameObject> instance, const Initializer &initializer,
-                                       std::optional<vec3f> position, bool haveTransforms);
-
         decltype(children)::const_iterator findChild(GameObject &instance) const;
 
         void addChildWithoutInstantiation(std::unique_ptr<GameObject> instance);
@@ -54,11 +51,13 @@ namespace dengine {
 
         GameObject & instantiateNew(const Initializer& initializer, std::optional<vec3f> position);
 
-        GameObject & instantiateByCloning(GameObject& instance, std::optional<vec3f> position);
+        GameObject & instantiateByCloning(const GameObject& pattern, std::optional<vec3f> position);
 
-        void propagateInstantiation(const Initializer &initializer, bool haveTransforms);
+        GameObject&
+        recursivelyInstantiate(const GameObject &pattern, GameObject &parent, const std::optional<vec3f> &position,
+                               const std::optional<vec3f> &origin);
 
-        void propagateInstantiationNotification();
+        void notifyAboutInstantiation(bool doPropagateToChildren);
     public:
         enum class EventType {
             UPDATE, SCENE_UNLOAD, GAME_END
@@ -70,11 +69,11 @@ namespace dengine {
 
         static GameObject & instantiate(const Initializer& initializer, const vec3f& position);
 
-        static GameObject & instantiate(GameObject &instance);
+        static GameObject & instantiate(const GameObject &instance);
 
-        static GameObject & instantiate(GameObject &instance, float x, float y, float z);
+        static GameObject & instantiate(const GameObject &instance, float x, float y, float z);
 
-        static GameObject & instantiate(GameObject &instance, const vec3f &position);
+        static GameObject & instantiate(const GameObject &instance, const vec3f &position);
 
         GameObject & instantiateChild(const Initializer& initializer);
 
@@ -82,11 +81,11 @@ namespace dengine {
 
         GameObject & instantiateChild(const Initializer& initializer, const vec3f &position);
 
-        GameObject & instantiateChild(GameObject &instance);
+        GameObject & instantiateChild(const GameObject &instance);
 
-        GameObject & instantiateChild(GameObject &instance, float x, float y, float z);
+        GameObject & instantiateChild(const GameObject &instance, float x, float y, float z);
 
-        GameObject & instantiateChild(GameObject &instance, const vec3f &position);
+        GameObject & instantiateChild(const GameObject &instance, const vec3f &position);
 
         static void move(GameObject &instance);
 
@@ -99,8 +98,6 @@ namespace dengine {
         void destroyAllChildren();
 
         GameObject & getParent() const;
-
-        std::vector<GameObject*> getAllChildren() const;
 
         iterator begin();
 
@@ -118,14 +115,11 @@ namespace dengine {
 
         static GameObject & getRoot();
 
-        std::unique_ptr<GameObject> clone() const;
-
         ComponentsManager & getComponentsManager() const;
 
         ID getId() const;
 
         //@todo things which are returned by reference can be reassigned (copy can be made). consider this (CompMan&TrComp are fixed)
-        TransformComponent & getTransformComponent() const;
 
         bool operator==(const GameObject& gameObject) const;
 

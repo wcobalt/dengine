@@ -34,17 +34,17 @@ GameObject & GameObject::instantiate(const Initializer &initializer, const vec3f
 }
 
 //instantiates game object on ITS coordinates
-GameObject & GameObject::instantiate(GameObject &instance) {
+GameObject & GameObject::instantiate(const GameObject &instance) {
     return getRoot().instantiateChild(instance);
 }
 
 //instantiates the child relative TO PARENT
-GameObject & GameObject::instantiate(GameObject &instance, float x, float y, float z) {
+GameObject & GameObject::instantiate(const GameObject &instance, float x, float y, float z) {
     return instantiate(instance, {x, y, z});
 }
 
 //instantiates the child relative TO PARENT
-GameObject & GameObject::instantiate(GameObject &instance, const vec3f &position) {
+GameObject & GameObject::instantiate(const GameObject &instance, const vec3f &position) {
     return getRoot().instantiateChild(instance, position);
 }
 
@@ -65,27 +65,19 @@ GameObject & GameObject::instantiateChild(const Initializer &initializer, const 
     return instantiateNew(initializer, position);
 }
 
-GameObject & GameObject::instantiateNew(const Initializer& initializer, std::optional<vec3f> position) {
-    return instantiateAsChild(std::make_unique<GameObject>(), initializer, position, false);
-}
-
 //instantiates game object on ITS coordinates
-GameObject & GameObject::instantiateChild(GameObject &instance) {
+GameObject & GameObject::instantiateChild(const GameObject &instance) {
     return instantiateByCloning(instance, {});
 }
 
 //instantiates the child relative TO PARENT
-GameObject & GameObject::instantiateChild(GameObject &instance, float x, float y, float z) {
+GameObject & GameObject::instantiateChild(const GameObject &instance, float x, float y, float z) {
     return instantiateChild(instance, {x, y, z});
 }
 
 //instantiates the child relative TO PARENT
-GameObject & GameObject::instantiateChild(GameObject &instance, const vec3f &position) {
+GameObject & GameObject::instantiateChild(const GameObject &instance, const vec3f &position) {
     return instantiateByCloning(instance, position);
-}
-
-GameObject & GameObject::instantiateByCloning(GameObject& instance, std::optional<vec3f> position) {
-    return instantiateAsChild(instance.clone(), {}, position, true);
 }
 
 void GameObject::move(GameObject &instance) {
@@ -145,10 +137,6 @@ GameObject & GameObject::getParent() const {
     return *parent;
 }
 
-std::vector<GameObject*> GameObject::getAllChildren() const {
-    return childrenFrontend;
-}
-
 GameObject::iterator GameObject::begin() {
     return childrenFrontend.begin();
 }
@@ -200,24 +188,13 @@ ID GameObject::getId() const {
 }
 
 void GameObject::initialize(bool doAddTransform) {
+    id = Dengine::get().getScenesManager().getCurrentScene().takeNextId();
+
     if (doAddTransform) {
         std::unique_ptr<TransformComponent> transform = std::make_unique<TransformComponent>(*this);
 
         componentsManager->attachComponent(std::move(transform));
     }
-}
-
-//clones children and components manager
-std::unique_ptr<GameObject> GameObject::clone() const {
-    std::unique_ptr<GameObject> clone = std::make_unique<GameObject>();
-
-    for (auto child : *this) {
-        clone->addChildWithoutInstantiation(child->clone());
-    }
-
-    clone->componentsManager = componentsManager->clone(*clone);
-
-    return clone;
 }
 
 GameObject & GameObject::getRoot() {
@@ -254,33 +231,44 @@ void GameObject::destroyChild(decltype(children)::const_iterator iterator) {
     children.erase(iterator);
 }
 
-/*
- * INSTANCE_CREATE
- * INSTANTIATION
- * PARENT_CHANGED
- * */
+GameObject & GameObject::instantiateNew(const Initializer& initializer, std::optional<vec3f> position) {
+    std::unique_ptr<GameObject> instance = std::make_unique<GameObject>();
 
-//instance - non-nullptr (all children have right parent), haveTransform: if inst. trough Initializer - false, trough clone() - true
-GameObject & GameObject::instantiateAsChild(std::unique_ptr<GameObject> instance, const Initializer &initializer,
-                                            std::optional<vec3f> position, bool haveTransforms) {
     GameObject& gameObject = *instance;
 
     //child is not initialized yet (just warning)
     addChildWithoutInstantiation(std::move(instance));
-
-    gameObject.propagateInstantiation(initializer, haveTransforms);
+    gameObject.initialize(true);
 
     if (position) {
-        vec3f parentPosition = getParent().getTransformComponent().getPosition();
+        vec3f parentPosition = getParent().getComponentsManager().getTransformComponent().getPosition();
 
-        getTransformComponent().setPosition(*position + parentPosition);
+        gameObject.getComponentsManager().getTransformComponent().setPosition(*position + parentPosition);
     }
 
-    initializer.initialize(*this);
+    initializer.initialize(gameObject);
 
-    gameObject.propagateInstantiationNotification();
+    gameObject.notifyAboutInstantiation(false);
 
-    //@todo propagate notification to children
+    return gameObject;
+}
+
+GameObject & GameObject::instantiateByCloning(const GameObject& pattern, std::optional<vec3f> position) {
+    //calculated position is position of GO (to which child is adding) + position
+    //origin is position of pattern GO
+    std::optional<vec3f> calculatedPosition, origin;
+
+    if (position) {
+        vec3f parentPosition = getParent().getComponentsManager().getTransformComponent().getPosition();
+
+        calculatedPosition = parentPosition + *position;
+
+        origin = pattern.getComponentsManager().getTransformComponent().getPosition();
+    }
+
+    GameObject& gameObject = recursivelyInstantiate(pattern, *this, calculatedPosition, origin);
+
+    gameObject.notifyAboutInstantiation(true);
 
     return gameObject;
 }
@@ -290,27 +278,55 @@ GameObject & GameObject::instantiateAsChild(std::unique_ptr<GameObject> instance
  * So: first of all GO and all its children are instantiated, then notification propagation is
  * launched.
  * */
-void
-GameObject::propagateInstantiation(const Initializer &initializer, bool haveTransforms) {
-    //children are instantiated first because when execution comes to initializer, GO must be in valid state
+GameObject &
+GameObject::recursivelyInstantiate(const GameObject &pattern, GameObject &parent, const std::optional<vec3f> &position,
+                                   const std::optional<vec3f> &origin) {
+    //children are instantiated first because parents depend on children
 
-    for (auto child : *this) {
-        child->propagateInstantiation(initializer, haveTransforms);
+    std::unique_ptr<GameObject> clone = std::make_unique<GameObject>();
+
+    GameObject& gameObject = *clone;
+
+    parent.addChildWithoutInstantiation(std::move(clone));
+    gameObject.initialize(false);
+
+    if (position) {
+        //position of another pattern tree element
+        vec3f patternPosition = pattern.getComponentsManager().getTransformComponent().getPosition();
+
+        //patternPos - origin - position of another pattern tree element relatively to source pattern
+        //position is offset
+        gameObject.getComponentsManager().getTransformComponent()
+            .setPosition((patternPosition - *origin) + *position);
     }
 
-    id = Dengine::get().getScenesManager().getCurrentScene().takeNextId();
-    initialize(!haveTransforms);//adds transform only if there's no one yet
+    for (auto child : pattern) {
+        child->recursivelyInstantiate(*child, gameObject, position, origin);
+    }
+
+    gameObject.componentsManager = pattern.getComponentsManager().clone(gameObject);
+
+    return gameObject;
 }
 
 /*
+ * ALL CHILDREN
+ * INSTANCE_CREATE
+ * INSTANTIATION
+ * PARENT_CHANGED
+ *
+ *
  * Is used to notify all children recursively and then the GO itself about
  * their first come to scene (when they are instantiated).
  * */
-void GameObject::propagateInstantiationNotification() {
+void GameObject::notifyAboutInstantiation(bool doPropagateToChildren) {
     //children first because parent may depends on them. (Yes children may depend on parent as well but
-    //for good children event shouldn't know about parent)
-    for (auto child : *this) {
-        child->propagateInstantiationNotification();
+    //for good children event shouldn't know about parent). When trough initializer (if in initializer new children are added
+    //then they are notified first then creator itself
+    if (doPropagateToChildren) {
+        for (auto child : *this) {
+            child->notifyAboutInstantiation(false);
+        }
     }
 
     componentsManager->spreadMessage(InstanceCreateMessage());

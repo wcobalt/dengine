@@ -135,7 +135,7 @@ void XDefaultKeyboardConverter::addKeyCodeBinding(int keyCode, DKeyCode dKeyCode
 }
 
 void XDefaultKeyboardConverter::loadXKeySymToUtf8SymbolMap() {
-    std::ifstream input(XKEYSYMS_TABLE_FILE, std::fstream::binary);
+    std::ifstream input(tableFileName, std::fstream::binary);
 
     int length = 0;
     int expectedLength = 0;
@@ -143,7 +143,7 @@ void XDefaultKeyboardConverter::loadXKeySymToUtf8SymbolMap() {
     KeySym keysym = 0;
     std::string utf8symbol;
 
-    if (!input.good()) throw IOException("Cannot open " + XKEYSYMS_TABLE_FILE + " file");
+    if (!input.good()) throw IOException("Cannot open " + tableFileName + " file");
 
     int index = 0;
 
@@ -205,3 +205,5 @@ void XDefaultKeyboardConverter::loadXKeySymToUtf8SymbolMap() {
 void XDefaultKeyboardConverter::setGroup(int group) {
     this->group = group;
 }
+
+XDefaultKeyboardConverter::XDefaultKeyboardConverter(const std::string & tableFileName) : tableFileName(tableFileName) {}

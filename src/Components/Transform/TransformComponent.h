@@ -19,7 +19,7 @@ namespace dengine {
 #include "../../Math/Quaternion.h"
 
 namespace dengine {
-    class TransformComponent : public virtual Component {
+    class TransformComponent final : public virtual Component {
     public:
         class SpacesManager : public DObject {
         private:
@@ -78,6 +78,16 @@ namespace dengine {
         void setPosition(const vec3f& position);
 
         void setPosition(float x, float y, float z);
+
+        void moveFor(const vec3f& position);
+
+        void moveFor(float x, float y, float z);
+
+        void setRelativePosition(const vec3f& position);
+
+        void setRelativePosition(float x, float y, float z);
+
+        vec3f getRelativePosition() const;
 
         void setRotation(const Quaternion<float>& rotation);
 

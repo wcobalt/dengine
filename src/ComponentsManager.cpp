@@ -24,6 +24,9 @@ void ComponentsManager::attachComponent(std::unique_ptr<Component> component) {
 
         attachComponentWithoutNotification(std::move(component));
 
+        if (typeid(componentReference).hash_code() == typeid(TransformComponent).hash_code())
+            transformComponent = dynamic_cast<TransformComponent*>(&componentReference);
+
         componentReference.sendMessage(ComponentLoadMessage());
     } else
         throw ComponentException("Component of such type: " + std::string(typeid(*component).name())
@@ -54,7 +57,7 @@ void ComponentsManager::detachAllComponents() {
 }
 
 void ComponentsManager::spreadMessage(const ComponentMessage &message) {
-    if (gameObject.getTransformComponent().isActive()) {
+    if (gameObject.getComponentsManager().getTransformComponent().isActive()) {
         for (auto &component : components)
             if (component->isEnabled())
                 component->sendMessage(message);
@@ -93,11 +96,11 @@ ComponentsManager::iterator ComponentsManager::end() {
 }
 
 ComponentsManager::const_iterator ComponentsManager::begin() const {
-    return componentsFrontend.begin();
+    return componentsFrontend.cbegin();
 }
 
 ComponentsManager::const_iterator ComponentsManager::end() const {
-    return componentsFrontend.end();
+    return componentsFrontend.cend();
 }
 
 ComponentsManager::const_iterator ComponentsManager::cbegin() const {
@@ -108,10 +111,6 @@ ComponentsManager::const_iterator ComponentsManager::cend() const {
     return componentsFrontend.cend();
 }
 
-std::vector<Component *> ComponentsManager::getAllComponents() const {
-    return componentsFrontend;
-}
-
 std::unique_ptr<ComponentsManager> ComponentsManager::clone(GameObject& gameObject) const {
     std::unique_ptr<ComponentsManager> clone = std::make_unique<ComponentsManager>(gameObject);
 
@@ -120,4 +119,11 @@ std::unique_ptr<ComponentsManager> ComponentsManager::clone(GameObject& gameObje
     }
 
     return clone;
+}
+
+TransformComponent &ComponentsManager::getTransformComponent() const {
+    if (transformComponent != nullptr) {
+        return *transformComponent;
+    } else
+        throw ComponentException("Unable to return TransformComponent since it was not attached yet");
 }

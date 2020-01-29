@@ -29,8 +29,13 @@ void Dengine::init(std::unique_ptr<Platform> platformSet) {
 }
 
 void Dengine::init(std::unique_ptr<Platform> platformSet, float fps) {
+    class for_make_unique : public Dengine {
+    public:
+        for_make_unique(std::unique_ptr<Platform> platformSet, float fps) : Dengine(std::move(platformSet), fps) {}
+    };
+
     if (!dengine) {
-        Dengine::dengine = std::unique_ptr<Dengine>(new Dengine(std::move(platformSet), fps));
+        Dengine::dengine = std::make_unique<for_make_unique>(std::move(platformSet), fps);
     }
 }
 

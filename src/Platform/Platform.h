@@ -16,14 +16,22 @@ namespace dengine {
 
 namespace dengine {
     class Platform {
+    private:
+        std::unique_ptr<WindowManager> windowManager;
+        std::unique_ptr<NetworkManager> networkManager;
+        std::unique_ptr<AudioManager> audioManager;
+        std::unique_ptr<GamepadManager> gamepadManager;
     public:
-        virtual std::shared_ptr<WindowManager> getWindowManager() const = 0;
+        Platform(std::unique_ptr<WindowManager> windowManager, std::unique_ptr<NetworkManager> networkManager,
+                std::unique_ptr<AudioManager> audioManager, std::unique_ptr<GamepadManager> gamepadManager);
+        
+        WindowManager & getWindowManager();
 
-        virtual std::shared_ptr<NetworkManager> getNetworkManager() const = 0;
+        NetworkManager & getNetworkManager();
 
-        virtual std::shared_ptr<AudioManager> getAudioManager() const = 0;
+        AudioManager & getAudioManager();
 
-        virtual std::shared_ptr<GamepadManager> getGamepadManager() const = 0;
+        GamepadManager & getGamepadManager();
     };
 }
 

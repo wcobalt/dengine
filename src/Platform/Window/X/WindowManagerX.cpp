@@ -79,6 +79,7 @@ WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std:
             lastWidth = width; lastHeight = height;
             lastState = NORMAL;
 
+            //@fixme fix calling virtual member functions from constructor
             setPosition(x, y);
             setTitle(title);
             setSize(width, height);
@@ -100,7 +101,7 @@ WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std:
                     XkbSelectEvents(display, XkbUseCoreKbd, XkbAllEventsMask, XkbAllEventsMask);
                     XkbSetDetectableAutoRepeat(display, True, nullptr);
 
-                    xKeyboardConverter = std::make_shared<XDefaultKeyboardConverter>();
+                    xKeyboardConverter = std::make_unique<XDefaultKeyboardConverter>(XKEYSYMS_TABLE_FILE);
                     xKeyboardConverter->initialize(display);
                 } else
                     throw XException("Unable to attach GLX context to window");
@@ -112,7 +113,6 @@ WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std:
         throw XException("Could not open X display connection");
 }
 
-//@todo blinking problem
 //@todo problem with reset of state (fullscreen, iconic) after it's call
 void WindowManagerX::setVisible(bool isVisible) {
     if (isVisible)
@@ -902,11 +902,11 @@ DMouseButton WindowManagerX::toDMouseButton(int xButton) const {
     }
 }
 
-shared_ptr<Key> WindowManagerX::toDKey(XEvent *xEvent) const {
+std::unique_ptr<Key> WindowManagerX::toDKey(XEvent *xEvent) const {
     DKeyCode dKeyCode = xKeyboardConverter->convertXKeyCodeToDKeyCode(xEvent);
     std::string keySymbol = xKeyboardConverter->convertXKeyCodeToSymbol(xEvent);
 
-    return std::make_shared<DKey>(dKeyCode, keySymbol);
+    return std::make_unique<DKey>(dKeyCode, keySymbol);
 }
 
 shared_ptr<EventsState> WindowManagerX::getEventsState() {

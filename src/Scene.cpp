@@ -75,7 +75,7 @@ void Scene::handle(GameObject::EventType messageType) {
     },
 
     [&hashTable](const GameObject& gameObject) -> bool {
-        bool isActive = gameObject.getTransformComponent().isActive();
+        bool isActive = gameObject.getComponentsManager().getTransformComponent().isActive();
 
         hashTable.emplace(gameObject.getId());
 

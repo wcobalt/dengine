@@ -15,14 +15,17 @@ namespace dengine {
 #include "DObject.h"
 #include "Exceptions/ComponentException.h"
 #include "Components/Component.h"
+#include "Components/Transform/TransformComponent.h"
 
 namespace dengine {
     class ComponentsManager : public DObject {
     private:
-        std::vector<std::unique_ptr<Component>> components;
+        mutable std::vector<std::unique_ptr<Component>> components;
         std::vector<Component*> componentsFrontend;//@fixme that's not cool
 
         GameObject& gameObject;
+
+        TransformComponent* transformComponent = nullptr;
     public:
         using const_iterator = decltype(componentsFrontend)::const_iterator;
         using iterator = decltype(componentsFrontend)::iterator;
@@ -35,7 +38,6 @@ namespace dengine {
 
         void attachComponentWithoutNotification(std::unique_ptr<Component> component);
     public:
-
         ComponentsManager(GameObject &gameObject);
 
         ComponentsManager& operator=(const ComponentsManager& componentsManager) = delete;
@@ -62,7 +64,7 @@ namespace dengine {
         void detachAllComponents();
 
         template<typename T>
-        T & getComponent() {
+        T & getComponent() const {
             for (auto & component : components) {
                 //@fixme use hashtable when hash is typeid().hash_code() (but how to get Transform and keep compsFrontend?)
                 if (auto result = std::dynamic_pointer_cast<T>(component)) {
@@ -85,7 +87,7 @@ namespace dengine {
 
         const_iterator cend() const;
 
-        std::vector<Component*> getAllComponents() const;
+        TransformComponent& getTransformComponent() const;
 
         std::unique_ptr<ComponentsManager> clone(GameObject& gameObject) const;
 
