@@ -12,11 +12,11 @@
 namespace dengine {
     class DefaultImageIO : public ImageIO {
     private:
-        std::vector<std::shared_ptr<ImageLoader>> loaders;
+        std::vector<std::unique_ptr<ImageLoader>> loaders;
     public:
         DefaultImageIO();
 
-        std::shared_ptr<Image> load(const std::string &fileName) const;
+        std::unique_ptr<Image> load(const std::string &fileName) const;
     };
 }
 

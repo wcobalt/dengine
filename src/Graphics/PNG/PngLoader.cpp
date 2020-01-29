@@ -15,7 +15,7 @@
 
 using namespace dengine;
 
-std::shared_ptr<Image> PngLoader::load(const std::string &fileName) const {
+std::unique_ptr<Image> PngLoader::load(const std::string &fileName) const {
     FILE* fileDescriptor = fopen(fileName.c_str(), "rb");
     if (!fileDescriptor)
         throw IOException("Unable to open " + fileName + " file");

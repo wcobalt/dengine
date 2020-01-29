@@ -9,10 +9,10 @@
 using namespace dengine;
 
 DefaultImageIO::DefaultImageIO() {
-    loaders.emplace_back(std::shared_ptr<ImageLoader>(new PngLoader())); //png
+    loaders.emplace_back(std::make_unique<PngLoader>()); //png
 }
 
-std::shared_ptr<Image> DefaultImageIO::load(const std::string &fileName) const {
+std::unique_ptr<Image> DefaultImageIO::load(const std::string &fileName) const {
     //heavy check (reads signatures from file several times)
     for (const auto& loader : loaders) {
         if (loader->isCompatible(fileName)) {

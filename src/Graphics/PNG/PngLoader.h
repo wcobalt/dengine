@@ -18,7 +18,7 @@ namespace dengine {
 
         bool hasPngSignature(FILE* stream) const;
     public:
-        std::shared_ptr<Image> load(const std::string &fileName) const;
+        std::unique_ptr<Image> load(const std::string &fileName) const;
 
         bool isCompatible(const std::string &fileName) const;
     };
