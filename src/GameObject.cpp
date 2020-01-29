@@ -207,8 +207,17 @@ void GameObject::initialize(bool doAddTransform) {
     }
 }
 
+//clones children and components manager
 std::unique_ptr<GameObject> GameObject::clone() const {
-    return std::unique_ptr<GameObject>();
+    std::unique_ptr<GameObject> clone = std::make_unique<GameObject>();
+
+    for (auto child : *this) {
+        clone->addChildWithoutInstantiation(child->clone());
+    }
+
+    clone->componentsManager = componentsManager->clone(*clone);
+
+    return clone;
 }
 
 GameObject & GameObject::getRoot() {
@@ -267,6 +276,8 @@ GameObject & GameObject::instantiateAsChild(std::unique_ptr<GameObject> instance
         getTransformComponent().setPosition(*position + parentPosition);
     }
 
+    initializer.initialize(*this);
+
     gameObject.propagateInstantiationNotification();
 
     //@todo propagate notification to children
@@ -281,8 +292,7 @@ GameObject & GameObject::instantiateAsChild(std::unique_ptr<GameObject> instance
  * */
 void
 GameObject::propagateInstantiation(const Initializer &initializer, bool haveTransforms) {
-    //children are instantiated first because:
-    //1) Parent components initialization (in Initializer) may depends on children
+    //children are instantiated first because when execution comes to initializer, GO must be in valid state
 
     for (auto child : *this) {
         child->propagateInstantiation(initializer, haveTransforms);
@@ -290,8 +300,6 @@ GameObject::propagateInstantiation(const Initializer &initializer, bool haveTran
 
     id = Dengine::get().getScenesManager().getCurrentScene().takeNextId();
     initialize(!haveTransforms);//adds transform only if there's no one yet
-
-    initializer.initialize(*this);
 }
 
 /*

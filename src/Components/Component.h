@@ -63,6 +63,8 @@ namespace dengine {
 
         GameObject & getGameObject() const;
 
+        std::unique_ptr<Component> clone(GameObject& gameObject) const;
+
         //@todo maybe exclude to a kind of toolkit?
         Scene& getCurrentScene();///for clarity and simplicity's sake
     };

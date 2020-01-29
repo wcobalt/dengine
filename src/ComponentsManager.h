@@ -32,7 +32,10 @@ namespace dengine {
         void checkComponentAttachment(const Component &component);
 
         decltype(components)::const_iterator findComponent(const Component &component) const;
+
+        void attachComponentWithoutNotification(std::unique_ptr<Component> component);
     public:
+
         ComponentsManager(GameObject &gameObject);
 
         ComponentsManager& operator=(const ComponentsManager& componentsManager) = delete;
@@ -83,6 +86,8 @@ namespace dengine {
         const_iterator cend() const;
 
         std::vector<Component*> getAllComponents() const;
+
+        std::unique_ptr<ComponentsManager> clone(GameObject& gameObject) const;
 
         void spreadMessage(const ComponentMessage &message);
     };

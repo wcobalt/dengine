@@ -54,3 +54,7 @@ GameObject & Component::getGameObject() const {
 Scene &Component::getCurrentScene() {
     return Dengine::get().getScenesManager().getCurrentScene();
 }
+
+std::unique_ptr<Component> Component::clone(GameObject& gameObject) const {
+    return std::make_unique<Component>(gameObject);
+}

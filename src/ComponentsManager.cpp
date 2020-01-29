@@ -22,13 +22,19 @@ void ComponentsManager::attachComponent(std::unique_ptr<Component> component) {
     if (it == components.end()) {
         Component& componentReference = *component;
 
-        components.emplace_back(std::move(component));
-        componentsFrontend.emplace_back(&componentReference);
+        attachComponentWithoutNotification(std::move(component));
 
         componentReference.sendMessage(ComponentLoadMessage());
     } else
         throw ComponentException("Component of such type: " + std::string(typeid(*component).name())
                                   + " already attached to this game object");
+}
+
+void ComponentsManager::attachComponentWithoutNotification(std::unique_ptr<Component> component) {
+    Component& componentReference = *component;
+
+    components.emplace_back(std::move(component));
+    componentsFrontend.emplace_back(&componentReference);
 }
 
 void ComponentsManager::detachComponent(const Component &component) {
@@ -104,4 +110,14 @@ ComponentsManager::const_iterator ComponentsManager::cend() const {
 
 std::vector<Component *> ComponentsManager::getAllComponents() const {
     return componentsFrontend;
+}
+
+std::unique_ptr<ComponentsManager> ComponentsManager::clone(GameObject& gameObject) const {
+    std::unique_ptr<ComponentsManager> clone = std::make_unique<ComponentsManager>(gameObject);
+
+    for (auto child : *this) {
+        clone->attachComponentWithoutNotification(child->clone(gameObject));
+    }
+
+    return clone;
 }
