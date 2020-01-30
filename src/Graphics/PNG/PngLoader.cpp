@@ -15,11 +15,7 @@
 
 using namespace dengine;
 
-void png_error_handler(png_structp png_struct, png_const_charp message) {
-    throw PngException("Cannot read PNG file: " + std::string(message));
-}
-
-std::shared_ptr<Image> PngLoader::load(const std::string &fileName) const {
+std::unique_ptr<Image> PngLoader::load(const std::string &fileName) const {
     FILE* fileDescriptor = fopen(fileName.c_str(), "rb");
     if (!fileDescriptor)
         throw IOException("Unable to open " + fileName + " file");
@@ -28,7 +24,11 @@ std::shared_ptr<Image> PngLoader::load(const std::string &fileName) const {
     if (!pngTest)
         throw PngException(fileName + " file is not a png image");
 
-    png_structp pngStruct = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, png_error_handler, nullptr);
+    png_structp pngStruct = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr,
+        [](png_structp pngStruct, png_const_charp message) {
+            throw PngException("Cannot read PNG file: " + std::string(message));
+        }, nullptr);
+
     if (!pngStruct)
         throw PngException("Cannot allocate png struct");
 

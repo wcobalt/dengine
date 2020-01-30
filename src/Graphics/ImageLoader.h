@@ -14,7 +14,7 @@ namespace dengine {
 namespace dengine {
     class ImageLoader {
     public:
-        virtual std::shared_ptr<Image> load(const std::string& fileName) const = 0;
+        virtual std::unique_ptr<Image> load(const std::string& fileName) const = 0;
 
         virtual bool isCompatible(const std::string& fileName) const = 0;
     };

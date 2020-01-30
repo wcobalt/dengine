@@ -28,7 +28,7 @@ namespace dengine {
 
         void setPosition(int x, int y);
 
-        std::shared_ptr<MouseState> build() const;
+        std::unique_ptr<MouseState> build() const;
     };
 }
 

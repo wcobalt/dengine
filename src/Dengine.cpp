@@ -8,81 +8,107 @@
 #include <memory>
 
 #include "Dengine.h"
-#include "DengineAccessor.h"
 #include "Platform/Window/WindowManager.h"
 #include "ScenesManager.h"
+#include "Scene.h"
 #include "Exceptions/DengineException.h"
+#include "Platform/Platform.h"
 
-using std::shared_ptr;
 using namespace dengine;
 
-Dengine::Dengine(shared_ptr<WindowManager> windowManager):mIsPaused(0), isGameStopped(0) {
-    setWindowManager(windowManager);
+const char Dengine::VERSION_STRING[] = "0.2.0:0";
 
-    scenesManager = std::make_shared<ScenesManager>();
+Dengine::Dengine(std::unique_ptr<Platform> platformSet, float fps) : mIsIgnoringInactive(false), isGameStopped(false),
+            fps(fps), platformSet(std::move(platformSet)), scenesManager(std::make_unique<ScenesManager>()) {}
+
+void Dengine::init(std::unique_ptr<Platform> platformSet) {
+    init(std::move(platformSet), DEFAULT_FPS);
 }
 
-void Dengine::init(shared_ptr<WindowManager> windowManager) {
+void Dengine::init(std::unique_ptr<Platform> platformSet, float fps) {
+    class for_make_unique : public Dengine {
+    public:
+        for_make_unique(std::unique_ptr<Platform> platformSet, float fps) : Dengine(std::move(platformSet), fps) {}
+    };
+
     if (!dengine) {
-        Dengine* dengine = new Dengine(windowManager);
-
-        shared_ptr<Dengine> fake(dengine);
-
-        Dengine::dengine = fake;
+        Dengine::dengine = std::make_unique<for_make_unique>(std::move(platformSet), fps);
     }
 }
 
-void Dengine::update() {
-    //windowManager->checkEvents();
-    scenesManager->update({});
+Dengine & Dengine::get() {
+    if (!dengine)
+        return *dengine;
+
+    throw DengineException("Dengine is not initialized. Call init()");
 }
 
-void Dengine::setFPS(float fps) {
+void Dengine::setFps(float fps) {
     this->fps = fps;
 }
 
-void Dengine::setWindowManager(shared_ptr<WindowManager> windowManager) {
-    this->windowManager = windowManager;
+float Dengine::getFps() const {
+    return getRealFps() < fps ? getRealFps() : fps;
+}
+
+float Dengine::getRealFps() const {
+    return static_cast<float>(10e9 / deltaTime);
+}
+
+float Dengine::getDeltaTime() const {
+    return deltaTime;
+}
+
+void Dengine::update() {
+    eventsState = std::move(platformSet->getWindowManager()->getEventsState());
+
+    scenesManager->handleExternalEvent(ScenesManager::EventType::UPDATE);
 }
 
 void Dengine::run() {
-    isGameStopped = false;
+    if (fps == 0) throw DengineException("Fps cannot be zero. Use setFps()");
 
     while (!isGameStopped) {
-        std::future fut = std::async(&Dengine::update, *this);
+        auto start = std::chrono::high_resolution_clock::now();
 
-        //@todo async may take some time real_fps != fps
-        std::this_thread::sleep_for(std::chrono::milliseconds((int) (1000.0 / fps)));
+        update();
+
+        auto finish = std::chrono::high_resolution_clock::now();
+
+        if (isGameStopped) scenesManager->handleExternalEvent(ScenesManager::EventType::GAME_END);
+
+        deltaTime = (finish - start).count();
+        float supposedFrameTime = static_cast<float>(10e9 / fps);
+        float awaitTime = supposedFrameTime - deltaTime;
+
+        if (awaitTime > 0)
+            std::this_thread::sleep_for(std::chrono::nanoseconds(static_cast<long>(awaitTime)));
     }
-}
 
-void Dengine::setPaused(bool isPaused) {
-    mIsPaused = isPaused;
+    //stop must be called from within the loop, so if the loop is broken then stop was called for sure (almost)
+    platformSet->getWindowManager()->destroy();
 }
 
 void Dengine::stop() {
     isGameStopped = true;
 }
 
-shared_ptr<WindowManager> Dengine::getWindowManager() const {
-    return windowManager;
+std::string Dengine::toString() const {
+    auto& scene = scenesManager->getCurrentScene();
+    const std::string& alias = scene.getAlias();
+
+    return "Dengine (v" + std::string(VERSION_STRING) + "):\n" +
+           "Current scene: " + std::to_string(scene.getId()) + " (" + (alias.empty() ? "<no alias>" : alias) + ")";
 }
 
-float Dengine::getFPS() const {
-    return fps;
+ScenesManager & Dengine::getScenesManager() const {
+    return *scenesManager;
 }
 
-bool Dengine::isPaused() const {
-    return mIsPaused;
+Platform & Dengine::getPlatform() const {
+    return *platformSet;
 }
 
-shared_ptr<ScenesManager> Dengine::getScenesManager() const {
-    return scenesManager;
-}
-
-shared_ptr<Dengine> Dengine::get() {
-    if (!dengine)
-        return dengine;
-
-    throw DengineException("Dengine is not initialized. Call init()");
+const Events & Dengine::getEventsState() {
+    return *eventsState;
 }

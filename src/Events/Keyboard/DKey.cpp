@@ -20,6 +20,6 @@ DKeyCode DKey::getKeycode() const {
     return keycode;
 }
 
-string DKey::getSymbol() const {
+const string & DKey::getSymbol() const {
     return symbol;
 }

@@ -5,51 +5,71 @@
 #include <string>
 #include <map>
 #include <memory>
-#include <vector>
+#include <unordered_map>
+#include <functional>
 
 #ifndef DENGINE_SCENE_H
 #define DENGINE_SCENE_H
 
 namespace dengine {
-    class DengineAccessor;
-    class GameObject;
+    class Space;
+    class SceneBehavior;
+    class SpacesManager;
 }
 
 #include "DObject.h"
+#include "Coreutils/ID.h"
+#include "GameObject.h"
 
 namespace dengine {
     class Scene : public DObject {
-    public:
-        const float ROOT_GAME_OBJECT_X = 0;
-        const float ROOT_GAME_OBJECT_Y = 0;
-        const float ROOT_GAME_OBJECT_Z = 0;
     private:
-        std::shared_ptr<dengine::GameObject> root;
+        std::unique_ptr<GameObject> root;
+        std::unique_ptr<SceneBehavior> sceneBehavior;
 
-        void deleteInstance(std::shared_ptr<dengine::GameObject> instance, bool isSceneUnloading);
-    protected:
-        virtual void sceneLoad(const dengine::DengineAccessor& dengineAccessor);
-        virtual void sceneUnload(const dengine::DengineAccessor& dengineAccessor);
+        const ID INIT_ID = IDUtils::NO_ID;
+
+        ID currentId = INIT_ID, id;
+        std::string alias;
+
+        void handle(GameObject::EventType messageType);
+
+        void freeScene();
+
+        void initializeSpaces();
     public:
-        Scene();
+        enum class StandardSpace {
+            SOME_SPACE
+        };
+    private:
+        std::unique_ptr<SpacesManager> spacesManager;
 
-        void placeInstance(std::shared_ptr<dengine::GameObject> instance);
+        mutable std::unordered_map<StandardSpace, Space*> standardSpaces;
+    public:
+        enum class EventType {
+            UPDATE, SCENE_UNLOAD, SCENE_LOAD, GAME_END
+        };
 
-        void placeInstance(std::shared_ptr<dengine::GameObject> instance, float x, float y);
-        void placeInstance(std::shared_ptr<dengine::GameObject> instance, float x, float y, float z);
+        Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior);
 
-        void destroyInstance(std::shared_ptr<dengine::GameObject> instance);
+        Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior, std::string alias);
 
-        void update(const dengine::DengineAccessor& dengineAccessor);
+        void handleExternalEvent(EventType eventType);
 
-        void create(const dengine::DengineAccessor& dengineAccessor);
+        ID takeNextId();
 
-        void destroy(const dengine::DengineAccessor& dengineAccessor);
+        GameObject & getRoot() const;
 
-        template <class T>
-        std::vector<std::shared_ptr<GameObject>> getInstances() const;
+        const std::string& getAlias() const;
 
-        std::shared_ptr<dengine::GameObject> getRoot() const;
+        ID getId() const;
+
+        //tell me if this violates SRP
+        Space& getSpace(StandardSpace standardSpace) const;
+
+        SpacesManager& getSpaces() const;
+
+        SceneBehavior& getBehavior() const;
     };
 }
 

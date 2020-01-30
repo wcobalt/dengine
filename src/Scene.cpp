@@ -1,133 +1,108 @@
-//
-// Created by wcobalt on 19.09.18.
-//
-
-#include <queue>
-#include <vector>
+#include <set>
 #include <memory>
-
 #include "Scene.h"
+#include "SceneBehavior.h"
 #include "GameObject.h"
-#include "DengineAccessor.h"
-#include "Components/Component.h"
-#include "Components/TransformComponent.h"
+#include "Filter/Filter.h"
+#include "Dengine.h"
+#include "Components/Transform/TransformComponent.h"
+#include "Exceptions/SceneException.h"
+#include "Coreutils/Messages/ComponentMessage.h"
+#include "ComponentsManager.h"
+#include "Filter/CustomFilter.h"
+#include "Filter/TraversalMethods/BfsTraversal.h"
+#include "Space.h"
+#include "SpacesManager.h"
 
 using namespace dengine;
 
-using std::queue;
-using std::vector;
-using std::shared_ptr;
+Scene::Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior) : Scene(id, std::move(sceneBehavior), "") {}
 
-Scene::Scene() {
-    shared_ptr<TransformComponent> transform(
-            new TransformComponent(ROOT_GAME_OBJECT_X, ROOT_GAME_OBJECT_Y, ROOT_GAME_OBJECT_Z));
+Scene::Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior, std::string alias) : sceneBehavior(std::move(sceneBehavior)),
+                                                                                       id(id), alias(std::move(alias)),
+                                                                                       spacesManager(std::make_unique<SpacesManager>()) {}
 
-    root = std::make_shared<GameObject>(transform);
-}
+void Scene::handleExternalEvent(EventType eventType) {
+    switch (eventType) {
+        case EventType::SCENE_LOAD:
+            currentId = INIT_ID;
+            initializeSpaces();
 
-void Scene::sceneLoad(const DengineAccessor& dengineAccessor) {}
+            sceneBehavior->onSceneLoad(*this);
 
-void Scene::sceneUnload(const DengineAccessor& dengineAccessor) {}
+            break;
+        case EventType::SCENE_UNLOAD:
+            handle(GameObject::EventType::SCENE_UNLOAD);
 
-void Scene::placeInstance(shared_ptr<GameObject> instance) {
-    root->addChild(instance);
+            sceneBehavior->onSceneUnload(*this);
+            freeScene();
 
-    instance->create({});
-}
+            break;
+        case EventType::GAME_END:
+            sceneBehavior->onGameEnd(*this);
+            handle(GameObject::EventType::GAME_END);
 
-void Scene::placeInstance(shared_ptr<GameObject> instance, float x, float y) {
-    auto transform3d = instance->getComponent<TransformComponent>();
+            break;
+        case EventType::UPDATE:
+            handle(GameObject::EventType::UPDATE);
 
-    placeInstance(instance, x, y, transform3d->getPosition().z);
-}
-
-void Scene::placeInstance(shared_ptr<GameObject> instance, float x, float y, float z) {
-    auto transform3d = instance->getComponent<TransformComponent>();
-
-    transform3d->setPosition(x, y, z);
-
-    placeInstance(instance);
-}
-
-void Scene::destroyInstance(shared_ptr<GameObject> instance) {
-    deleteInstance(instance, false);
-}
-
-void Scene::deleteInstance(shared_ptr<GameObject> instance, bool isSceneUnloading) {
-    instance->destroy({}, isSceneUnloading);
-}
-
-template <class T>
-vector<shared_ptr<GameObject>> Scene::getInstances() const {
-    queue<shared_ptr<GameObject>> q;
-    vector<shared_ptr<GameObject>> result;
-
-    q.push(root);
-
-    while (!q.empty()) {
-        shared_ptr<GameObject> currentInstance = q.front();
-
-        q.pop();
-
-        vector<shared_ptr<GameObject>> children = currentInstance->getChildren();
-
-        for (const auto& instance : children)
-            q.push(instance);
-
-        if (currentInstance != root &&
-            std::dynamic_pointer_cast<T>(currentInstance)) {
-
-            result.push_back(currentInstance);
-        }
-    }
-
-    return result;
-}
-
-shared_ptr<GameObject> Scene::getRoot() const {
-    return root;
-}
-
-void Scene::update(const DengineAccessor& dengineAccessor) {
-    queue<shared_ptr<GameObject>> q;
-
-    q.push(root);
-
-    while (!q.empty()) {
-        shared_ptr<GameObject> currentInstance = q.front();
-
-        q.pop();
-
-        vector<shared_ptr<GameObject>> children = currentInstance->getChildren();
-
-        for (const auto& instance : children)
-            q.push(instance);
-
-        currentInstance->update(dengineAccessor);
+            break;
     }
 }
 
-void Scene::destroy(const DengineAccessor& dengineAccessor) {
-    sceneUnload(dengineAccessor);
-
-    queue<shared_ptr<GameObject>> q;
-
-    q.push(root);
-
-    while (!q.empty()) {
-        shared_ptr<GameObject> currentInstance = q.front();
-
-        q.pop();
-
-        vector<shared_ptr<GameObject>> children = currentInstance->getChildren();
-
-        for (const auto& instance : children)
-            q.push(instance);
-
-        deleteInstance(currentInstance, true);
-    }
+ID Scene::takeNextId() {
+    return currentId++;
 }
 
-void Scene::create(const DengineAccessor& dengineAccessor) {
-    sceneLoad(dengineAccessor);
+GameObject & Scene::getRoot() const {
+    return *root;
+}
+
+const std::string &Scene::getAlias() const {
+    return alias;
+}
+
+ID Scene::getId() const {
+    return id;
+}
+
+void Scene::handle(GameObject::EventType messageType) {
+    std::set<ID> hashTable;//it's not a hashtable
+
+    BfsTraversal traversal;
+    CustomFilter filter(
+    [messageType](GameObject& gameObject, TraversalMethod& traversalMethod) {
+        gameObject.handleExternalEvent(messageType);
+    },
+
+    [&hashTable](const GameObject& gameObject) -> bool {
+        bool isActive = gameObject.getComponentsManager().getTransformComponent().isActive();
+
+        hashTable.emplace(gameObject.getId());
+
+        return hashTable.find(gameObject.getId()) == hashTable.end() && isActive;
+    }, traversal);
+
+    filter.run(*root);
+}
+
+void Scene::freeScene() {
+    root->destroyAllChildren();
+    spacesManager->reset();
+}
+
+void Scene::initializeSpaces() {
+    standardSpaces.insert(std::make_pair(StandardSpace::SOME_SPACE, &spacesManager->create("some_space")));
+}
+
+SpacesManager &Scene::getSpaces() const {
+    return *spacesManager;
+}
+
+Space &Scene::getSpace(StandardSpace standardSpace) const {
+    return *standardSpaces.at(standardSpace);
+}
+
+SceneBehavior &Scene::getBehavior() const {
+    return *sceneBehavior;
 }

@@ -44,9 +44,8 @@ void DefaultWindowStateBuilder::setHiddenToTray(bool wasHiddenToTray) {
     this->wasHiddenToTray = wasHiddenToTray;
 }
 
-std::shared_ptr<WindowState> DefaultWindowStateBuilder::build() const {
-    std::shared_ptr<WindowState> result(new DefaultWindowState(wasMaximized, wasWindowed, wasIconified,
-                                            wasResized, gotFocus, lostFocus, isClosing, wasMoved, wasHiddenToTray));
-
-    return result;
+std::unique_ptr<WindowState> DefaultWindowStateBuilder::build() const {
+    return std::make_unique<DefaultWindowState>(wasMaximized, wasWindowed,
+            wasIconified, wasResized, gotFocus, lostFocus,
+            isClosing, wasMoved, wasHiddenToTray);
 }

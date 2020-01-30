@@ -10,7 +10,7 @@
 namespace dengine {
     class ImageException : public DengineException {
     public:
-        inline ImageException(const std::string &message) : DengineException(message) {}
+        ImageException(std::string message) : DengineException(std::move(message)) {}
     };
 }
 

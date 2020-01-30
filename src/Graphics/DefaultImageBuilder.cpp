@@ -43,8 +43,8 @@ void DefaultImageBuilder::setRgbaPixel(size_t x, size_t y, std::byte r, std::byt
     data[y][x * getSampleDepth() + 3] = a;
 }
 
-std::shared_ptr<Image> DefaultImageBuilder::build() const {
-    return std::shared_ptr<Image>(new DefaultImage(data, imageType, width, height));
+std::unique_ptr<Image> DefaultImageBuilder::build() const {
+    return std::make_unique<DefaultImage>(data, imageType, width, height);
 }
 
 void DefaultImageBuilder::checkIfAllocable() {

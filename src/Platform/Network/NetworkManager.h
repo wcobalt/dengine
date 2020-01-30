@@ -5,10 +5,10 @@
 #ifndef DENGINE_NETWORKMANAGER_H
 #define DENGINE_NETWORKMANAGER_H
 
+namespace dengine {
+    class NetworkManager {
 
-class NetworkManager {
-
-};
-
+    };
+}
 
 #endif //DENGINE_NETWORKMANAGER_H

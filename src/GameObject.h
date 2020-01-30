@@ -4,64 +4,126 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <optional>
 
 #ifndef DENGINE_GAMEOBJECT_H
 #define DENGINE_GAMEOBJECT_H
 
-#include "Components/TransformComponent.h"
-
 namespace dengine {
     class Component;
     class TransformComponent;
+    class Initializer;
+    class ComponentsManager;
 }
 
 #include "DObject.h"
+#include "Coreutils/ID.h"
+#include "Math/vectors.h"
+#include "Coreutils/Messages/DirectChildrenChangeMessage.h"
 
 namespace dengine {
-    class GameObject : public DObject {
+    class GameObject final : public DObject {
     private:
-        std::vector<std::shared_ptr<dengine::Component>> components;
+        std::unique_ptr<ComponentsManager> componentsManager;
 
-        std::shared_ptr<dengine::GameObject> parent;
-        std::vector<std::shared_ptr<dengine::GameObject>> children;
+        GameObject* parent;
 
-        void safelyRemoveComponent(std::vector<std::shared_ptr<dengine::Component>>::iterator it);
-        void removeComponent(std::vector<std::shared_ptr<dengine::Component>>::iterator it);
-        void removeChild(std::vector<std::shared_ptr<dengine::GameObject>>::iterator it);
+        //it is guaranteed that the Nth element in children will be the Nth element in childrenFrontend
+        std::vector<std::unique_ptr<GameObject>> children;
+        std::vector<GameObject*> childrenFrontend;//@todo is it good?
 
-        void initParent();
+        ID id = IDUtils::NO_ID;
     public:
-        GameObject();
-        GameObject(std::shared_ptr<dengine::TransformComponent> transform);
+        using iterator = decltype(childrenFrontend)::iterator;
+        using const_iterator = decltype(childrenFrontend)::const_iterator;
+    private:
+        void destroyChild(decltype(children)::const_iterator iterator);
 
-        void addComponent(std::shared_ptr<dengine::Component> component);
+        void initialize(bool doAddTransform);
 
-        template <class T>
-        void addComponent();
+        decltype(children)::const_iterator findChild(GameObject &instance) const;
 
-        template <class T>
-        void removeComponent();
+        void addChildWithoutInstantiation(std::unique_ptr<GameObject> instance);
 
-        void removeComponent(std::shared_ptr<dengine::Component> component);
+        void notifyAboutAdditionWithoutInstantiation(GameObject &instance,
+                                                     const DirectChildrenChangeMessage::ChildChangeType &childrenChangeType,
+                                                     GameObject *previousParent);
 
-        void addChild(std::shared_ptr<dengine::GameObject> instance);
+        GameObject & instantiateNew(const Initializer& initializer, std::optional<vec3f> position);
 
-        void removeChild(std::shared_ptr<dengine::GameObject> instance);
+        GameObject & instantiateByCloning(const GameObject& pattern, std::optional<vec3f> position);
 
-        void removeAllChildren();
+        GameObject&
+        recursivelyInstantiate(const GameObject &pattern, GameObject &parent, const std::optional<vec3f> &position,
+                               const std::optional<vec3f> &origin);
 
-        std::shared_ptr<dengine::GameObject> getParent() const;
+        void notifyAboutInstantiation(bool doPropagateToChildren);
+    public:
+        enum class EventType {
+            UPDATE, SCENE_UNLOAD, GAME_END
+        };
 
-        std::vector<std::shared_ptr<dengine::GameObject>> getChildren() const;
+        static GameObject & instantiate(const Initializer& initializer);
 
-        template <class T>
-        std::shared_ptr<T> getComponent() const;
+        static GameObject & instantiate(const Initializer& initializer, float x, float y, float z);
 
-        std::vector<std::shared_ptr<dengine::Component>> getAllComponents() const;
+        static GameObject & instantiate(const Initializer& initializer, const vec3f& position);
 
-        void create(const dengine::DengineAccessor& dengineAccessor);
-        void destroy(const dengine::DengineAccessor& dengineAccessor, bool isSceneUnloading);
-        void update(const dengine::DengineAccessor& dengineAccessor);
+        static GameObject & instantiate(const GameObject &instance);
+
+        static GameObject & instantiate(const GameObject &instance, float x, float y, float z);
+
+        static GameObject & instantiate(const GameObject &instance, const vec3f &position);
+
+        GameObject & instantiateChild(const Initializer& initializer);
+
+        GameObject & instantiateChild(const Initializer& initializer, float x, float y, float z);
+
+        GameObject & instantiateChild(const Initializer& initializer, const vec3f &position);
+
+        GameObject & instantiateChild(const GameObject &instance);
+
+        GameObject & instantiateChild(const GameObject &instance, float x, float y, float z);
+
+        GameObject & instantiateChild(const GameObject &instance, const vec3f &position);
+
+        static void move(GameObject &instance);
+
+        void moveToChildren(GameObject &instance);
+
+        void destroy();
+
+        void destroyChild(GameObject &instance);
+
+        void destroyAllChildren();
+
+        GameObject & getParent() const;
+
+        iterator begin();
+
+        iterator end();
+
+        const_iterator begin() const;
+
+        const_iterator end() const;
+
+        const_iterator cbegin() const;
+
+        const_iterator cend() const;
+
+        void handleExternalEvent(EventType eventType);
+
+        static GameObject & getRoot();
+
+        ComponentsManager & getComponentsManager() const;
+
+        ID getId() const;
+
+        //@todo things which are returned by reference can be reassigned (copy can be made). consider this (CompMan&TrComp are fixed)
+
+        bool operator==(const GameObject& gameObject) const;
+
+        bool operator!=(const GameObject& gameObject) const;
     };
 }
 

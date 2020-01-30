@@ -1,40 +1,73 @@
 //
-// Created by wcobalt on 19.09.18.
+// Created by wcobalt on 3/30/19.
 //
 
 #include <memory>
 
-#ifndef DENGINE_COMPONENT_H
-#define DENGINE_COMPONENT_H
+#ifndef DENGINE_DEFAULTCOMPONENT_H
+#define DENGINE_DEFAULTCOMPONENT_H
+
+namespace dengine {
+    class GameObject;
+    class Events;
+    class DirectChildrenChangeMessage;
+    class ParentChangeMessage;
+    class ComponentMessage;
+    class InstanceCreateMessage;
+    class InstanceDestroyMessage;
+    class ComponentLoadMessage;
+    class ComponentUnloadMessage;
+    class UpdateMessage;
+    class SceneUnloadMessage;
+    class GameEndMessage;
+    class Scene;
+}
 
 #include "../DObject.h"
 
 namespace dengine {
-    class GameObject;
-    class DengineAccessor;
-}
-
-namespace dengine {
     class Component : public DObject {
+    private:
+        bool mIsEnabled;
+    protected:
+        GameObject& gameObject;
     public:
-        virtual void componentLoad(const DengineAccessor& dengineAccessor, std::shared_ptr<GameObject> instance) = 0;
+        //safe component has to be non-copyable (because of gameObject reference)
+        Component& operator=(const Component& component) = delete;
 
-        virtual void componentUnload(const DengineAccessor& dengineAccessor) = 0;
+        Component(GameObject &gameObject);
 
-        virtual void update(const DengineAccessor& dengineAccessor) = 0;
+        void onInstanceCreate(const InstanceCreateMessage &message);
 
-        virtual void instanceCreate(const DengineAccessor& dengineAccessor) = 0;
+        void onComponentLoad(const ComponentLoadMessage &message);
 
-        virtual void instanceDestroy(const DengineAccessor& dengineAccessor) = 0;
+        void onComponentUnload(const ComponentUnloadMessage &message);
 
-        virtual void sceneUnload(const DengineAccessor& dengineAccessor) = 0;
+        void onUpdate(const UpdateMessage &message);
 
-        virtual void setEnabled(bool isEnabled) = 0;
+        void onInstanceDestroy(const InstanceDestroyMessage &message);
 
-        virtual bool isEnabled() const = 0;
+        void onSceneUnload(const SceneUnloadMessage &message);
 
-        virtual std::shared_ptr<GameObject> getBoundInstance() const = 0;
+        void onGameEnd(const GameEndMessage &message);
+
+        void onDirectChildrenChange(const DirectChildrenChangeMessage &message);
+
+        void onParentChange(const ParentChangeMessage &message);
+
+        void setEnabled(bool isEnabled);
+
+        void sendMessage(const ComponentMessage &message);
+
+        bool isEnabled() const;
+
+        GameObject & getGameObject() const;
+
+        std::unique_ptr<Component> clone(GameObject& gameObject) const;
+
+        //@todo maybe exclude to a kind of toolkit?
+        Scene& getCurrentScene();///for clarity and simplicity's sake
     };
 }
 
-#endif //DENGINE_COMPONENT_H
+#endif //DENGINE_DEFAULTCOMPONENT_H

@@ -8,10 +8,11 @@
 
 using namespace dengine;
 
-DefaultMouseState::DefaultMouseState(const std::set<DMouseButton>& pressedButtons,
-                                     const std::set<DMouseButton>& releasedButtons,
+DefaultMouseState::DefaultMouseState(std::set<DMouseButton> pressedButtons,
+                                     std::set<DMouseButton> releasedButtons,
                                      int wheelDirection, int x, int y):
-                                     pressedButtons(pressedButtons), releasedButtons(releasedButtons),
+                                     pressedButtons(std::move(pressedButtons)),
+                                     releasedButtons(std::move(releasedButtons)),
                                      mWheelDirection(wheelDirection),
                                      x(x), y(y) {}
 

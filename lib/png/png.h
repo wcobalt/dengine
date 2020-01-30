@@ -1360,10 +1360,10 @@ PNG_EXPORT(51, void, png_set_flush, (png_structrp png_ptr, int nrows));
 PNG_EXPORT(52, void, png_write_flush, (png_structrp png_ptr));
 #endif
 
-/* Optional update palette with requested transformations */
+/* Optional onUpdate palette with requested transformations */
 PNG_EXPORT(53, void, png_start_read_image, (png_structrp png_ptr));
 
-/* Optional call to update the users info structure */
+/* Optional call to onUpdate the users info structure */
 PNG_EXPORT(54, void, png_read_update_info, (png_structrp png_ptr,
     png_inforp info_ptr));
 

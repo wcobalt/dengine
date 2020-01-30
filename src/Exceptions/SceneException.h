@@ -10,7 +10,7 @@
 namespace dengine {
     class SceneException : public DengineException {
     public:
-        SceneException(const std::string& message) : DengineException(message) {}
+        SceneException(std::string message) : DengineException(std::move(message)) {}
     };
 }
 
