@@ -6,10 +6,14 @@
 
 using namespace dengine;
 
-ParentChangeMessage::ParentChangeMessage(std::shared_ptr<GameObject> previousParent, std::shared_ptr<GameObject> newParent)
+ParentChangeMessage::ParentChangeMessage(GameObject *previousParent, GameObject &newParent)
     : ParentChangeMessage(previousParent, newParent, std::chrono::system_clock::now()) {}
 
-ParentChangeMessage::ParentChangeMessage(std::shared_ptr<GameObject> previousParent, std::shared_ptr<GameObject> newParent,
+ParentChangeMessage::ParentChangeMessage(GameObject *previousParent, GameObject &newParent,
                                          time_type sendingTime) :
-      ComponentMessage(Component::MessageType::PARENT_CHANGE, sendingTime),
+      ComponentMessage(ComponentMessage::Type::PARENT_CHANGE, sendingTime),
       previousParent(previousParent), newParent(newParent) {}
+
+void ParentChangeMessage::handle(Component &component) const {
+    component.onParentChange(*this);
+}

@@ -12,36 +12,33 @@
 #include "ScenesManager.h"
 #include "Scene.h"
 #include "Exceptions/DengineException.h"
-#include "Platform/PlatformSet.h"
+#include "Platform/Platform.h"
 
-using std::shared_ptr;
 using namespace dengine;
 
 const char Dengine::VERSION_STRING[] = "0.2.0:0";
 
-Dengine::Dengine(shared_ptr<PlatformSet> platformSet, float fps) : mIsIgnoringInactive(false), isGameStopped(false), fps(fps) {
-    this->platformSet = platformSet;
+Dengine::Dengine(std::unique_ptr<Platform> platformSet, float fps) : mIsIgnoringInactive(false), isGameStopped(false),
+            fps(fps), platformSet(std::move(platformSet)), scenesManager(std::make_unique<ScenesManager>()) {}
 
-    scenesManager = std::make_shared<ScenesManager>();
+void Dengine::init(std::unique_ptr<Platform> platformSet) {
+    init(std::move(platformSet), DEFAULT_FPS);
 }
 
-void Dengine::init(shared_ptr<PlatformSet> platformSet) {
-    init(platformSet, 0);
-}
+void Dengine::init(std::unique_ptr<Platform> platformSet, float fps) {
+    class for_make_unique : public Dengine {
+    public:
+        for_make_unique(std::unique_ptr<Platform> platformSet, float fps) : Dengine(std::move(platformSet), fps) {}
+    };
 
-void Dengine::init(std::shared_ptr<PlatformSet> platformSet, float fps) {
     if (!dengine) {
-        Dengine* dengine = new Dengine(platformSet, fps);
-
-        shared_ptr<Dengine> fake(dengine);
-
-        Dengine::dengine = fake;
+        Dengine::dengine = std::make_unique<for_make_unique>(std::move(platformSet), fps);
     }
 }
 
-shared_ptr<Dengine> Dengine::get() {
+Dengine & Dengine::get() {
     if (!dengine)
-        return dengine;
+        return *dengine;
 
     throw DengineException("Dengine is not initialized. Call init()");
 }
@@ -63,17 +60,9 @@ float Dengine::getDeltaTime() const {
 }
 
 void Dengine::update() {
-    eventsState = platformSet->getWindowManager()->getEventsState();
+    eventsState = std::move(platformSet->getWindowManager()->getEventsState());
 
     scenesManager->handleExternalEvent(ScenesManager::EventType::UPDATE);
-}
-
-void Dengine::setIgnoreInactive(bool doIgnoreInactive) {
-    mIsIgnoringInactive = doIgnoreInactive;
-}
-
-bool Dengine::isIgnoringInactive() const {
-    return mIsIgnoringInactive;
 }
 
 void Dengine::run() {
@@ -96,7 +85,7 @@ void Dengine::run() {
             std::this_thread::sleep_for(std::chrono::nanoseconds(static_cast<long>(awaitTime)));
     }
 
-    //stop must be called from within the loop, so if loop is broken then stop was called for sure (almost)
+    //stop must be called from within the loop, so if the loop is broken then stop was called for sure (almost)
     platformSet->getWindowManager()->destroy();
 }
 
@@ -105,23 +94,21 @@ void Dengine::stop() {
 }
 
 std::string Dengine::toString() const {
-    auto scene = scenesManager->getCurrentScene();
-    const std::string& alias = scene->getAlias();
+    auto& scene = scenesManager->getCurrentScene();
+    const std::string& alias = scene.getAlias();
 
     return "Dengine (v" + std::string(VERSION_STRING) + "):\n" +
-            "Current scene: " + std::to_string(scene->getId()) + " (" + (alias.empty() ? "<no alias>" : alias) + ")\n"
-            "Credits: \n" +
-            "Author: Wert Cobalt (Artyom Drapun) <cobalt.itech@gmail.com>\n";
+           "Current scene: " + std::to_string(scene.getId()) + " (" + (alias.empty() ? "<no alias>" : alias) + ")";
 }
 
-shared_ptr<ScenesManager> Dengine::getScenesManager() const {
-    return scenesManager;
+ScenesManager & Dengine::getScenesManager() const {
+    return *scenesManager;
 }
 
-std::shared_ptr<PlatformSet> Dengine::getPlatformSet() const {
-    return platformSet;
+Platform & Dengine::getPlatform() const {
+    return *platformSet;
 }
 
-std::shared_ptr<EventsState> Dengine::getEventsState() {
-    return eventsState;
+const Events & Dengine::getEventsState() {
+    return *eventsState;
 }

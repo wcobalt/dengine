@@ -15,12 +15,12 @@ namespace dengine {
     private:
         std::string message;
     public:
-        inline DengineException(const std::string& message) : message(message) {}
+        //@todo default constructors to exceptions
+        explicit DengineException(std::string message) : message(std::move(message)) {}
 
-        inline virtual const char* what() const noexcept {
+        virtual const char* what() const noexcept {
             return message.c_str();
         }
-
     private:
         std::string toString() const override {
             return message;

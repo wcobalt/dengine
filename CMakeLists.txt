@@ -6,7 +6,7 @@ set(CMAKE_PREFIX_PATH lib)
 
 add_executable(App
         src/App/main.cpp
-        )
+        src/Filter/TraversalMethods/BfsTraversal.cpp src/Filter/TraversalMethods/BfsTraversal.h src/Filter/TraversalMethods/BaseTraversal.cpp src/Filter/TraversalMethods/BaseTraversal.h src/Filter/TraversalMethods/DfsTraversal.cpp src/Filter/TraversalMethods/DfsTraversal.h src/Platform/XPlatformBuilder.cpp src/Platform/XPlatformBuilder.h src/Platform/Platform.cpp src/Platform/PlatformBuilder.h)
 
 add_library(Dengine
         src/Components/Component.cpp
@@ -24,7 +24,7 @@ add_library(Dengine
         src/ScenesManager.h
         src/GameObject.cpp
         src/GameObject.h
-        src/Platform/PlatformSet.h
+        src/Platform/Platform.h
         src/Coreutils/ID.h
         src/SceneBehavior.h
         src/SceneBehavior.cpp
@@ -36,21 +36,16 @@ add_library(Dengine
         src/Events/Window/DefaultWindowState.cpp
         src/Events/Window/WindowStateBuilder.h
         src/Events/Window/WindowState.h
-        src/Events/Keyboard/KeyBySymbolComparator.h
         src/Events/Keyboard/KeyboardStateBuilder.h
-        src/Events/Keyboard/KeyBySymbolComparator.cpp
         src/Events/Keyboard/DefaultKeyboardState.cpp
         src/Events/Keyboard/DefaultKeyboardState.h
         src/Events/Keyboard/DKey.h
         src/Events/Keyboard/Keyboard.cpp
-        src/Events/Keyboard/KeyByDKeyCodeComparator.cpp
         src/Events/Keyboard/Keyboard.h
         src/Events/Keyboard/DefaultKeyboardStateBuilder.cpp
-        src/Events/Keyboard/KeyByDKeyCodeComparator.h
         src/Events/Keyboard/DKey.cpp
         src/Events/Keyboard/KeyboardState.h
         src/Events/Keyboard/Key.h
-        src/Events/Keyboard/KeyComparator.h
         src/Events/Keyboard/DefaultKeyboardStateBuilder.h
         src/Events/Mouse/DefaultMouseStateBuilder.h
         src/Events/Mouse/MouseState.h
@@ -59,8 +54,8 @@ add_library(Dengine
         src/Events/Mouse/MouseStateBuilder.h
         src/Events/Mouse/DefaultMouseState.h
         src/Events/Mouse/DefaultMouseState.cpp
-        src/Events/EventsState.cpp
-        src/Events/EventsState.h
+        src/Events/Events.cpp
+        src/Events/Events.h
 
         src/Exceptions/IllegalStateException.h
         src/Exceptions/ImageException.h
@@ -70,6 +65,8 @@ add_library(Dengine
         src/Exceptions/ComponentException.h
         src/Exceptions/SceneException.h
         src/Exceptions/GameObjectException.h
+        src/Exceptions/SpaceException.h
+        src/Exceptions/PlatformBuildException.h
 
         src/Math/Vector3.h
         src/Math/vectors.h
@@ -110,17 +107,14 @@ add_library(Dengine
         src/Platform/Audio/AudioManager.h
         src/Platform/Audio/AudioManager.cpp
 
-        src/Filter/Filter.cpp
+        src/Filter/CustomFilter.cpp
         src/Filter/Filter.h
         src/Initializer.h
         src/Components/Transform/TransformFilters.cpp
         src/Components/Transform/TransformFilters.h
         src/Components/Transform/TransformToolkit.cpp
         src/Components/Transform/TransformToolkit.h
-        src/Exceptions/LayerException.h
-        src/Layer.cpp
-        src/Layer.h
-        src/Coreutils/Messages/ComponentMessage.cpp src/Coreutils/Messages/ComponentMessage.h src/Coreutils/Messages/DirectChildrenChangeMessage.cpp src/Coreutils/Messages/DirectChildrenChangeMessage.h src/Coreutils/Messages/ParentChangeMessage.cpp src/Coreutils/Messages/ParentChangeMessage.h src/ComponentsManager.cpp src/ComponentsManager.h)
+        src/Coreutils/Messages/ComponentMessage.cpp src/Coreutils/Messages/ComponentMessage.h src/Coreutils/Messages/DirectChildrenChangeMessage.cpp src/Coreutils/Messages/DirectChildrenChangeMessage.h src/Coreutils/Messages/ParentChangeMessage.cpp src/Coreutils/Messages/ParentChangeMessage.h src/ComponentsManager.cpp src/ComponentsManager.h src/Coreutils/Messages/ComponentMessages.cpp src/Coreutils/Messages/ComponentMessages.h src/Filter/CustomFilter.h src/Filter/TraversalMethod.h src/Space.cpp src/Space.h src/SpacesManager.cpp src/SpacesManager.h)
 
 
 find_package(OpenGL REQUIRED)

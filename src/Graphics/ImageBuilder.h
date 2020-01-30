@@ -28,7 +28,7 @@ namespace dengine {
 
         virtual void setRgbaPixel(size_t x, size_t y, std::byte r, std::byte g, std::byte b, std::byte a) = 0;
 
-        virtual std::shared_ptr<Image> build() const = 0;
+        virtual std::unique_ptr<Image> build() const = 0;
 
         virtual void clear() = 0;
     };

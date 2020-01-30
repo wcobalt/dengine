@@ -78,7 +78,7 @@ namespace dengine {
             }
         };
 
-        std::shared_ptr<XKeyboardConverter> xKeyboardConverter;
+        std::unique_ptr<XKeyboardConverter> xKeyboardConverter;
 
         PropertyData getProperty(const char *propertyName, Window window) const;
 
@@ -91,11 +91,13 @@ namespace dengine {
         void setMaximized(bool mode, Atom *atoms, int count);
         bool find(long needle, const PropertyData& haystack) const;
         DMouseButton toDMouseButton(int xButton) const;
-        std::shared_ptr<Key> toDKey(XEvent *xEvent) const;
+        std::unique_ptr<Key> toDKey(XEvent *xEvent) const;
 
         static Bool selectKeyboardEventsPredicate(Display *display, XEvent *xEvent, XPointer arg);
         static Bool selectWindowEventsPredicate(Display *display, XEvent *xEvent, XPointer arg);
         static int selectEventsPredicate(XEvent *xEvent, int *types, int size);
+
+        const std::string XKEYSYMS_TABLE_FILE = "xkeysyms";
     public:
         WindowManagerX(int x, int y, uint width, uint height, const std::string& title);
 
@@ -169,13 +171,13 @@ namespace dengine {
 
         //@todo GLXContext
 
-        std::shared_ptr<MouseState> getMouseState() const;
+        std::unique_ptr<MouseState> checkMouseState() const;
 
-        std::shared_ptr<KeyboardState> getKeyboardState() const;
+        std::unique_ptr<KeyboardState> checkKeyboardState() const;
 
-        std::shared_ptr<WindowState> getWindowState();
+        std::unique_ptr<WindowState> checkWindowState();
 
-        std::shared_ptr<EventsState> getEventsState() override;
+        std::unique_ptr<Events> checkEvents() override;
 
         ~WindowManagerX();//
     };

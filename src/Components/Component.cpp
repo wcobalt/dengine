@@ -4,33 +4,32 @@
 #include <memory>
 
 #include "Component.h"
+#include "../Dengine.h"
 #include "../GameObject.h"
+#include "../ScenesManager.h"
 #include "../Exceptions/ComponentException.h"
 #include "../Exceptions/IllegalArgumentException.h"
 #include "../Coreutils/Messages/ParentChangeMessage.h"
 #include "../Coreutils/Messages/DirectChildrenChangeMessage.h"
+#include "../Coreutils/Messages/ComponentMessage.h"
 
 using namespace dengine;
 
-Component::Component(std::shared_ptr<GameObject> gameObject) {
-    if (gameObject == nullptr) throw IllegalArgumentException("Game object cannot be null");
+Component::Component(GameObject &gameObject) : gameObject(gameObject) {}
 
-    this->gameObject = gameObject;
-}
+void Component::onInstanceCreate(const InstanceCreateMessage &message) {}
 
-void Component::onInstanceCreate(const ComponentMessage &message) {}
+void Component::onComponentLoad(const ComponentLoadMessage &message) {}
 
-void Component::onComponentLoad(const ComponentMessage &message) {}
+void Component::onComponentUnload(const ComponentUnloadMessage &message) {}
 
-void Component::onComponentUnload(const ComponentMessage &message) {}
+void Component::onUpdate(const UpdateMessage &message) {}
 
-void Component::onUpdate(const ComponentMessage &message) {}
+void Component::onInstanceDestroy(const InstanceDestroyMessage &message) {}
 
-void Component::onInstanceDestroy(const ComponentMessage &message) {}
+void Component::onSceneUnload(const SceneUnloadMessage &message) {}
 
-void Component::onSceneUnload(const ComponentMessage &message) {}
-
-void Component::onGameEnd(const ComponentMessage &message) {}
+void Component::onGameEnd(const GameEndMessage &message) {}
 
 void Component::onDirectChildrenChange(const DirectChildrenChangeMessage &message) {}
 
@@ -41,51 +40,21 @@ void Component::setEnabled(bool isEnabled) {
 }
 
 void Component::sendMessage(const ComponentMessage &message) {
-    //looks like shit
-    switch (message.getMessageType()) {
-        case MessageType::INSTANCE_CREATE:
-            onInstanceCreate(message);
-
-            break;
-        case MessageType::INSTANCE_DESTROY:
-            onInstanceDestroy(message);
-
-            break;
-        case MessageType::COMPONENT_LOAD:
-            onComponentLoad(message);
-
-            break;
-        case MessageType::COMPONENT_UNLOAD:
-            onComponentUnload(message);
-
-            break;
-        case MessageType::UPDATE:
-            onUpdate(message);
-
-            break;
-        case MessageType::SCENE_UNLOAD:
-            onSceneUnload(message);
-
-            break;
-        case MessageType::GAME_END:
-            onGameEnd(message);
-
-            break;
-        case MessageType::PARENT_CHANGE:
-            onParentChange(dynamic_cast<const ParentChangeMessage&>(message)); //i'm sure it isn't good. may be add some checks?
-
-            break;
-        case MessageType::DIRECT_CHILDREN_CHANGE:
-            onDirectChildrenChange(dynamic_cast<const DirectChildrenChangeMessage&>(message));
-
-            break;
-    }
+    message.handle(*this);
 }
 
 bool Component::isEnabled() const {
     return mIsEnabled;
 }
 
-std::shared_ptr<GameObject> Component::getGameObject() const {
+GameObject & Component::getGameObject() const {
     return gameObject;
+}
+
+Scene &Component::getCurrentScene() {
+    return Dengine::get().getScenesManager().getCurrentScene();
+}
+
+std::unique_ptr<Component> Component::clone(GameObject& gameObject) const {
+    return std::make_unique<Component>(gameObject);
 }

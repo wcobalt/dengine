@@ -26,8 +26,10 @@ namespace dengine {
         void addKeyCodeBinding(int keyCode, dengine::DKeyCode dKeyCode);
 
         const unsigned BYTE_SIZE = 8;
+
+        std::string tableFileName;
     public:
-        const std::string XKEYSYMS_TABLE_FILE = "xkeysyms";
+        explicit XDefaultKeyboardConverter(const std::string& tableFileName);
 
         void initialize(Display *display);
 

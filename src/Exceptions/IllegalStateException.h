@@ -11,7 +11,7 @@
 namespace dengine {
     class IllegalStateException : public DengineException {
     public:
-        IllegalStateException(const std::string& message) : DengineException(message) {}
+        IllegalStateException(std::string message) : DengineException(std::move(message)) {}
     };
 }
 

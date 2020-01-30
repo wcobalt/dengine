@@ -31,7 +31,7 @@ namespace dengine {
 
         virtual void setHiddenToTray(bool wasHiddenToTray) = 0;
 
-        virtual std::shared_ptr<WindowState> build() const = 0;
+        virtual std::unique_ptr<WindowState> build() const = 0;
     };
 }
 

@@ -12,21 +12,28 @@ namespace dengine {
     class ComponentMessage : public DObject {
     protected:
         using time_type = std::chrono::system_clock::time_point;
+    public:
+        enum class Type {
+            INSTANCE_CREATE, INSTANCE_DESTROY, COMPONENT_LOAD, COMPONENT_UNLOAD, UPDATE, SCENE_UNLOAD, GAME_END,
+            DIRECT_CHILDREN_CHANGE, PARENT_CHANGE
+        };
     private:
         time_type sendingTime;
-        Component::MessageType messageType;
+        Type messageType;
     public:
-        ComponentMessage(Component::MessageType messageType);
+        ComponentMessage(Type messageType);
 
-        ComponentMessage(Component::MessageType messageType, time_type sendingTime);
+        ComponentMessage(Type messageType, time_type sendingTime);
 
         virtual time_type getSendingTime() const {
             return sendingTime;
         }
 
-        virtual Component::MessageType getMessageType() const {
+        virtual Type getMessageType() const {
             return messageType;
         }
+
+        virtual void handle(Component& component) const = 0;
     };
 }
 

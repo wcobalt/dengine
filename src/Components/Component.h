@@ -9,41 +9,47 @@
 
 namespace dengine {
     class GameObject;
-    class EventsState;
+    class Events;
     class DirectChildrenChangeMessage;
     class ParentChangeMessage;
     class ComponentMessage;
+    class InstanceCreateMessage;
+    class InstanceDestroyMessage;
+    class ComponentLoadMessage;
+    class ComponentUnloadMessage;
+    class UpdateMessage;
+    class SceneUnloadMessage;
+    class GameEndMessage;
+    class Scene;
 }
 
 #include "../DObject.h"
 
 namespace dengine {
-    class Component : public DObject, public std::enable_shared_from_this<Component> {
+    class Component : public DObject {
     private:
         bool mIsEnabled;
     protected:
-        std::shared_ptr<GameObject> gameObject;
+        GameObject& gameObject;
     public:
-        enum class MessageType {
-            INSTANCE_CREATE, INSTANCE_DESTROY, COMPONENT_LOAD, COMPONENT_UNLOAD, UPDATE, SCENE_UNLOAD, GAME_END,
-            DIRECT_CHILDREN_CHANGE, PARENT_CHANGE
-        };
+        //safe component has to be non-copyable (because of gameObject reference)
+        Component& operator=(const Component& component) = delete;
 
-        Component(std::shared_ptr<GameObject> gameObject);
+        Component(GameObject &gameObject);
 
-        void onInstanceCreate(const ComponentMessage &message);
+        void onInstanceCreate(const InstanceCreateMessage &message);
 
-        void onComponentLoad(const ComponentMessage &message);
+        void onComponentLoad(const ComponentLoadMessage &message);
 
-        void onComponentUnload(const ComponentMessage &message);
+        void onComponentUnload(const ComponentUnloadMessage &message);
 
-        void onUpdate(const ComponentMessage &message);
+        void onUpdate(const UpdateMessage &message);
 
-        void onInstanceDestroy(const ComponentMessage &message);
+        void onInstanceDestroy(const InstanceDestroyMessage &message);
 
-        void onSceneUnload(const ComponentMessage &message);
+        void onSceneUnload(const SceneUnloadMessage &message);
 
-        void onGameEnd(const ComponentMessage &message);
+        void onGameEnd(const GameEndMessage &message);
 
         void onDirectChildrenChange(const DirectChildrenChangeMessage &message);
 
@@ -55,7 +61,12 @@ namespace dengine {
 
         bool isEnabled() const;
 
-        std::shared_ptr<GameObject> getGameObject() const;
+        GameObject & getGameObject() const;
+
+        std::unique_ptr<Component> clone(GameObject& gameObject) const;
+
+        //@todo maybe exclude to a kind of toolkit?
+        Scene& getCurrentScene();///for clarity and simplicity's sake
     };
 }
 

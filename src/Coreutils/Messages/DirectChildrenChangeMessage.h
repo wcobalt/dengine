@@ -19,23 +19,25 @@ namespace dengine {
             DESTRUCTION, INSTANTIATION, MOVE_FROM, MOVE_TO
         };
     private:
-        std::shared_ptr<GameObject> changedChild;
+        GameObject& changedChild;
 
         ChildChangeType childChangeType;
     public:
         DirectChildrenChangeMessage(ChildChangeType childChangeType,
-                                    std::shared_ptr<GameObject> changedChild);
+                                    GameObject &changedChild);
 
         DirectChildrenChangeMessage(ChildChangeType childChangeType,
-                                    std::shared_ptr<GameObject> changedChild, time_type sendingTime);
+                                    GameObject &changedChild, time_type sendingTime);
 
         ChildChangeType getChildChangeType() const {
             return childChangeType;
         }
 
-        std::shared_ptr<GameObject> getChangedChild() const {
+        GameObject & getChangedChild() const {
             return changedChild;
         }
+
+        void handle(Component &component) const override;
     };
 }
 

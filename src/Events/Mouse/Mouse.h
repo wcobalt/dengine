@@ -6,8 +6,8 @@
 #define DENGINE_MOUSEBUTTON_H
 
 namespace dengine {
-    typedef int DMouseButton;
-    typedef int DWheelDirection;
+    using DMouseButton = unsigned;
+    using DWheelDirection = int;
 
     class Mouse {
     public:

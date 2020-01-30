@@ -20,8 +20,8 @@ namespace dengine {
 
         int x, y;
     public:
-        DefaultMouseState(const std::set<DMouseButton>& pressedButtons,
-                          const std::set<DMouseButton>& releasedButtons,
+        DefaultMouseState(std::set<DMouseButton> pressedButtons,
+                          std::set<DMouseButton> releasedButtons,
                           int wheelDirection, int x, int y);
 
         bool isButtonPressed(DMouseButton button) const;

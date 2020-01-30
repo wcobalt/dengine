@@ -13,7 +13,7 @@ namespace dengine {
 namespace dengine {
     class Initializer {
     public:
-        virtual void initialize(std::shared_ptr<GameObject> gameObject) = 0;
+        virtual void initialize(GameObject &gameObject) const {};
     };
 }
 

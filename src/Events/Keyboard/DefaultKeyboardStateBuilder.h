@@ -17,21 +17,19 @@ namespace dengine {
 namespace dengine {
     class DefaultKeyboardStateBuilder : public KeyboardStateBuilder {
     private:
-        std::set<std::shared_ptr<Key>> pressedKeys;
-        std::set<std::shared_ptr<Key>> releasedKeys;
+        std::set<std::unique_ptr<Key>> pressedKeys;
+        std::set<std::unique_ptr<Key>> releasedKeys;
         std::string layoutCode, layoutName;
     public:
-        DefaultKeyboardStateBuilder();
+        void addPressedKey(std::unique_ptr<Key> key);
 
-        void addPressedKey(std::shared_ptr<Key> key);
+        void addReleasedKey(std::unique_ptr<Key> key);
 
-        void addReleasedKey(std::shared_ptr<Key> key);
+        void setCurrentKeyboardLayoutCode(std::string layoutCode);
 
-        void setCurrentKeyboardLayoutCode(const std::string &layoutCode);
+        void setCurrentKeyboardLayoutName(std::string layoutName);
 
-        void setCurrentKeyboardLayoutName(const std::string &layoutName);
-
-        std::shared_ptr<KeyboardState> build();
+        std::unique_ptr<KeyboardState> build();
     };
 }
 

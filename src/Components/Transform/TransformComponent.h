@@ -4,13 +4,14 @@
 
 #include <memory>
 #include <unordered_map>
+#include <set>
 
 #ifndef DENGINE_TRANSFORMCOMPONENT_H
 #define DENGINE_TRANSFORMCOMPONENT_H
 
 namespace dengine {
     class GameObject;
-    class Layer;
+    class Space;
 }
 
 #include "../Component.h"
@@ -18,71 +19,122 @@ namespace dengine {
 #include "../../Math/Quaternion.h"
 
 namespace dengine {
-    class TransformComponent : public virtual Component {
+    class TransformComponent final : public virtual Component {
+    public:
+        class SpacesContainer : public DObject {
+        private:
+            std::set<Space*> spaces;
+        public:
+            class Spaces : public DObject {
+            private:
+                using spaces_type = std::set<Space*>;
+
+                spaces_type & spaces;
+            public:
+                Spaces(spaces_type& spaces);
+
+                using iterator = spaces_type::iterator;
+                using const_iterator = spaces_type::const_iterator;
+
+                iterator begin();
+
+                iterator end();
+
+                const_iterator begin() const;
+
+                const_iterator end() const;
+
+                const_iterator cbegin() const;
+
+                const_iterator cend() const;
+            };
+        public:
+            SpacesContainer& operator=(SpacesContainer& spacesManager) = delete;
+
+            void addSpace(Space& space);
+
+            void removeSpace(Space& space);
+
+            Spaces buildSpaces() const;
+        };
     private:
         bool mIsActive;
-        std::string tagName; //@todo i don't know is it worth to exclude tag in a separate class
-        std::unordered_map<std::shared_ptr<Layer>, bool> layers;
-
-        using const_layers_iterator = decltype(layers)::const_iterator;
-
-        const_layers_iterator findLayer(std::shared_ptr<Layer> layer) const;
 
         vec3f position;
-        Quaternion<float> rotation;
+        Quat rotation;
         vec3f scale;
+
+        SpacesContainer spacesManager;
     public:
-        TransformComponent(std::shared_ptr<GameObject> gameObject);
+        TransformComponent(GameObject &gameObject);
 
-        TransformComponent(std::shared_ptr<GameObject> gameObject, const vec3f& position);
+        TransformComponent(GameObject &gameObject, const vec3f& position);
 
-        TransformComponent(std::shared_ptr<GameObject> gameObject, float x, float y, float z);
+        TransformComponent(GameObject &gameObject, float x, float y, float z);
 
-        TransformComponent(std::shared_ptr<GameObject> gameObject, const vec3f& position,
-                const Quaternion<float>& rotation, const vec3f& scale);
+        TransformComponent(GameObject &gameObject, const vec3f& position,
+                           const Quat& rotation, const vec3f& scale);
 
+        //absolute, doesnt move children
         void setPosition(const vec3f& position);
 
         void setPosition(float x, float y, float z);
 
-        void setRotation(const Quaternion<float>& rotation);
+        //relative to current position, doesnt move children
+        void changePositionFor(const vec3f& delta);
+
+        void changePositionFor(float x, float y, float z);
+
+        //absolute, moves children
+        void moveTo(const vec3f& position);
+
+        void moveTo(float x, float y, float z);
+
+        //relative to current position, moves children
+        void moveFor(const vec3f& delta);
+
+        void moveFor(float x, float y, float z);
+
+        //relative to parent, doesnt move children
+        void setRelativePosition(const vec3f& position);
+
+        void setRelativePosition(float x, float y, float z);
+
+        //relative to parent, moves children
+        void moveToRelative(const vec3f& position);
+
+        void moveToRelative(float x, float y, float z);
+
+        vec3f getRelativePosition() const;
+
+        vec3f getPosition() const;
+
+        void setRotation(const Quat& rotation);
 
         void setScale(const vec3f& scale);
 
         void setScale(float x, float y, float z);
 
-        vec3f getPosition() const;
-
-        Quaternion<float> getRotation() const;
+        Quat getRotation() const;
 
         vec3f getScale() const;
 
-        Quaternion<float> up() const;
+        Quat up() const;
 
-        Quaternion<float> forward() const;
+        Quat front() const;
 
-        Quaternion<float> left() const;
+        Quat left() const;
 
-        void addToLayer(std::shared_ptr<Layer> layer);
+        void onAdditionToSpace(Space& space);//add to SpacesContainer
 
-        bool isOnLayer(std::shared_ptr<Layer> layer) const;
+        void onRemovalFromSpace(Space& space);//remove from SpacesContainer
 
-        std::vector<std::shared_ptr<Layer>> getAllLayers() const {
-            std::vector<std::shared_ptr<Layer>> result;
-
-            for (auto& pair : layers)
-                result.emplace_back(pair.first);
-
-            return result;
-        }
-
-        void setTagName(const std::string& tagName);
-
-        const std::string& getTagName() const {
-            return tagName;
-        }
-
+        //inactive objects ignore incoming events, but can still be used other ways
         void setActive(bool isActive);
+
+        SpacesContainer::Spaces getSpaces() const {
+            return spacesManager.buildSpaces();
+        }
 
         bool isActive() const {
             return mIsActive;

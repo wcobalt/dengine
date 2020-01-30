@@ -9,39 +9,21 @@
 
 namespace dengine {
     class GameObject;
+    class TraversalMethod;
 }
 
 namespace dengine {
     class Filter {
-    private:
-        std::function<bool(std::shared_ptr<GameObject>)> filterAction;
-        std::function<bool(std::shared_ptr<GameObject>)> filterSelection;
-
-        std::shared_ptr<GameObject> getRoot() const;
-
-        bool dfs(std::shared_ptr<GameObject> gameObject) const;
     public:
-        Filter(std::function<void(std::shared_ptr<GameObject>)> filterAction,
-               std::function<bool(std::shared_ptr<GameObject>)> filterSelection, bool alwaysReturn);
+        virtual void run() = 0;
 
-        Filter(std::function<bool(std::shared_ptr<GameObject>)> filterAction,
-               std::function<bool(std::shared_ptr<GameObject>)> filterSelection);
+        virtual void run(GameObject &gameObject) = 0;
 
-        virtual void run() const;
+        virtual bool check(const GameObject& gameObject) const = 0;
 
-        virtual void run(std::shared_ptr<GameObject> gameObject) const;
+        virtual void execute(GameObject &gameObject, TraversalMethod &traversalMethod) const = 0;
 
-        virtual void runBfs() const;
-
-        virtual void runBfs(bool isReverse) const;
-
-        virtual void runBfs(std::shared_ptr<GameObject> gameObject) const;
-
-        virtual void runBfs(std::shared_ptr<GameObject> gameObject, bool isReverse) const;
-
-        virtual void runDfs() const;
-
-        virtual void runDfs(std::shared_ptr<GameObject> gameObject) const;
+        virtual const TraversalMethod& getTraversalMethod() const = 0;
     };
 }
 

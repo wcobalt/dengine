@@ -10,8 +10,8 @@
 namespace dengine {
     class ScenesManager;
     class WindowManager;
-    class PlatformSet;
-    class EventsState;
+    class Platform;
+    class Events;
 }
 
 #include "Coreutils/ID.h"
@@ -31,21 +31,23 @@ namespace dengine {
     private:
         float fps, deltaTime;
 
-        std::shared_ptr<PlatformSet> platformSet;
-        std::shared_ptr<ScenesManager> scenesManager;
+        std::unique_ptr<Platform> platformSet;
+        std::unique_ptr<ScenesManager> scenesManager;
 
         bool mIsIgnoringInactive;
         bool isGameStopped;
 
-        static std::shared_ptr<Dengine> dengine;
+        static std::unique_ptr<Dengine> dengine;
 
-        std::shared_ptr<EventsState> eventsState;
+        std::unique_ptr<Events> eventsState;
 
         void update();
 
-        Dengine(std::shared_ptr<PlatformSet> platformSet, float fps);
+        Dengine(std::unique_ptr<Platform> platformSet, float fps);
     public:
         static const char VERSION_STRING[];
+
+        static constexpr float DEFAULT_FPS = 30;
 
         static constexpr unsigned VERSION_MAJOR = 0;
         static constexpr unsigned VERSION_MINOR = 2;
@@ -53,11 +55,11 @@ namespace dengine {
         static constexpr unsigned VERSION_BUILD = 0;
 
         //SOLID
-        static void init(std::shared_ptr<PlatformSet> platformSet);
+        static void init(std::unique_ptr<Platform> platformSet);
 
-        static void init(std::shared_ptr<PlatformSet> platformSet, float fps);
+        static void init(std::unique_ptr<Platform> platformSet, float fps);
 
-        static std::shared_ptr<Dengine> get();
+        static Dengine & get();
 
         void setFps(float fps);
 
@@ -67,21 +69,17 @@ namespace dengine {
 
         float getDeltaTime() const;
 
-        void setIgnoreInactive(bool doIgnoreInactive);
-
-        bool isIgnoringInactive() const;
-
         void run();
 
         void stop();
 
         std::string toString() const;
 
-        std::shared_ptr<EventsState> getEventsState();
+        const Events & getEventsState();
 
-        std::shared_ptr<ScenesManager> getScenesManager() const;
+        ScenesManager & getScenesManager() const;
 
-        std::shared_ptr<PlatformSet> getPlatformSet() const;
+        Platform & getPlatform() const;
     };
 }
 

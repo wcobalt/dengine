@@ -15,30 +15,38 @@ namespace dengine {
 #include "DObject.h"
 #include "Exceptions/ComponentException.h"
 #include "Components/Component.h"
+#include "Components/Transform/TransformComponent.h"
 
 namespace dengine {
     class ComponentsManager : public DObject {
     private:
-        std::vector<std::shared_ptr<Component>> components;
-        std::shared_ptr<GameObject> gameObject;
+        mutable std::vector<std::unique_ptr<Component>> components;
+        std::vector<Component*> componentsFrontend;//@fixme that's not cool
 
-        using const_component_iterator = decltype(components)::const_iterator;
+        GameObject& gameObject;
 
-        void detachComponent(const_component_iterator iterator);
-
-        void checkComponentAttachment(std::shared_ptr<Component> component);
-
-        const_component_iterator findComponent(std::shared_ptr<Component> component) const;
-
+        TransformComponent* transformComponent = nullptr;
     public:
-        ComponentsManager(std::shared_ptr<GameObject> gameObject);
+        using const_iterator = decltype(componentsFrontend)::const_iterator;
+        using iterator = decltype(componentsFrontend)::iterator;
+    private:
+        void detachComponent(decltype(components)::const_iterator iterator);
 
-        void attachComponent(std::shared_ptr<Component> component);
+        void checkComponentAttachment(const Component &component);
 
-        template<typename T>
+        decltype(components)::const_iterator findComponent(const Component &component) const;
+    public:
+        explicit ComponentsManager(GameObject &gameObject);
+
+        ComponentsManager& operator=(const ComponentsManager& componentsManager) = delete;
+
+        void attachComponent(std::unique_ptr<Component> component);
+
+        template<typename T, typename std::enable_if<!std::is_same<T, TransformComponent>::value, std::nullptr_t>::type = nullptr>
         void detachComponent() {
             for (auto it = components.begin(); it != components.end(); it++) {
-                if (std::dynamic_pointer_cast<T>(*it)) {
+                Component& component = **it;
+                if (typeid(component).hash_code() == typeid(T).hash_code()) {
                     detachComponent(it);
 
                     return;
@@ -48,22 +56,37 @@ namespace dengine {
             throw ComponentException("Cannot detach component of this type, because it is not attached yet");
         }
 
-        void detachComponent(std::shared_ptr<Component> component);
+        void detachComponent(const Component &component);
 
         void detachAllComponents();
 
         template<typename T>
-        std::shared_ptr<T> getComponent() {
-            for (auto it = components.begin(); it != components.end(); it++) {
-                if (auto result = std::dynamic_pointer_cast<T>(*it)) {
-                    return result;
+        T & getComponent() const {
+            for (auto & component : components) {
+                //@fixme use hashtable when hash is typeid().hash_code() (but how to get Transform and keep compsFrontend?)
+                if (auto result = std::dynamic_pointer_cast<T>(component)) {
+                    return *result;
                 }
             }
 
             throw ComponentException("Cannot return component of this type, because is is not attached yet.");
         }
 
-        std::vector<std::shared_ptr<Component>> getAllComponents() const;
+        iterator begin();
+
+        iterator end();
+
+        const_iterator begin() const;
+
+        const_iterator end() const;
+
+        const_iterator cbegin() const;
+
+        const_iterator cend() const;
+
+        TransformComponent& getTransformComponent() const;
+
+        std::unique_ptr<ComponentsManager> clone(GameObject& gameObject) const;
 
         void spreadMessage(const ComponentMessage &message);
     };

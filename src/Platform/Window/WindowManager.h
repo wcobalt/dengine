@@ -13,7 +13,7 @@ namespace dengine {
     class MouseState;
     class KeyboardState;
     class WindowState;
-    class EventsState;
+    class Events;
     class Image;
 }
 
@@ -100,13 +100,13 @@ namespace dengine {
 
         virtual bool isFocused() const = 0;
 
-        virtual std::shared_ptr<MouseState> getMouseState() const = 0;
+        virtual std::unique_ptr<MouseState> checkMouseState() const = 0;
 
-        virtual std::shared_ptr<KeyboardState> getKeyboardState() const = 0;
+        virtual std::unique_ptr<KeyboardState> checkKeyboardState() const = 0;
 
-        virtual std::shared_ptr<WindowState> getWindowState() = 0;
+        virtual std::unique_ptr<WindowState> checkWindowState() = 0;
 
-        virtual std::shared_ptr<EventsState> getEventsState() = 0;
+        virtual std::unique_ptr<Events> checkEvents() = 0;
 
         virtual ~WindowManager() = default;
     };

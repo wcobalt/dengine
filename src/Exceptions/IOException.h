@@ -12,7 +12,7 @@
 namespace dengine {
     class IOException : public DengineException {
     public:
-        IOException(const std::string& message) : DengineException(message) {}
+        IOException(std::string message) : DengineException(std::move(message)) {}
     };
 }
 

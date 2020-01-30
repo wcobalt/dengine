@@ -20,7 +20,7 @@ namespace dengine {
 
         DKeyCode getKeycode() const;
 
-        std::string getSymbol() const;
+        const std::string & getSymbol() const;
     };
 }
 

@@ -1,3 +1,5 @@
+#include <optional>
+
 #include "GameObject.h"
 #include "Dengine.h"
 #include "ScenesManager.h"
@@ -9,57 +11,77 @@
 #include "Coreutils/Messages/DirectChildrenChangeMessage.h"
 #include "Coreutils/Messages/ParentChangeMessage.h"
 #include "ComponentsManager.h"
+#include "Coreutils/Messages/ComponentMessages.h"
+#include "Coreutils/Messages/ComponentMessage.h"
 
 using namespace dengine;
 
-GameObject::GameObject() : GameObject(nullptr, nullptr) {}
+//STATIC METHODS INSTANTIATE RELATIVE TO ROOT (AND AS ROOT'S CHILD)
 
-GameObject::GameObject(std::shared_ptr<Initializer> initializer) : GameObject(initializer, nullptr) {}
+//instantiates game object on ITS coordinates
+GameObject & GameObject::instantiate(const Initializer &initializer) {
+    return getRoot().instantiateChild(initializer);
+}
 
-GameObject::GameObject(std::shared_ptr<TransformComponent> transform) : GameObject(nullptr, transform) {}
+//instantiates the child relative TO PARENT
+GameObject & GameObject::instantiate(const Initializer &initializer, float x, float y, float z) {
+    return instantiate(initializer, {x, y, z});
+}
 
-GameObject::GameObject(std::shared_ptr<Initializer> initializer, std::shared_ptr<TransformComponent> transform)
-        : initializer(initializer), userDefinedTransform(transform) {
-    id = Dengine::get()->getScenesManager()->getCurrentScene()->takeNextId();
-    componentsManager = std::make_shared<ComponentsManager>(shared_from_this());
+//instantiates the child relative TO PARENT
+GameObject & GameObject::instantiate(const Initializer &initializer, const vec3f &position) {
+    return getRoot().instantiateChild(initializer, position);
 }
 
 //instantiates game object on ITS coordinates
-void GameObject::instantiate(std::shared_ptr<GameObject> instance) {
-    instance->getRoot()->instantiateAsChild(instance);
+GameObject & GameObject::instantiate(const GameObject &instance) {
+    return getRoot().instantiateChild(instance);
 }
 
-//instantiates the child relate TO PARENT
-void GameObject::instantiate(std::shared_ptr<GameObject> instance, float x, float y, float z) {
-    instantiate(instance, {x, y, z});
+//instantiates the child relative TO PARENT
+GameObject & GameObject::instantiate(const GameObject &instance, float x, float y, float z) {
+    return instantiate(instance, {x, y, z});
 }
 
-//instantiates the child relate TO PARENT
-void GameObject::instantiate(std::shared_ptr<GameObject> instance, const vec3f &position) {
-    instance->getRoot()->instantiateChild(instance, position);
+//instantiates the child relative TO PARENT
+GameObject & GameObject::instantiate(const GameObject &instance, const vec3f &position) {
+    return getRoot().instantiateChild(instance, position);
 }
 
-//instantiates game objecton ITS coordinates
-void GameObject::instantiateChild(std::shared_ptr<GameObject> instance) {
-    instantiateAsChild(instance);
+//NON-STATIC METHODS INSTANTIATE RELATIVE TO PARENT
+
+//instantiates game object on ITS coordinates
+GameObject & GameObject::instantiateChild(const Initializer &initializer) {
+    return instantiateNew(initializer, {});
 }
 
-//instantiates the child relate TO PARENT
-void GameObject::instantiateChild(std::shared_ptr<GameObject> instance, float x, float y, float z) {
-    instantiateChild(instance, {x, y, z});
+//instantiates the child relative TO PARENT
+GameObject & GameObject::instantiateChild(const Initializer &initializer, float x, float y, float z) {
+    return instantiateChild(initializer, {x, y, z});
 }
 
-//instantiates the child relate TO PARENT
-void GameObject::instantiateChild(std::shared_ptr<GameObject> instance, vec3f position) {
-    vec3f parentPosition = componentsManager->getComponent<TransformComponent>()->getPosition();
-
-    instance->getComponentsManager()->getComponent<TransformComponent>()->setPosition(position + parentPosition);
-
-    instantiateAsChild(instance);
+//instantiates the child relative TO PARENT
+GameObject & GameObject::instantiateChild(const Initializer &initializer, const vec3f &position) {
+    return instantiateNew(initializer, position);
 }
 
-void GameObject::move(std::shared_ptr<GameObject> instance) {
-    instance->getRoot()->moveToChildren(instance);
+//instantiates game object on ITS coordinates
+GameObject & GameObject::instantiateChild(const GameObject &instance) {
+    return instantiateByCloning(instance, {});
+}
+
+//instantiates the child relative TO PARENT
+GameObject & GameObject::instantiateChild(const GameObject &instance, float x, float y, float z) {
+    return instantiateChild(instance, {x, y, z});
+}
+
+//instantiates the child relative TO PARENT
+GameObject & GameObject::instantiateChild(const GameObject &instance, const vec3f &position) {
+    return instantiateByCloning(instance, position);
+}
+
+void GameObject::move(GameObject &instance) {
+    getRoot().moveToChildren(instance);
 }
 
 /*
@@ -68,39 +90,32 @@ void GameObject::move(std::shared_ptr<GameObject> instance) {
  * PARENT_CHANGED
  * */
 
-void GameObject::moveToChildren(std::shared_ptr<GameObject> instance) {
-    std::shared_ptr<GameObject> parent = instance->getParent();
+void GameObject::moveToChildren(GameObject &instance) {
+    GameObject& instanceParent = instance.getParent();
 
-    parent->children.erase(parent->findChild(instance));
-    addChildWithoutInstantiation(instance);
+    //WARNING: WON'T WORK IF THE CHILDREN WILL BE STORED IN NON-CONTIGUOUS CONTAINER
+
+    auto childrenIterator = instanceParent.findChild(instance);
+    size_t index = childrenIterator - instanceParent.children.begin();
+
+    //not very graceful (get by index, when there's an iterator (but it's const, so...))
+    std::unique_ptr<GameObject> instancePointer = std::move(instanceParent.children[index]);
+
+    //erase
+    instanceParent.children.erase(childrenIterator);
+    instanceParent.childrenFrontend.erase(instanceParent.childrenFrontend.begin() + index);
+
+    addChildWithoutInstantiation(std::move(instancePointer));
 
     DirectChildrenChangeMessage moveFromMessage(DirectChildrenChangeMessage::ChildChangeType::MOVE_FROM, instance);
-    parent->componentsManager->spreadMessage(moveFromMessage);
+    instanceParent.componentsManager->spreadMessage(moveFromMessage);
 
-    noticeAboutAddingWithoutInstantiation(instance,
-            DirectChildrenChangeMessage::ChildChangeType::MOVE_TO,
-            parent);
+    notifyAboutAdditionWithoutInstantiation(instance,
+                                            DirectChildrenChangeMessage::ChildChangeType::MOVE_TO,
+                                            &instanceParent);
 }
 
-void GameObject::destroy(std::shared_ptr<GameObject> instance) {
-    bool destroyed = false;
-
-    Filter filter([&destroyed](std::shared_ptr<GameObject> gameObject) {
-        gameObject->destroy();
-        destroyed = true;
-    },
-
-    [&instance](std::shared_ptr<GameObject> gameObject) -> bool {
-        return instance == gameObject;
-    }, true);
-
-    filter.run();
-
-    if (!destroyed)
-        throw GameObjectException("Cannot destroy the game object because there is no such one in scene tree.");
-}
-
-void GameObject::destroyChild(std::shared_ptr<GameObject> instance) {
+void GameObject::destroyChild(GameObject &instance) {
     auto it = findChild(instance);
 
     if (it != children.end()) {
@@ -110,7 +125,7 @@ void GameObject::destroyChild(std::shared_ptr<GameObject> instance) {
 }
 
 void GameObject::destroy() {
-    parent->destroyChild(shared_from_this());
+    parent->destroyChild(*this);
 }
 
 void GameObject::destroyAllChildren() {
@@ -118,82 +133,77 @@ void GameObject::destroyAllChildren() {
         destroyChild(it);
 }
 
-std::shared_ptr<GameObject> GameObject::getParent() const {
-    return parent;
-}
-
-std::vector<std::shared_ptr<GameObject>> GameObject::getAllChildren() const {
-    return children;
+GameObject & GameObject::getParent() const {
+    return *parent;
 }
 
 GameObject::iterator GameObject::begin() {
-    return children.begin();
+    return childrenFrontend.begin();
 }
 
 GameObject::iterator GameObject::end() {
-    return children.end();
+    return childrenFrontend.end();
 }
 
 GameObject::const_iterator GameObject::begin() const {
-    return children.begin();
+    return childrenFrontend.begin();
 }
 
 GameObject::const_iterator GameObject::end() const {
-    return children.end();
+    return childrenFrontend.end();
 }
 
 GameObject::const_iterator GameObject::cbegin() const {
-    return children.cbegin();
+    return childrenFrontend.cbegin();
 }
 
 GameObject::const_iterator GameObject::cend() const {
-    return children.cend();
+    return childrenFrontend.cend();
 }
 
 //reacts only for external events
 void GameObject::handleExternalEvent(EventType eventType) {
     switch (eventType) {
         case EventType::UPDATE:
-            componentsManager->spreadMessage({Component::MessageType::UPDATE});
+            componentsManager->spreadMessage(UpdateMessage());
 
             break;
         case EventType::SCENE_UNLOAD:
-            componentsManager->spreadMessage({Component::MessageType::SCENE_UNLOAD});
+            componentsManager->spreadMessage(SceneUnloadMessage());
 
             break;
         case EventType::GAME_END:
-            componentsManager->spreadMessage({Component::MessageType::GAME_END});
+            componentsManager->spreadMessage(GameEndMessage());
 
             break;
     }
 }
 
-std::shared_ptr<ComponentsManager> GameObject::getComponentsManager() const {
-    return componentsManager;
+ComponentsManager & GameObject::getComponentsManager() const {
+    return *componentsManager;
 }
 
 ID GameObject::getId() const {
     return id;
 }
 
-void GameObject::initialize() {
-    std::shared_ptr<TransformComponent> transform = userDefinedTransform;
+void GameObject::initialize(bool doAddTransform) {
+    id = Dengine::get().getScenesManager().getCurrentScene().takeNextId();
 
-    if (!transform)
-        transform = std::make_shared<TransformComponent>(shared_from_this());
+    if (doAddTransform) {
+        std::unique_ptr<TransformComponent> transform = std::make_unique<TransformComponent>(*this);
 
-    componentsManager->attachComponent(transform);
-
-    initializer->initialize(shared_from_this());
+        componentsManager->attachComponent(std::move(transform));
+    }
 }
 
-std::shared_ptr<GameObject> GameObject::getRoot() {
-    return Dengine::get()->getScenesManager()->getCurrentScene()->getRoot();
+GameObject & GameObject::getRoot() {
+    return Dengine::get().getScenesManager().getCurrentScene().getRoot();
 }
 
-GameObject::const_iterator GameObject::findChild(std::shared_ptr<GameObject> instance) const {
+decltype(GameObject::children)::const_iterator GameObject::findChild(GameObject &instance) const {
     for (auto it = children.begin(); it != children.end(); it++) {
-        if (*it == instance) return it;
+        if (**it == instance) return it;
     }
 
     return children.end();
@@ -205,51 +215,149 @@ GameObject::const_iterator GameObject::findChild(std::shared_ptr<GameObject> ins
  * INSTANCE_DESTROY
  * */
 
-void GameObject::destroyChild(const_iterator iterator) {
-    std::shared_ptr<GameObject> child = *iterator;
+void GameObject::destroyChild(decltype(children)::const_iterator iterator) {
+    GameObject& child = **iterator;
 
-    child->destroyAllChildren();
+    child.destroyAllChildren();
 
     DirectChildrenChangeMessage destructionMessage(DirectChildrenChangeMessage::ChildChangeType::DESTRUCTION,
                                                    child);
 
     componentsManager->spreadMessage(destructionMessage);
-    child->componentsManager->spreadMessage({Component::MessageType::INSTANCE_DESTROY});
+    child.componentsManager->spreadMessage(InstanceDestroyMessage());
 
+    //not very graceful too
+    childrenFrontend.erase(childrenFrontend.begin() + (iterator - children.begin()));
     children.erase(iterator);
 }
 
+GameObject & GameObject::instantiateNew(const Initializer& initializer, std::optional<vec3f> position) {
+    std::unique_ptr<GameObject> instance = std::make_unique<GameObject>();
+
+    GameObject& gameObject = *instance;
+
+    //child is not initialized yet (just warning)
+    addChildWithoutInstantiation(std::move(instance));
+    gameObject.initialize(true);
+
+    if (position) {
+        vec3f parentPosition = getParent().getComponentsManager().getTransformComponent().getPosition();
+
+        gameObject.getComponentsManager().getTransformComponent().setPosition(*position + parentPosition);
+    }
+
+    initializer.initialize(gameObject);
+
+    gameObject.notifyAboutInstantiation(false);
+
+    return gameObject;
+}
+
+GameObject & GameObject::instantiateByCloning(const GameObject& pattern, std::optional<vec3f> position) {
+    //calculated position is position of GO (to which child is adding) + position
+    //origin is position of pattern GO
+    std::optional<vec3f> calculatedPosition, origin;
+
+    if (position) {
+        vec3f parentPosition = getParent().getComponentsManager().getTransformComponent().getPosition();
+
+        calculatedPosition = parentPosition + *position;
+
+        origin = pattern.getComponentsManager().getTransformComponent().getPosition();
+    }
+
+    GameObject& gameObject = recursivelyInstantiate(pattern, *this, calculatedPosition, origin);
+
+    gameObject.notifyAboutInstantiation(true);
+
+    return gameObject;
+}
+
 /*
+ * There's a rule: before GO/Component/etc is notified about something it HAS TO be in valid state.
+ * So: first of all GO and all its children are instantiated, then notification propagation is
+ * launched.
+ * */
+GameObject &
+GameObject::recursivelyInstantiate(const GameObject &pattern, GameObject &parent, const std::optional<vec3f> &position,
+                                   const std::optional<vec3f> &origin) {
+    //children are instantiated first because parents depend on children
+
+    std::unique_ptr<GameObject> clone = std::make_unique<GameObject>();
+
+    GameObject& gameObject = *clone;
+
+    parent.addChildWithoutInstantiation(std::move(clone));
+    gameObject.initialize(false);
+
+    if (position) {
+        //position of another pattern tree element
+        vec3f patternPosition = pattern.getComponentsManager().getTransformComponent().getPosition();
+
+        //patternPos - origin - position of another pattern tree element relatively to source pattern
+        //position is offset
+        gameObject.getComponentsManager().getTransformComponent()
+            .setPosition((patternPosition - *origin) + *position);
+    }
+
+    for (auto child : pattern) {
+        child->recursivelyInstantiate(*child, gameObject, position, origin);
+    }
+
+    gameObject.componentsManager = pattern.getComponentsManager().clone(gameObject);
+
+    return gameObject;
+}
+
+/*
+ * ALL CHILDREN
  * INSTANCE_CREATE
  * INSTANTIATION
  * PARENT_CHANGED
+ *
+ *
+ * Is used to notify all children recursively and then the GO itself about
+ * their first come to scene (when they are instantiated).
  * */
+void GameObject::notifyAboutInstantiation(bool doPropagateToChildren) {
+    //children first because parent may depends on them. (Yes children may depend on parent as well but
+    //for good children event shouldn't know about parent). When trough initializer (if in initializer new children are added
+    //then they are notified first then creator itself
+    if (doPropagateToChildren) {
+        for (auto child : *this) {
+            child->notifyAboutInstantiation(false);
+        }
+    }
 
-void GameObject::instantiateAsChild(std::shared_ptr<GameObject> instance) {
-    std::shared_ptr<GameObject> clone = instance->clone();
+    componentsManager->spreadMessage(InstanceCreateMessage());
 
-    //child is not initialized yet
-    addChildWithoutInstantiation(clone);
-
-    clone->initialize();
-
-    clone->componentsManager->spreadMessage({Component::MessageType::INSTANCE_CREATE});
-
-    noticeAboutAddingWithoutInstantiation(clone,
-            DirectChildrenChangeMessage::ChildChangeType::INSTANTIATION,
-            nullptr);
+    getParent().notifyAboutAdditionWithoutInstantiation(*this,
+                                                        DirectChildrenChangeMessage::ChildChangeType::INSTANTIATION,
+                                                        nullptr);
 }
 
-void GameObject::addChildWithoutInstantiation(std::shared_ptr<GameObject> instance) {
-    children.emplace_back(instance);
-    instance->parent = shared_from_this();
+void GameObject::addChildWithoutInstantiation(std::unique_ptr<GameObject> instance) {
+    GameObject* instancePointer = instance.get();
+
+    children.emplace_back(std::move(instance));
+    childrenFrontend.emplace_back(instancePointer);
+
+    instancePointer->parent = this;
 }
 
-void GameObject::noticeAboutAddingWithoutInstantiation(std::shared_ptr<GameObject> instance,
-                                                       const DirectChildrenChangeMessage::ChildChangeType &childrenChangeType,
-                                                       std::shared_ptr<GameObject> previousParent) {
+void GameObject::notifyAboutAdditionWithoutInstantiation(GameObject &instance,
+                                                         const DirectChildrenChangeMessage::ChildChangeType &childrenChangeType,
+                                                         GameObject *previousParent) {
     DirectChildrenChangeMessage moveToMessage(childrenChangeType, instance);
     componentsManager->spreadMessage(moveToMessage);
 
-    instance->componentsManager->spreadMessage(ParentChangeMessage{previousParent, shared_from_this()});
+    instance.componentsManager->spreadMessage(ParentChangeMessage{previousParent, *this});
+}
+
+bool GameObject::operator==(const GameObject & gameObject) const {
+    return id == gameObject.id;
+}
+
+bool GameObject::operator!=(const GameObject &gameObject) const {
+    return !(*this == gameObject);
 }

@@ -19,26 +19,24 @@ namespace dengine {
 
 #include "Coreutils/ID.h"
 #include "DObject.h"
-#include "Coreutils/Messages/ComponentMessage.h"
 
 namespace dengine {
     class ScenesManager : public DObject {
     private:
-        std::vector<std::shared_ptr<Scene>> scenes;
+        mutable std::vector<std::unique_ptr<Scene>> scenes;
 
-        std::shared_ptr<Scene> currentScene;
+        Scene* currentScene = nullptr;
 
-        ID currentId;
+        ID currentId = IDUtils::NO_ID;
 
         ID takeNextSceneId();
     public:
         using const_iterator = decltype(scenes)::const_iterator;
-
         using iterator = decltype(scenes)::iterator;
     private:
-        const_iterator findSceneByAlias(const std::string& alias) const;
+        iterator findSceneByAlias(std::string_view alias) const;
 
-        const_iterator findSceneById(ID id) const;
+        iterator findSceneById(ID id) const;
 
         void removeScene(const_iterator iterator);
 
@@ -50,21 +48,24 @@ namespace dengine {
             UPDATE, GAME_END
         };
 
-        ScenesManager();
-
         void handleExternalEvent(EventType eventType);
 
-        ID addScene(std::shared_ptr<SceneBehavior> sceneBehavior);
+        //depends on how to reset behaviours when scene reloading - nohow just call onSceneLoad()
+        Scene & addScene(std::unique_ptr<SceneBehavior> sceneBehavior);
 
-        ID addScene(std::shared_ptr<SceneBehavior> sceneBehavior, const std::string &alias);
+        Scene & addScene(std::unique_ptr<SceneBehavior> sceneBehavior, std::string alias);
 
         void removeScene(ID id);
 
-        void removeScene(const std::string& alias);
+        void removeScene(std::string_view alias);
+
+        void removeScene(Scene& scene);
 
         void loadScene(ID id);
 
-        void loadScene(const std::string& alias);
+        void loadScene(std::string_view alias);
+
+        void loadScene(Scene& scene);
 
         void restartScene();
 
@@ -74,13 +75,13 @@ namespace dengine {
 
         void loadFirstScene();
 
-        std::shared_ptr<Scene> getCurrentScene() const;
+        Scene & getCurrentScene() const;
 
-        bool isCurrentSceneExist() const;
+        bool isAnySceneLoaded() const;
 
-        std::shared_ptr<Scene> getScene(ID id) const;
+        Scene & getScene(ID id) const;
 
-        std::shared_ptr<Scene> getScene(const std::string &alias) const;
+        Scene & getScene(std::string_view alias) const;
 
         iterator begin();
 
