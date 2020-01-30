@@ -21,7 +21,7 @@ namespace dengine {
 namespace dengine {
     class TransformComponent final : public virtual Component {
     public:
-        class SpacesManager : public DObject {
+        class SpacesContainer : public DObject {
         private:
             std::set<Space*> spaces;
         public:
@@ -49,7 +49,7 @@ namespace dengine {
                 const_iterator cend() const;
             };
         public:
-            SpacesManager& operator=(SpacesManager& spacesManager) = delete;
+            SpacesContainer& operator=(SpacesContainer& spacesManager) = delete;
 
             void addSpace(Space& space);
 
@@ -61,10 +61,10 @@ namespace dengine {
         bool mIsActive;
 
         vec3f position;
-        Quaternion<float> rotation;
+        Quat rotation;
         vec3f scale;
 
-        SpacesManager spacesManager;
+        SpacesContainer spacesManager;
     public:
         TransformComponent(GameObject &gameObject);
 
@@ -73,43 +73,61 @@ namespace dengine {
         TransformComponent(GameObject &gameObject, float x, float y, float z);
 
         TransformComponent(GameObject &gameObject, const vec3f& position,
-                           const Quaternion<float>& rotation, const vec3f& scale);
+                           const Quat& rotation, const vec3f& scale);
 
+        //absolute, doesnt move children
         void setPosition(const vec3f& position);
 
         void setPosition(float x, float y, float z);
 
-        void moveFor(const vec3f& position);
+        //relative to current position, doesnt move children
+        void changePositionFor(const vec3f& delta);
+
+        void changePositionFor(float x, float y, float z);
+
+        //absolute, moves children
+        void moveTo(const vec3f& position);
+
+        void moveTo(float x, float y, float z);
+
+        //relative to current position, moves children
+        void moveFor(const vec3f& delta);
 
         void moveFor(float x, float y, float z);
 
+        //relative to parent, doesnt move children
         void setRelativePosition(const vec3f& position);
 
         void setRelativePosition(float x, float y, float z);
 
+        //relative to parent, moves children
+        void moveToRelative(const vec3f& position);
+
+        void moveToRelative(float x, float y, float z);
+
         vec3f getRelativePosition() const;
 
-        void setRotation(const Quaternion<float>& rotation);
+        vec3f getPosition() const;
+
+        void setRotation(const Quat& rotation);
 
         void setScale(const vec3f& scale);
 
         void setScale(float x, float y, float z);
 
-        vec3f getPosition() const;
-
-        Quaternion<float> getRotation() const;
+        Quat getRotation() const;
 
         vec3f getScale() const;
 
-        Quaternion<float> up() const;
+        Quat up() const;
 
-        Quaternion<float> front() const;
+        Quat front() const;
 
-        Quaternion<float> left() const;
+        Quat left() const;
 
-        void onAdditionToSpace(Space& space);//add to spacesmanager
+        void onAdditionToSpace(Space& space);//add to SpacesContainer
 
-        void onRemovalFromSpace(Space& space);//remove from spacesmanager
+        void onRemovalFromSpace(Space& space);//remove from SpacesContainer
 
         void addToSpace(Space& space);//just delegation
 
@@ -117,12 +135,11 @@ namespace dengine {
 
         bool isInSpace(Space& space) const;//just delegation
 
-
         //inactive objects ignore incoming events, but can still be used other ways
         void setActive(bool isActive);
 
-        SpacesManager::Spaces getSpaces() const {
-            return std::move(spacesManager.buildSpaces());//RVO?
+        SpacesContainer::Spaces getSpaces() const {
+            return spacesManager.buildSpaces();
         }
 
         bool isActive() const {

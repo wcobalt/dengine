@@ -35,8 +35,6 @@ namespace dengine {
         void checkComponentAttachment(const Component &component);
 
         decltype(components)::const_iterator findComponent(const Component &component) const;
-
-        void attachComponentWithoutNotification(std::unique_ptr<Component> component);
     public:
         explicit ComponentsManager(GameObject &gameObject);
 
