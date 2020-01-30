@@ -34,7 +34,7 @@ namespace dengine {
         using const_iterator = decltype(scenes)::const_iterator;
         using iterator = decltype(scenes)::iterator;
     private:
-        iterator findSceneByAlias(const std::string& alias) const;
+        iterator findSceneByAlias(std::string_view alias) const;
 
         iterator findSceneById(ID id) const;
 
@@ -53,15 +53,19 @@ namespace dengine {
         //depends on how to reset behaviours when scene reloading - nohow just call onSceneLoad()
         Scene & addScene(std::unique_ptr<SceneBehavior> sceneBehavior);
 
-        Scene & addScene(std::unique_ptr<SceneBehavior> sceneBehavior, const std::string &alias);
+        Scene & addScene(std::unique_ptr<SceneBehavior> sceneBehavior, std::string alias);
 
         void removeScene(ID id);
 
-        void removeScene(const std::string& alias);
+        void removeScene(std::string_view alias);
+
+        void removeScene(Scene& scene);
 
         void loadScene(ID id);
 
-        void loadScene(const std::string& alias);
+        void loadScene(std::string_view alias);
+
+        void loadScene(Scene& scene);
 
         void restartScene();
 
@@ -77,7 +81,7 @@ namespace dengine {
 
         Scene & getScene(ID id) const;
 
-        Scene & getScene(const std::string &alias) const;
+        Scene & getScene(std::string_view alias) const;
 
         iterator begin();
 

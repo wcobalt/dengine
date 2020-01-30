@@ -10,7 +10,7 @@
 namespace dengine {
     class GameObjectException : public DengineException {
     public:
-        GameObjectException(const std::string &message) : DengineException(message) {}
+        GameObjectException(std::string message) : DengineException(std::move(message)) {}
     };
 }
 

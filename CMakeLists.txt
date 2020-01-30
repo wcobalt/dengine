@@ -70,6 +70,7 @@ add_library(Dengine
         src/Exceptions/ComponentException.h
         src/Exceptions/SceneException.h
         src/Exceptions/GameObjectException.h
+        src/Exceptions/SpaceException.h
 
         src/Math/Vector3.h
         src/Math/vectors.h

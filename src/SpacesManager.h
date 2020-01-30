@@ -17,7 +17,7 @@ namespace dengine {
 namespace dengine {
     class SpacesManager : public DObject {
     private:
-        std::set<std::unique_ptr<Space>> spaces;
+        mutable std::set<std::unique_ptr<Space>> spaces;
 
         ID takeNextId();
 
@@ -26,12 +26,24 @@ namespace dengine {
 
         using iterator = decltype(spaces)::iterator;
         using const_iterator = decltype(spaces)::const_iterator;
-    public:
-        Space& create(const std::string& name);
 
-        Space& get(const std::string& name) const;
+        void removeSpace(iterator iterator);
+
+        iterator findSpaceById(ID id) const;
+
+        iterator findSpaceByAlias(std::string_view name) const;
+    public:
+        Space& create(std::string name);
+
+        Space& get(std::string_view name) const;
 
         Space& get(ID id) const;
+
+        void remove(std::string_view name);
+
+        void remove(ID id);
+
+        void remove(Space& space);
 
         iterator begin();
 

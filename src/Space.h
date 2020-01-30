@@ -24,10 +24,12 @@ namespace dengine {
     private:
         iterator findGameObject(GameObject &gameObject);
 
+        iterator remove(iterator gameObjectToRemove);
+
         ID id;
         std::string name;
     public:
-        Space(ID id, const std::string& name);
+        Space(ID id, std::string name);
 
         iterator begin();
 
@@ -48,6 +50,8 @@ namespace dengine {
         void add(GameObject& gameObject);
 
         void remove(GameObject &gameObject);
+
+        void removeAll();
 
         bool has(GameObject& gameObject) const;
     };

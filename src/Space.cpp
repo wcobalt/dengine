@@ -7,10 +7,11 @@
 #include "GameObject.h"
 #include "Components/Transform/TransformComponent.h"
 #include "ComponentsManager.h"
+#include "Exceptions/SpaceException.h"
 
 using namespace dengine;
 
-Space::Space(ID id, const std::string &name) : id(id), name(name) {}
+Space::Space(ID id, std::string name) : id(id), name(std::move(name)) {}
 
 Space::iterator Space::begin() {
     return gameObjects.begin();
@@ -56,10 +57,10 @@ void Space::remove(GameObject &gameObject) {
     auto it = findGameObject(gameObject);
 
     if (it != gameObjects.end()) {
-        gameObjects.erase(it);
-
-        gameObject.getComponentsManager().getTransformComponent().onRemovalFromSpace(*this);
-    }
+        remove(it);
+    } else
+        throw SpaceException("Unable to remove game object with id " + std::to_string(gameObject.getId())
+            + " from space " + getName() + ": such game object is not added to the space yet");
 }
 
 bool Space::has(GameObject &gameObject) const {
@@ -68,4 +69,19 @@ bool Space::has(GameObject &gameObject) const {
 
 Space::iterator Space::findGameObject(GameObject &gameObject) {
     return gameObjects.find(&gameObject);
+}
+
+void Space::removeAll() {
+    for (auto it = gameObjects.begin(); it != gameObjects.end(); ) {
+        it = remove(it);
+    }
+}
+
+Space::iterator Space::remove(iterator gameObjectToRemove) {
+    GameObject& gameObject = **gameObjectToRemove;
+    auto it = gameObjects.erase(gameObjectToRemove);
+
+    gameObject.getComponentsManager().getTransformComponent().onRemovalFromSpace(*this);
+
+    return it;
 }

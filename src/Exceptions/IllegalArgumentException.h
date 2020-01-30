@@ -11,7 +11,7 @@
 namespace dengine {
     class IllegalArgumentException : public DengineException {
     public:
-        IllegalArgumentException(const std::string& message) : DengineException(message) {}
+        IllegalArgumentException(std::string message) : DengineException(std::move(message)) {}
     };
 }
 

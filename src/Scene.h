@@ -52,7 +52,7 @@ namespace dengine {
 
         Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior);
 
-        Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior, const std::string &alias);
+        Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior, std::string alias);
 
         void handleExternalEvent(EventType eventType);
 

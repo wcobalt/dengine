@@ -18,9 +18,9 @@ using namespace dengine;
 
 Scene::Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior) : Scene(id, std::move(sceneBehavior), "") {}
 
-Scene::Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior, const std::string &alias) : sceneBehavior(std::move(sceneBehavior)),
-                                                                                              id(id), alias(alias),
-                                                                                              spacesManager(std::make_unique<SpacesManager>()) {}
+Scene::Scene(ID id, std::unique_ptr<SceneBehavior> sceneBehavior, std::string alias) : sceneBehavior(std::move(sceneBehavior)),
+                                                                                       id(id), alias(std::move(alias)),
+                                                                                       spacesManager(std::make_unique<SpacesManager>()) {}
 
 void Scene::handleExternalEvent(EventType eventType) {
     switch (eventType) {

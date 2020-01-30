@@ -129,12 +129,6 @@ namespace dengine {
 
         void onRemovalFromSpace(Space& space);//remove from SpacesContainer
 
-        void addToSpace(Space& space);//just delegation
-
-        void removeFromSpace(Space& space);//just delegation
-
-        bool isInSpace(Space& space) const;//just delegation
-
         //inactive objects ignore incoming events, but can still be used other ways
         void setActive(bool isActive);
 
