@@ -39,7 +39,7 @@ namespace dengine {
 
         void setHiddenToTray(bool wasHiddenToTray);
 
-        std::shared_ptr<WindowState> build() const;
+        std::unique_ptr<WindowState> build() const;
     };
 }
 

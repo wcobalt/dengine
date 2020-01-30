@@ -7,54 +7,61 @@
 
 #include "DefaultKeyboardState.h"
 #include "Keyboard.h"
-#include "KeyByDKeyCodeComparator.h"
-#include "KeyBySymbolComparator.h"
 #include "DKey.h"
 
 using namespace dengine;
 
-DefaultKeyboardState::DefaultKeyboardState(const std::set<std::shared_ptr<Key>>& pressedKeys,
-                                           const std::set<std::shared_ptr<Key>>& releasedKeys,
-                                           const std::string& keyboardLayoutCode, const std::string& keyboardLayoutName):
-                                            keyboardLayoutCode(keyboardLayoutCode), keyboardLayoutName(keyboardLayoutName) {
+DefaultKeyboardState::DefaultKeyboardState(std::set<std::unique_ptr<Key>> pressedKeys,
+                                           std::set<std::unique_ptr<Key>> releasedKeys,
+                                           std::string keyboardLayoutCode, std::string keyboardLayoutName):
+                                            keyboardLayoutCode(std::move(keyboardLayoutCode)),
+                                            keyboardLayoutName(std::move(keyboardLayoutName)),
+                                            pressedKeys(std::move(pressedKeys)),
+                                            releasedKeys(std::move(releasedKeys)) {
 
-    pressedKeysIndexDKeyCode.insert(pressedKeys.begin(), pressedKeys.end());
-    pressedKeysIndexSymbol.insert(pressedKeys.begin(), pressedKeys.end());
-    this->pressedKeys.insert(pressedKeys.begin(), pressedKeys.end());
+    for (auto& key : this->pressedKeys) {
+        pressedKeysIndexDKeyCode.insert(key->getKeycode());
+        pressedKeysIndexSymbol.insert(key->getSymbol());
 
-    releasedKeysIndexDKeyCode.insert(releasedKeys.begin(), releasedKeys.end());
-    releasedKeysIndexSymbol.insert(releasedKeys.begin(), releasedKeys.end());
-    this->releasedKeys.insert(releasedKeys.begin(), releasedKeys.end());
+        pressedKeysFrontend.insert(&*key);
+    }
+
+    for (auto& key : this->releasedKeys) {
+        releasedKeysIndexDKeyCode.insert(key->getKeycode());
+        releasedKeysIndexSymbol.insert(key->getSymbol());
+
+        releasedKeysFrontend.insert(&*key);
+    }
 }
 
 bool DefaultKeyboardState::isKeyPressed(DKeyCode key) const {
-    return pressedKeysIndexDKeyCode.find(std::make_shared<DKey>(key, "")) != pressedKeysIndexDKeyCode.end();
+    return pressedKeysIndexDKeyCode.find(key) != pressedKeysIndexDKeyCode.end();
 }
 
 bool DefaultKeyboardState::isKeyReleased(DKeyCode key) const {
-    return releasedKeysIndexDKeyCode.find(std::make_shared<DKey>(key, "")) != releasedKeysIndexDKeyCode.end();
+    return releasedKeysIndexDKeyCode.find(key) != releasedKeysIndexDKeyCode.end();
 }
 
-bool DefaultKeyboardState::isSymbolPressed(const std::string &symbol) const {
-    return pressedKeysIndexSymbol.find(std::make_shared<DKey>(0, symbol)) != pressedKeysIndexSymbol.end();
+bool DefaultKeyboardState::isSymbolPressed(std::string_view symbol) const {
+    return pressedKeysIndexSymbol.find(symbol) != pressedKeysIndexSymbol.end();
 }
 
-bool DefaultKeyboardState::isSymbolReleased(const std::string &symbol) const {
-    return releasedKeysIndexSymbol.find(std::make_shared<DKey>(0, symbol)) != releasedKeysIndexSymbol.end();
+bool DefaultKeyboardState::isSymbolReleased(std::string_view symbol) const {
+    return releasedKeysIndexSymbol.find(symbol) != releasedKeysIndexSymbol.end();
 }
 
-std::string DefaultKeyboardState::getCurrentKeyboardLayoutCode() const {
+const std::string & DefaultKeyboardState::getCurrentKeyboardLayoutCode() const {
     return keyboardLayoutCode;
 }
 
-std::string DefaultKeyboardState::getCurrentKeyboardLayoutName() const {
+const std::string & DefaultKeyboardState::getCurrentKeyboardLayoutName() const {
     return keyboardLayoutName;
 }
 
-std::set<std::shared_ptr<Key>> DefaultKeyboardState::getAllPressedKeys() const {
-    return pressedKeys;
+const std::set<Key*> & DefaultKeyboardState::getAllPressedKeys() const {
+    return pressedKeysFrontend;
 }
 
-std::set<std::shared_ptr<Key>> DefaultKeyboardState::getAllReleasedKeys() const {
-    return releasedKeys;
+const std::set<Key*> & DefaultKeyboardState::getAllReleasedKeys() const {
+    return releasedKeysFrontend;
 }

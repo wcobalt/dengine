@@ -18,14 +18,11 @@ using namespace dengine;
 
 const char Dengine::VERSION_STRING[] = "0.2.0:0";
 
-Dengine::Dengine(std::unique_ptr<Platform> platformSet, float fps) : mIsIgnoringInactive(false), isGameStopped(false), fps(fps) {
-    this->platformSet = std::move(platformSet);
-
-    scenesManager = std::make_unique<ScenesManager>();
-}
+Dengine::Dengine(std::unique_ptr<Platform> platformSet, float fps) : mIsIgnoringInactive(false), isGameStopped(false),
+            fps(fps), platformSet(std::move(platformSet)), scenesManager(std::make_unique<ScenesManager>()) {}
 
 void Dengine::init(std::unique_ptr<Platform> platformSet) {
-    init(std::move(platformSet), 0);
+    init(std::move(platformSet), DEFAULT_FPS);
 }
 
 void Dengine::init(std::unique_ptr<Platform> platformSet, float fps) {
@@ -112,6 +109,6 @@ Platform & Dengine::getPlatform() const {
     return *platformSet;
 }
 
-const EventsState & Dengine::getEventsState() {
+const Events & Dengine::getEventsState() {
     return *eventsState;
 }

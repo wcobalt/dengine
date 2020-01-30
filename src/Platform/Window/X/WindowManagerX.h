@@ -171,13 +171,13 @@ namespace dengine {
 
         //@todo GLXContext
 
-        std::shared_ptr<MouseState> getMouseState() const;
+        std::unique_ptr<MouseState> checkMouseState() const;
 
-        std::shared_ptr<KeyboardState> getKeyboardState() const;
+        std::unique_ptr<KeyboardState> checkKeyboardState() const;
 
-        std::shared_ptr<WindowState> getWindowState();
+        std::unique_ptr<WindowState> checkWindowState();
 
-        std::shared_ptr<EventsState> getEventsState() override;
+        std::unique_ptr<Events> checkEvents() override;
 
         ~WindowManagerX();//
     };

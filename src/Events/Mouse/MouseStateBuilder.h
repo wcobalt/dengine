@@ -23,7 +23,7 @@ namespace dengine {
 
         virtual void setPosition(int x, int y) = 0;
 
-        virtual std::shared_ptr<MouseState> build() const = 0;
+        virtual std::unique_ptr<MouseState> build() const = 0;
     };
 }
 

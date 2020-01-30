@@ -9,7 +9,7 @@
 
 namespace dengine {
     class GameObject;
-    class EventsState;
+    class Events;
     class DirectChildrenChangeMessage;
     class ParentChangeMessage;
     class ComponentMessage;

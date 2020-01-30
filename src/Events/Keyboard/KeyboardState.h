@@ -20,17 +20,17 @@ namespace dengine {
 
         virtual bool isKeyReleased(DKeyCode key) const = 0;
 
-        virtual bool isSymbolPressed(const std::string& symbol) const = 0;
+        virtual bool isSymbolPressed(std::string_view symbol) const = 0;
 
-        virtual bool isSymbolReleased(const std::string& symbol) const = 0;
+        virtual bool isSymbolReleased(std::string_view symbol) const = 0;
 
-        virtual std::string getCurrentKeyboardLayoutCode() const = 0;
+        virtual const std::string & getCurrentKeyboardLayoutCode() const = 0;
 
-        virtual std::string getCurrentKeyboardLayoutName() const = 0;
+        virtual const std::string & getCurrentKeyboardLayoutName() const = 0;
 
-        virtual std::set<std::shared_ptr<Key>> getAllPressedKeys() const = 0;
+        virtual const std::set<Key*> & getAllPressedKeys() const = 0;
 
-        virtual std::set<std::shared_ptr<Key>> getAllReleasedKeys() const = 0;
+        virtual const std::set<Key*> & getAllReleasedKeys() const = 0;
     };
 }
 

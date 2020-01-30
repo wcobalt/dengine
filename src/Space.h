@@ -45,6 +45,7 @@ namespace dengine {
 
         ID getId() const;
 
+        //@todo think about return string_view
         const std::string& getName() const;
 
         void add(GameObject& gameObject);

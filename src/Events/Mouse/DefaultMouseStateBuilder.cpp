@@ -26,8 +26,7 @@ void DefaultMouseStateBuilder::setWheelDirection(DWheelDirection wheelDirection)
     this->mWheelDirection = wheelDirection;
 }
 
-std::shared_ptr<MouseState> DefaultMouseStateBuilder::build() const {
-    std::shared_ptr<MouseState> result(new DefaultMouseState(pressedButtons, releasedButtons, mWheelDirection, x, y));
-
-    return result;
+std::unique_ptr<MouseState> DefaultMouseStateBuilder::build() const {
+    return std::make_unique<DefaultMouseState>(pressedButtons, releasedButtons,
+            mWheelDirection, x, y);
 }

@@ -6,7 +6,7 @@ set(CMAKE_PREFIX_PATH lib)
 
 add_executable(App
         src/App/main.cpp
-        src/Filter/TraversalMethods/BfsTraversal.cpp src/Filter/TraversalMethods/BfsTraversal.h src/Filter/TraversalMethods/BaseTraversal.cpp src/Filter/TraversalMethods/BaseTraversal.h src/Filter/TraversalMethods/DfsTraversal.cpp src/Filter/TraversalMethods/DfsTraversal.h src/Platform/XPlatform.cpp src/Platform/XPlatform.h src/Platform/Platform.cpp)
+        src/Filter/TraversalMethods/BfsTraversal.cpp src/Filter/TraversalMethods/BfsTraversal.h src/Filter/TraversalMethods/BaseTraversal.cpp src/Filter/TraversalMethods/BaseTraversal.h src/Filter/TraversalMethods/DfsTraversal.cpp src/Filter/TraversalMethods/DfsTraversal.h src/Platform/XPlatformBuilder.cpp src/Platform/XPlatformBuilder.h src/Platform/Platform.cpp src/Platform/PlatformBuilder.h)
 
 add_library(Dengine
         src/Components/Component.cpp
@@ -36,21 +36,16 @@ add_library(Dengine
         src/Events/Window/DefaultWindowState.cpp
         src/Events/Window/WindowStateBuilder.h
         src/Events/Window/WindowState.h
-        src/Events/Keyboard/KeyBySymbolComparator.h
         src/Events/Keyboard/KeyboardStateBuilder.h
-        src/Events/Keyboard/KeyBySymbolComparator.cpp
         src/Events/Keyboard/DefaultKeyboardState.cpp
         src/Events/Keyboard/DefaultKeyboardState.h
         src/Events/Keyboard/DKey.h
         src/Events/Keyboard/Keyboard.cpp
-        src/Events/Keyboard/KeyByDKeyCodeComparator.cpp
         src/Events/Keyboard/Keyboard.h
         src/Events/Keyboard/DefaultKeyboardStateBuilder.cpp
-        src/Events/Keyboard/KeyByDKeyCodeComparator.h
         src/Events/Keyboard/DKey.cpp
         src/Events/Keyboard/KeyboardState.h
         src/Events/Keyboard/Key.h
-        src/Events/Keyboard/KeyComparator.h
         src/Events/Keyboard/DefaultKeyboardStateBuilder.h
         src/Events/Mouse/DefaultMouseStateBuilder.h
         src/Events/Mouse/MouseState.h
@@ -59,8 +54,8 @@ add_library(Dengine
         src/Events/Mouse/MouseStateBuilder.h
         src/Events/Mouse/DefaultMouseState.h
         src/Events/Mouse/DefaultMouseState.cpp
-        src/Events/EventsState.cpp
-        src/Events/EventsState.h
+        src/Events/Events.cpp
+        src/Events/Events.h
 
         src/Exceptions/IllegalStateException.h
         src/Exceptions/ImageException.h
@@ -71,6 +66,7 @@ add_library(Dengine
         src/Exceptions/SceneException.h
         src/Exceptions/GameObjectException.h
         src/Exceptions/SpaceException.h
+        src/Exceptions/PlatformBuildException.h
 
         src/Math/Vector3.h
         src/Math/vectors.h

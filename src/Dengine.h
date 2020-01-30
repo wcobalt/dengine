@@ -11,7 +11,7 @@ namespace dengine {
     class ScenesManager;
     class WindowManager;
     class Platform;
-    class EventsState;
+    class Events;
 }
 
 #include "Coreutils/ID.h"
@@ -39,13 +39,15 @@ namespace dengine {
 
         static std::unique_ptr<Dengine> dengine;
 
-        std::unique_ptr<EventsState> eventsState;
+        std::unique_ptr<Events> eventsState;
 
         void update();
 
         Dengine(std::unique_ptr<Platform> platformSet, float fps);
     public:
         static const char VERSION_STRING[];
+
+        static constexpr float DEFAULT_FPS = 30;
 
         static constexpr unsigned VERSION_MAJOR = 0;
         static constexpr unsigned VERSION_MINOR = 2;
@@ -73,7 +75,7 @@ namespace dengine {
 
         std::string toString() const;
 
-        const EventsState & getEventsState();
+        const Events & getEventsState();
 
         ScenesManager & getScenesManager() const;
 

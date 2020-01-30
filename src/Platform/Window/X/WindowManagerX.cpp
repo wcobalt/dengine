@@ -32,7 +32,7 @@
 #include "../../../Events/Keyboard/DKey.h"
 #include "../../../Events/Keyboard/Keyboard.h"
 #include "../../../Events/Mouse/Mouse.h"
-#include "../../../Events/EventsState.h"
+#include "../../../Events/Events.h"
 #include "../../../Graphics/Image.h"
 #include "Util/XDefaultKeyboardConverter.h"
 #include "Util/XKeyboardConverter.h"
@@ -79,7 +79,7 @@ WindowManagerX::WindowManagerX(int x, int y, uint width, uint height, const std:
             lastWidth = width; lastHeight = height;
             lastState = NORMAL;
 
-            //@fixme fix calling virtual member functions from constructor
+            //@fixme fix calling virtual member functions from constructor and destructor
             setPosition(x, y);
             setTitle(title);
             setSize(width, height);
@@ -556,7 +556,7 @@ bool WindowManagerX::isFocused() const {
 //@todo logging
 //@todo tests
 
-std::shared_ptr<MouseState> WindowManagerX::getMouseState() const {
+std::unique_ptr<MouseState> WindowManagerX::checkMouseState() const {
     std::shared_ptr<MouseStateBuilder> builder(new DefaultMouseStateBuilder());
 
     Window win;
@@ -597,7 +597,7 @@ std::shared_ptr<MouseState> WindowManagerX::getMouseState() const {
     return builder->build();
 }
 
-std::shared_ptr<KeyboardState> WindowManagerX::getKeyboardState() const {
+std::unique_ptr<KeyboardState> WindowManagerX::checkKeyboardState() const {
     std::shared_ptr<KeyboardStateBuilder> builder(new DefaultKeyboardStateBuilder());
 
     XEvent xEvent;
@@ -647,7 +647,7 @@ int WindowManagerX::selectEventsPredicate(XEvent *xEvent, int *types, int size) 
     return False;
 }
 
-std::shared_ptr<WindowState> WindowManagerX::getWindowState() {
+std::unique_ptr<WindowState> WindowManagerX::checkWindowState() {
     std::shared_ptr<WindowStateBuilder> builder(new DefaultWindowStateBuilder());
 
     XEvent xEvent;
@@ -909,6 +909,8 @@ std::unique_ptr<Key> WindowManagerX::toDKey(XEvent *xEvent) const {
     return std::make_unique<DKey>(dKeyCode, keySymbol);
 }
 
-shared_ptr<EventsState> WindowManagerX::getEventsState() {
-    return std::make_shared<EventsState>(getWindowState(), getKeyboardState(), getMouseState());
+std::unique_ptr<Events> WindowManagerX::checkEvents() {
+    return std::make_unique<Events>(checkWindowState(),
+            checkKeyboardState(),
+            checkMouseState());
 }
