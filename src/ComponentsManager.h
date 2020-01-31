@@ -42,18 +42,32 @@ namespace dengine {
 
         void attachComponent(std::unique_ptr<Component> component);
 
+        //probably it needs perfect forwarding
+        /*
+         * if T is TransformComponent pass true in private method attach(unique, bool). In that function if bool is true
+         * then component is automatically considered as TransformComp otherwise - it checks for "Transformity"
+         * */
+        template<typename T, typename ...Types>
+        void attachComponent(Types ...args) {
+            attachComponent(std::make_unique<T>(gameObject, args...));
+        }
+
         template<typename T, typename std::enable_if<!std::is_same<T, TransformComponent>::value, std::nullptr_t>::type = nullptr>
         void detachComponent() {
+            size_t tHash = typeid(T).hash_code();
+
             for (auto it = components.begin(); it != components.end(); it++) {
                 Component& component = **it;
-                if (typeid(component).hash_code() == typeid(T).hash_code()) {
+
+                if (typeid(component).hash_code() == tHash) {
                     detachComponent(it);
 
                     return;
                 }
             }
 
-            throw ComponentException("Cannot detach component of this type, because it is not attached yet");
+            throw ComponentException("Cannot detach component of this type (" + std::string(typeid(T).name())
+                                     + "), because it is not attached yet");
         }
 
         void detachComponent(const Component &component);
@@ -64,13 +78,30 @@ namespace dengine {
         T & getComponent() const {
             for (auto & component : components) {
                 //@fixme use hashtable when hash is typeid().hash_code() (but how to get Transform and keep compsFrontend?)
-                if (auto result = std::dynamic_pointer_cast<T>(component)) {
-                    return *result;
+                if (auto result = dynamic_cast<T&>(*component)) {
+                    return result;
                 }
             }
 
-            throw ComponentException("Cannot return component of this type, because is is not attached yet.");
+            throw ComponentException("Cannot return component of this type (" + std::string(typeid(T).name())
+                                     + "), because is is not attached yet.");
         }
+
+        template<typename T>
+        bool isComponentAttached() const {
+            size_t tHash = typeid(T).hash_code();
+
+            for (auto& component : components) {
+                Component& componentReference = *component;
+
+                if (typeid(componentReference).hash_code() == tHash)
+                    return true;
+            }
+
+            return false;
+        }
+
+        bool isComponentAttached(const Component& component) const;
 
         iterator begin();
 

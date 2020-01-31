@@ -15,7 +15,7 @@
 
 using namespace dengine;
 
-Component::Component(GameObject &gameObject) : gameObject(gameObject), toolkit(std::make_unique<Toolkit>()) {}
+Component::Component(GameObject &gameObject) : gameObject(gameObject), toolkit(std::make_unique<Toolkit>(*this)) {}
 
 void Component::onInstanceCreate(const InstanceCreateMessage &message) {}
 

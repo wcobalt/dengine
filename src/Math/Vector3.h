@@ -24,8 +24,6 @@ namespace dengine {
 
         Vector3() : x(0), y(0), z(0) {}
 
-        Vector3(const Vector3<T>& vector) = default;
-
         Vector3(const Vector2<T>& vector) : x(vector.x), y(vector.y), z(0) {}
 
         Vector3(T x, T y, T z) : x(x), y(y), z(z) {}
@@ -59,8 +57,6 @@ namespace dengine {
         std::vector<T> toStlVector() const override {
             return {x, y, z};
         }
-
-        Vector3<T>& operator=(const Vector3<T>& b) = default;
 
         T scalar(const Vector3<T>& b) const {
             return x * b.x + y * b.y + z * b.z;

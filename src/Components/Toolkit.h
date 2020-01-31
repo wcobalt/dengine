@@ -9,12 +9,22 @@
 
 namespace dengine {
     class Scene;
+    class Component;
+    class SpacesManager;
 }
 
 namespace dengine {
     class Toolkit : public DObject {
+    private:
+        Component& component;
     public:
+        explicit Toolkit(Component& component);
+
         virtual Scene& getCurrentScene() const;
+
+        virtual SpacesManager& getSpacesManager() const;
+
+        virtual Component& getComponent() const;
     };
 }
 

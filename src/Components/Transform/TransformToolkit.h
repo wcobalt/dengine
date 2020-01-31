@@ -5,16 +5,35 @@
 #ifndef DENGINE_TRANSFORMTOOLKIT_H
 #define DENGINE_TRANSFORMTOOLKIT_H
 
+#include "../Toolkit.h"
+#include "../../Math/Geometry.h"
+
 namespace dengine {
-    class TransformToolkit {
+    class TransformComponent;
+    class GameObject;
+    class Space;
+}
+
+namespace dengine {
+    class TransformToolkit : public Toolkit {
+    private:
+        TransformComponent& transformComponent;
     public:
-        //@todo what's about calculation distance to a transformComponent rather than a gameObject?
-        double getDistanceTo(std::shared_ptr<GameObject> instance) const;
+        explicit TransformToolkit(TransformComponent& transformComponent);
+
+        double getDistanceTo(const GameObject& gameObject) const;
+
+        double getDistanceTo(const TransformComponent& transform) const;
 
         double getDistanceTo(const vec3f& position) const;
 
-        template<typename T>
-        std::shared_ptr<GameObject> getNearestInstance() const;
+        GameObject& getNearestInstance() const;
+
+        GameObject& getNearestInstanceInSpace(Space& space) const;
+
+        const vec3f & getParentPosition() const;
+
+        //filters factories
     };
 }
 

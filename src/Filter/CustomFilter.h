@@ -13,10 +13,10 @@ namespace dengine {
 
 namespace dengine {
     class CustomFilter : public Filter {
-    private:
+    public:
         using action_type = std::function<void(GameObject&, TraversalMethod&)>;
         using selection_type = std::function<bool(const GameObject&)>;
-
+    private:
         TraversalMethod& traversalMethod;
 
         action_type action;

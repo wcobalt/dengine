@@ -25,8 +25,11 @@ void ComponentsManager::attachComponent(std::unique_ptr<Component> component) {
         components.emplace_back(std::move(component));
         componentsFrontend.emplace_back(&componentReference);
 
-        if (typeid(componentReference).hash_code() == typeid(TransformComponent).hash_code())
-            transformComponent = dynamic_cast<TransformComponent*>(&componentReference);
+        if (transformComponent == nullptr &&
+            typeid(componentReference).hash_code() == typeid(TransformComponent).hash_code()) {
+
+            transformComponent = dynamic_cast<TransformComponent *>(&componentReference);
+        }
 
         componentReference.sendMessage(ComponentLoadMessage());
     } else
@@ -71,7 +74,7 @@ void ComponentsManager::detachComponent(decltype(components)::const_iterator ite
 }
 
 void ComponentsManager::checkComponentAttachment(const Component &component) {
-    if (component.getGameObject() != gameObject)
+    if (!isComponentAttached(component))
         throw ComponentException("Game object that component is bound to and this game object are different.");
 }
 
@@ -125,4 +128,8 @@ TransformComponent &ComponentsManager::getTransformComponent() const {
         return *transformComponent;
     } else
         throw ComponentException("Unable to return TransformComponent since it was not attached yet");
+}
+
+bool ComponentsManager::isComponentAttached(const Component &component) const {
+    return component.getGameObject() == gameObject;
 }
