@@ -21,6 +21,7 @@ namespace dengine {
     class SceneUnloadMessage;
     class GameEndMessage;
     class Scene;
+    class Toolkit;
 }
 
 #include "../DObject.h"
@@ -29,6 +30,8 @@ namespace dengine {
     class Component : public DObject {
     private:
         bool mIsEnabled;
+
+        std::unique_ptr<Toolkit> toolkit;
     protected:
         GameObject& gameObject;
     public:
@@ -65,8 +68,7 @@ namespace dengine {
 
         std::unique_ptr<Component> clone(GameObject& gameObject) const;
 
-        //@todo maybe exclude to a kind of toolkit?
-        Scene& getCurrentScene();///for clarity and simplicity's sake
+        Toolkit& getToolkit();
     };
 }
 

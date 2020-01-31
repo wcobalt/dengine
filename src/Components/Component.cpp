@@ -4,10 +4,10 @@
 #include <memory>
 
 #include "Component.h"
+#include "Toolkit.h"
 #include "../Dengine.h"
 #include "../GameObject.h"
 #include "../ScenesManager.h"
-#include "../Exceptions/ComponentException.h"
 #include "../Exceptions/IllegalArgumentException.h"
 #include "../Coreutils/Messages/ParentChangeMessage.h"
 #include "../Coreutils/Messages/DirectChildrenChangeMessage.h"
@@ -15,7 +15,7 @@
 
 using namespace dengine;
 
-Component::Component(GameObject &gameObject) : gameObject(gameObject) {}
+Component::Component(GameObject &gameObject) : gameObject(gameObject), toolkit(std::make_unique<Toolkit>()) {}
 
 void Component::onInstanceCreate(const InstanceCreateMessage &message) {}
 
@@ -51,8 +51,9 @@ GameObject & Component::getGameObject() const {
     return gameObject;
 }
 
-Scene &Component::getCurrentScene() {
-    return Dengine::get().getScenesManager().getCurrentScene();
+
+Toolkit &Component::getToolkit() {
+    return *toolkit;
 }
 
 std::unique_ptr<Component> Component::clone(GameObject& gameObject) const {
