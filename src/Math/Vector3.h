@@ -24,18 +24,23 @@ namespace dengine {
 
         Vector3() : x(0), y(0), z(0) {}
 
-        Vector3(const Vector3<T>& vector) = default;
-
-        Vector3(const Vector2<T>& vector) : x(vector.x), y(vector.y), z(0) {}
+        Vector3(const Vector2<T>& vector, T z = 0) : x(vector.x), y(vector.y), z(z) {}
 
         Vector3(T x, T y, T z) : x(x), y(y), z(z) {}
 
         Vector3(const std::vector<T>& vector) : Vector3() {
             size_t size = vector.size();
 
-            if (size > 0) x = vector[0];
-            if (size > 1) y = vector[1];
-            if (size > 2) z = vector[2];
+            if (size > 0) {
+                x = vector[0];
+
+                if (size > 1) {
+                    y = vector[1];
+
+                    if (size > 2)
+                        z = vector[2];
+                }
+            }
         }
 
         inline T getModulo() const override {
@@ -59,8 +64,6 @@ namespace dengine {
         std::vector<T> toStlVector() const override {
             return {x, y, z};
         }
-
-        Vector3<T>& operator=(const Vector3<T>& b) = default;
 
         T scalar(const Vector3<T>& b) const {
             return x * b.x + y * b.y + z * b.z;

@@ -39,7 +39,7 @@ namespace dengine {
         void initializeSpaces();
     public:
         enum class StandardSpace {
-            SOME_SPACE
+            GLOBAL
         };
     private:
         std::unique_ptr<SpacesManager> spacesManager;
@@ -67,7 +67,7 @@ namespace dengine {
         //tell me if this violates SRP
         Space& getSpace(StandardSpace standardSpace) const;
 
-        SpacesManager& getSpaces() const;
+        SpacesManager& getSpacesManager() const;
 
         SceneBehavior& getBehavior() const;
     };

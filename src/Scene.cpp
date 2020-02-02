@@ -92,10 +92,10 @@ void Scene::freeScene() {
 }
 
 void Scene::initializeSpaces() {
-    standardSpaces.insert(std::make_pair(StandardSpace::SOME_SPACE, &spacesManager->create("some_space")));
+    standardSpaces.insert(std::make_pair(StandardSpace::GLOBAL, &spacesManager->create("global")));
 }
 
-SpacesManager &Scene::getSpaces() const {
+SpacesManager &Scene::getSpacesManager() const {
     return *spacesManager;
 }
 

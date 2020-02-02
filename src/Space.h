@@ -55,6 +55,8 @@ namespace dengine {
         void removeAll();
 
         bool has(GameObject& gameObject) const;
+
+        bool operator==(const Space& space) const;
     };
 }
 

@@ -21,9 +21,11 @@ namespace dengine {
 
         virtual bool check(const GameObject& gameObject) const = 0;
 
-        virtual void execute(GameObject &gameObject, TraversalMethod &traversalMethod) const = 0;
+        virtual void execute(GameObject &gameObject, TraversalMethod &traversalMethod) = 0;
 
-        virtual const TraversalMethod& getTraversalMethod() const = 0;
+        virtual void setTraversalMethod(std::unique_ptr<TraversalMethod> traversalMethod) = 0;
+
+        virtual TraversalMethod & getTraversalMethod() const = 0;
     };
 }
 

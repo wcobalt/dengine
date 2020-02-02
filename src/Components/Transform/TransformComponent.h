@@ -12,6 +12,7 @@
 namespace dengine {
     class GameObject;
     class Space;
+    class TransformToolkit;
 }
 
 #include "../Component.h"
@@ -21,9 +22,11 @@ namespace dengine {
 namespace dengine {
     class TransformComponent final : public virtual Component {
     public:
+        static constexpr float MAX_DISTANCE = 10e9;
+
         class SpacesContainer : public DObject {
         private:
-            std::set<Space*> spaces;
+            mutable std::set<Space*> spaces;
         public:
             class Spaces : public DObject {
             private:
@@ -31,7 +34,7 @@ namespace dengine {
 
                 spaces_type & spaces;
             public:
-                Spaces(spaces_type& spaces);
+                explicit Spaces(spaces_type& spaces);
 
                 using iterator = spaces_type::iterator;
                 using const_iterator = spaces_type::const_iterator;
@@ -47,10 +50,10 @@ namespace dengine {
                 const_iterator cbegin() const;
 
                 const_iterator cend() const;
+
+                bool isIn(const Space& space) const;
             };
         public:
-            SpacesContainer& operator=(SpacesContainer& spacesManager) = delete;
-
             void addSpace(Space& space);
 
             void removeSpace(Space& space);
@@ -64,16 +67,17 @@ namespace dengine {
         Quat rotation;
         vec3f scale;
 
-        SpacesContainer spacesManager;
+        std::unique_ptr<SpacesContainer> spacesContainer;
+        std::unique_ptr<TransformToolkit> transformToolkit;
     public:
-        TransformComponent(GameObject &gameObject);
+        explicit TransformComponent(GameObject &gameObject);
 
-        TransformComponent(GameObject &gameObject, const vec3f& position);
+        TransformComponent(GameObject &gameObject, const vec3f &position);
 
         TransformComponent(GameObject &gameObject, float x, float y, float z);
 
-        TransformComponent(GameObject &gameObject, const vec3f& position,
-                           const Quat& rotation, const vec3f& scale);
+        TransformComponent(GameObject &gameObject, const vec3f &position,
+                           const Quat &rotation, const vec3f &scale);
 
         //absolute, doesnt move children
         void setPosition(const vec3f& position);
@@ -107,7 +111,7 @@ namespace dengine {
 
         vec3f getRelativePosition() const;
 
-        vec3f getPosition() const;
+        const vec3f & getPosition() const;
 
         void setRotation(const Quat& rotation);
 
@@ -115,15 +119,17 @@ namespace dengine {
 
         void setScale(float x, float y, float z);
 
-        Quat getRotation() const;
+        const Quat & getRotation() const;
 
-        vec3f getScale() const;
+        const vec3f & getScale() const;
 
-        Quat up() const;
+        vec3f up() const;
 
-        Quat front() const;
+        vec3f front() const;
 
-        Quat left() const;
+        vec3f left() const;
+
+        std::unique_ptr<Component> clone(GameObject &gameObject) const override;
 
         void onAdditionToSpace(Space& space);//add to SpacesContainer
 
@@ -132,13 +138,19 @@ namespace dengine {
         //inactive objects ignore incoming events, but can still be used other ways
         void setActive(bool isActive);
 
-        SpacesContainer::Spaces getSpaces() const {
-            return spacesManager.buildSpaces();
-        }
+        TransformComponent::SpacesContainer::Spaces getSpaces() const;
 
-        bool isActive() const {
-            return mIsActive;
-        }
+        TransformToolkit & getTransformToolkit() const;
+
+        bool isActive() const;
+
+        static void copy(const TransformComponent& from, TransformComponent& to, bool copyAll = true);
+
+        static void copy(const GameObject& from, GameObject& to, bool copyAll = true);
+
+        void copyTo(TransformComponent& transform, bool copyAll = true) const;
+
+        void copyTo(GameObject& gameObject, bool copyAll = true) const;
     };
 }
 
