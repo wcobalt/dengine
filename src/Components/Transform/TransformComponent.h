@@ -22,6 +22,8 @@ namespace dengine {
 namespace dengine {
     class TransformComponent final : public virtual Component {
     public:
+        static constexpr float MAX_DISTANCE = 10e9;
+
         class SpacesContainer : public DObject {
         private:
             mutable std::set<Space*> spaces;
@@ -48,6 +50,8 @@ namespace dengine {
                 const_iterator cbegin() const;
 
                 const_iterator cend() const;
+
+                bool isIn(const Space& space) const;
             };
         public:
             void addSpace(Space& space);
@@ -68,12 +72,12 @@ namespace dengine {
     public:
         explicit TransformComponent(GameObject &gameObject);
 
-        TransformComponent(GameObject &gameObject, vec3f position);
+        TransformComponent(GameObject &gameObject, const vec3f &position);
 
         TransformComponent(GameObject &gameObject, float x, float y, float z);
 
-        TransformComponent(GameObject &gameObject, vec3f position,
-                           Quat rotation, vec3f scale);
+        TransformComponent(GameObject &gameObject, const vec3f &position,
+                           const Quat &rotation, const vec3f &scale);
 
         //absolute, doesnt move children
         void setPosition(const vec3f& position);
@@ -125,6 +129,8 @@ namespace dengine {
 
         vec3f left() const;
 
+        std::unique_ptr<Component> clone(GameObject &gameObject) const override;
+
         void onAdditionToSpace(Space& space);//add to SpacesContainer
 
         void onRemovalFromSpace(Space& space);//remove from SpacesContainer
@@ -137,6 +143,14 @@ namespace dengine {
         TransformToolkit & getTransformToolkit() const;
 
         bool isActive() const;
+
+        static void copy(const TransformComponent& from, TransformComponent& to, bool copyAll = true);
+
+        static void copy(const GameObject& from, GameObject& to, bool copyAll = true);
+
+        void copyTo(TransformComponent& transform, bool copyAll = true) const;
+
+        void copyTo(GameObject& gameObject, bool copyAll = true) const;
     };
 }
 

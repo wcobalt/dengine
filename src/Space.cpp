@@ -85,3 +85,7 @@ Space::iterator Space::remove(iterator gameObjectToRemove) {
 
     return it;
 }
+
+bool Space::operator==(const Space &space) const {
+    return space.id == id;
+}

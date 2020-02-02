@@ -40,23 +40,23 @@ namespace dengine {
 
         Component(GameObject &gameObject);
 
-        void onInstanceCreate(const InstanceCreateMessage &message);
+        virtual void onInstanceCreate(const InstanceCreateMessage &message);
 
-        void onComponentLoad(const ComponentLoadMessage &message);
+        virtual void onComponentLoad(const ComponentLoadMessage &message);
 
-        void onComponentUnload(const ComponentUnloadMessage &message);
+        virtual void onComponentUnload(const ComponentUnloadMessage &message);
 
-        void onUpdate(const UpdateMessage &message);
+        virtual void onUpdate(const UpdateMessage &message);
 
-        void onInstanceDestroy(const InstanceDestroyMessage &message);
+        virtual void onInstanceDestroy(const InstanceDestroyMessage &message);
 
-        void onSceneUnload(const SceneUnloadMessage &message);
+        virtual void onSceneUnload(const SceneUnloadMessage &message);
 
-        void onGameEnd(const GameEndMessage &message);
+        virtual void onGameEnd(const GameEndMessage &message);
 
-        void onDirectChildrenChange(const DirectChildrenChangeMessage &message);
+        virtual void onDirectChildrenChange(const DirectChildrenChangeMessage &message);
 
-        void onParentChange(const ParentChangeMessage &message);
+        virtual void onParentChange(const ParentChangeMessage &message);
 
         void setEnabled(bool isEnabled);
 
@@ -66,7 +66,7 @@ namespace dengine {
 
         GameObject & getGameObject() const;
 
-        std::unique_ptr<Component> clone(GameObject& gameObject) const;
+        virtual std::unique_ptr<Component> clone(GameObject& gameObject) const;
 
         Toolkit& getToolkit();
     };

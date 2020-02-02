@@ -2,21 +2,22 @@
 #include "TransformToolkit.h"
 #include "../../GameObject.h"
 #include "../../ComponentsManager.h"
+#include "../../Space.h"
 
 using namespace dengine;
 
 TransformComponent::TransformComponent(GameObject &gameObject) : TransformComponent(gameObject, {}) {}
 
-TransformComponent::TransformComponent(GameObject &gameObject, vec3f position)
-    : TransformComponent(gameObject, std::move(position), {}, {1, 1, 1}) {}
+TransformComponent::TransformComponent(GameObject &gameObject, const vec3f &position)
+    : TransformComponent(gameObject, position, {}, {1, 1, 1}) {}
 
 TransformComponent::TransformComponent(GameObject &gameObject, float x, float y, float z)
     : TransformComponent(gameObject, {x, y, z}) {}
 
-TransformComponent::TransformComponent(GameObject &gameObject, vec3f position,
-                                       Quat rotation, vec3f scale)
-                                       : Component(gameObject), position(std::move(position)),
-                                         rotation(std::move(rotation)), scale(std::move(scale)),
+TransformComponent::TransformComponent(GameObject &gameObject, const vec3f &position,
+                                       const Quat &rotation, const vec3f &scale)
+                                       : Component(gameObject), position(position),
+                                         rotation(rotation), scale(scale),
                                          mIsActive(true), spacesContainer(std::make_unique<SpacesContainer>()),
                                          transformToolkit(std::make_unique<TransformToolkit>(*this)) {}
 
@@ -141,12 +142,43 @@ bool TransformComponent::isActive() const {
     return mIsActive;
 }
 
-//it's supposed that space wasn't added already
+std::unique_ptr<Component> TransformComponent::clone(GameObject &gameObject) const {
+    std::unique_ptr<TransformComponent> clone = std::make_unique<TransformComponent>(gameObject);
+
+    copyTo(*clone);
+
+    return clone;
+}
+
+void TransformComponent::copy(const TransformComponent &from, TransformComponent &to, bool copyAll) {
+    from.copyTo(to, copyAll);
+}
+
+void TransformComponent::copy(const GameObject &from, GameObject &to, bool copyAll) {
+    from.getComponentsManager().getTransformComponent().copyTo(to, copyAll);
+}
+
+void TransformComponent::copyTo(TransformComponent &transform, bool copyAll) const {
+    transform.position = position;
+    transform.rotation = rotation;
+    transform.scale = scale;
+
+    if (copyAll) {
+        transform.mIsActive = mIsActive;
+        transform.spacesContainer = std::make_unique<SpacesContainer>(*spacesContainer);
+    }
+}
+
+void TransformComponent::copyTo(GameObject &gameObject, bool copyAll) const {
+    copyTo(gameObject.getComponentsManager().getTransformComponent(), copyAll);
+}
+
+//it's supposed that space wasn't added already (check is performed in SpacesManager)
 void TransformComponent::SpacesContainer::addSpace(Space &space) {
     spaces.insert(&space);
 }
 
-//it's supposed that space was added already
+//it's supposed that space was added already (check is performed in SpacesManager)
 void TransformComponent::SpacesContainer::removeSpace(Space &space) {
     spaces.erase(&space);
 }
@@ -181,4 +213,12 @@ TransformComponent::SpacesContainer::Spaces::cbegin() const {
 
 TransformComponent::SpacesContainer::Spaces::const_iterator TransformComponent::SpacesContainer::Spaces::cend() const {
     return spaces.cend();
+}
+
+bool TransformComponent::SpacesContainer::Spaces::isIn(const Space &space) const {
+    for (auto currentSpace : *this) {
+        if (*currentSpace == space) return true;
+    }
+
+    return false;
 }
